@@ -146,7 +146,9 @@ public:
 #if defined(QT3_SUPPORT)
     static bool useQt3Support;
 #endif
+#ifndef QT_NO_SETTINGS // Emscripten; bug? https://bugreports.qt-project.org/browse/QTBUG-21746
     static QSettings *trolltechConf();
+#endif
 };
 
 QT_END_NAMESPACE

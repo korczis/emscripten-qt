@@ -2492,6 +2492,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMutex, libraryPathMutex, (QMutex::Recursive))
 */
 QStringList QCoreApplication::libraryPaths()
 {
+#if !defined(QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS) // Emscripten; not sure how it would compile ordinarily - bug?
     QMutexLocker locker(libraryPathMutex());
     if (!coreappdata()->app_libpaths) {
         QStringList *app_libpaths = coreappdata()->app_libpaths = new QStringList;
@@ -2531,6 +2532,9 @@ QStringList QCoreApplication::libraryPaths()
         }
     }
     return *(coreappdata()->app_libpaths);
+#else
+    return QStringList();
+#endif
 }
 
 

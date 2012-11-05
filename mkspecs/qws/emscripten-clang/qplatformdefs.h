@@ -49,17 +49,15 @@
 #include "qglobal.h"
 
 // extra disabling.
-#ifdef __native_client__
-#define QT_NO_FSFILEENGINE
-#endif
+//#define QT_NO_FSFILEENGINE
 
 #define QT_NO_SOCKET_H
+#define QT_NO_SETTINGS
 
 #define DIR void *
 #define PATH_MAX 256
 
 #include "../../common/posix/qplatformdefs.h"
-#include "qfunctions_nacl.h"
 #include <pthread.h>
 
 #undef QT_LSTAT

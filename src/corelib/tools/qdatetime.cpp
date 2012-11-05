@@ -55,7 +55,7 @@
 #include <locale.h>
 #endif
 
-#include <time.h>
+#include <sys/time.h> // Emscripten
 #if defined(Q_OS_WINCE)
 #include "qfunctions_wince.h"
 #endif

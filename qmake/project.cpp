@@ -1556,6 +1556,9 @@ QMakeProject::isActiveConfig(const QString &x, bool regex, QMap<QString, QString
     } else if (x == "symbian") {
         validateModes();
         return Option::target_mode == Option::TARG_SYMBIAN_MODE;
+    } else if (x == "emscripten") {
+        validateModes();
+        return Option::target_mode == Option::TARG_EMSCRIPTEN_MODE;
     } else if (x == "win32") {
         validateModes();
         return Option::target_mode == Option::TARG_WIN_MODE;

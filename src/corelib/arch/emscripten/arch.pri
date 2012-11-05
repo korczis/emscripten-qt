@@ -1,0 +1,3 @@
+#
+# EMSCRIPTEN architecture
+#

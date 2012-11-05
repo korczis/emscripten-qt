@@ -897,6 +897,7 @@ QCONFIG_FLAGS=
 XPLATFORM=              # This seems to be the QMAKESPEC, like "linux-g++" or "symbian-gcce"
 XPLATFORM_MINGW=no      # Whether target platform is MinGW (win32-g++*)
 XPLATFORM_INTEGRITY=no  # Whether target platform is INTEGRITY (*integrity*)
+XPLATFORM_EMSCRIPTEN=no  # Whether target platform is EMSCRIPTEN (*emscripten*)
 XPLATFORM_SYMBIAN=no    # Whether target platform is SYMBIAN (*symbian*)
 XPLATFORM_SYMBIAN_SBSV2=no # Whether target platform is SYMBIAN_SBSV2 (symbian-sbsv2)
 XPLATFORM_QNX=no
@@ -1703,6 +1704,7 @@ while [ "$#" -gt 0 ]; do
         case "$XPLATFORM" in *symbian*) XPLATFORM_SYMBIAN=yes;; esac
         case "$XPLATFORM" in symbian-sbsv2) XPLATFORM_SYMBIAN_SBSV2=yes;; esac
         case "$XPLATFORM" in *qnx-*|*blackberry-*) XPLATFORM_QNX=yes;; esac
+        case "$XPLATFORM" in *emscripten*) XPLATFORM_EMSCRIPTEN=yes;; esac
         ;;
     device-option)
         DEV_VAR=`echo $VAL | sed "s,^\(.*\)=.*,\1,"`
@@ -3310,6 +3312,8 @@ elif [ "$XPLATFORM_INTEGRITY" = "yes" ]; then
     CFG_ARCH=integrity
 elif [ "$XPLATFORM_SYMBIAN" = "yes" ]; then
     CFG_ARCH=symbian
+elif [ "$XPLATFORM_EMSCRIPTEN" = "yes" ]; then
+    CFG_ARCH=emscripten
 elif [ "$PLATFORM_MAC" = "yes" ] || [ -z "$CFG_ARCH" ]; then
     CFG_ARCH=$CFG_HOST_ARCH
 fi

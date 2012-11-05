@@ -49,7 +49,8 @@
 #if defined(Q_OS_HURD)
 #include <sys/time.h>
 #endif
-#include <time.h>
+//#include <time.h> // Emscripten
+#include <sys/time.h>
 #include <unistd.h>
 #elif defined(Q_OS_WIN)
 #include <qt_windows.h>

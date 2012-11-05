@@ -1508,6 +1508,7 @@ void QMakeProject::validateModes()
                 const QStringList &tgt = base_vars.value("TARGET_PLATFORM");
                 if (!tgt.isEmpty()) {
                     const QString &os = tgt.first();
+qDebug() << "os: " << os;
                     if (os == "unix")
                         Option::target_mode = Option::TARG_UNIX_MODE;
                     else if (os == "macx")

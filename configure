@@ -3029,6 +3029,7 @@ case "$XPLATFORM" in *integrity*) XPLATFORM_INTEGRITY=yes;; esac
 case "$XPLATFORM" in *symbian*) XPLATFORM_SYMBIAN=yes;; esac
 case "$XPLATFORM" in symbian-sbsv2) XPLATFORM_SYMBIAN_SBSV2=yes;; esac
 case "$XPLATFORM" in *qnx-*|*blackberry-*) XPLATFORM_QNX=yes;; esac
+case "$XPLATFORM" in *emscripten*) XPLATFORM_EMSCRIPTEN=yes;; esac
 
 if [ -d "$PLATFORM" ]; then
   QMAKESPEC="$PLATFORM"
@@ -4558,6 +4559,8 @@ elif [ "$PLATFORM_QPA" = "yes" ]; then
     Platform="Qt Lighthouse"
 elif [ "$XPLATFORM_INTEGRITY" = "yes" ]; then
     Platform="Qt for INTEGRITY"
+elif [ "$XPLATFORM_EMSCRIPTEN" = "yes" ]; then
+    Platform="Qt for Emscripten"
 elif [ "$XPLATFORM_SYMBIAN" = "yes" ]; then
     Platform="Qt for Symbian"
 elif [ "$PLATFORM_MAC" = "yes" ]; then

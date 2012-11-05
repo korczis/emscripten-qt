@@ -266,6 +266,8 @@ qDebug() << "Opt: " << opt;
                 Option::target_mode_overridden = true;
             } else if(opt == "integrity") {
                 Option::target_mode = TARG_INTEGRITY_MODE;
+            } else if(opt == "emscripten") {
+                Option::target_mode = TARG_EMSCRIPTEN_MODE;
             } else if(opt == "d") {
                 Option::debug_level++;
             } else if(opt == "version" || opt == "v" || opt == "-version") {

@@ -552,6 +552,9 @@ QStringList qmake_feature_paths(QMakeProperty *prop=0)
         case Option::TARG_SYMBIAN_MODE:
             concat << base_concat + QDir::separator() + "symbian";
             break;
+        case Option::TARG_EMSCRIPTEN_MODE:
+            concat << base_concat + QDir::separator() + "emscripten";
+            break;
         }
         concat << base_concat;
     }
@@ -1517,6 +1520,8 @@ qDebug() << "os: " << os;
                         Option::target_mode = Option::TARG_SYMBIAN_MODE;
                     else if (os == "win32")
                         Option::target_mode = Option::TARG_WIN_MODE;
+                    else if (os == "emscripten")
+                        Option::target_mode = Option::TARG_EMSCRIPTEN_MODE;
                     else
                         fprintf(stderr, "Unknown target platform specified: %s\n",
                                 os.toLatin1().constData());

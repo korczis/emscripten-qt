@@ -72,7 +72,7 @@
 
 QT_BEGIN_NAMESPACE
 
-#if defined (Q_OS_NACL)
+#if defined (Q_OS_NACL) || defined (Q_OS_EMSCRIPTEN)
 static inline uint detectProcessorFeatures()
 {
     return 0;

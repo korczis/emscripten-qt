@@ -638,7 +638,7 @@ QT_END_NAMESPACE
 
 #include "moc_qfilesystemwatcher.cpp"
 
-#include "qfilesystemwatcher.moc"
+//#include "qfilesystemwatcher.moc" // Emscripten, but looks like it might be bug anyway(?)
 
 #endif // QT_NO_FILESYSTEMWATCHER
 

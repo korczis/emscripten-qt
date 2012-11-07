@@ -45,6 +45,7 @@
 #include "qdatetime.h"
 #include "qdiriterator.h"
 #include "qset.h"
+#include <QtCore/qdebug.h>
 
 #ifndef QT_NO_FSFILEENGINE
 

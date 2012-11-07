@@ -43,13 +43,12 @@
 #define QPLATFORMDEFS_H
 
 // Get Qt defines/settings
+#undef QT_LARGEFILE_SUPPORT
+#include "../../common/posix/qplatformdefs.h"
 
 #define _POSIX_TIMERS
 
 #include "qglobal.h"
-
-// extra disabling.
-//#define QT_NO_FSFILEENGINE
 
 #define QT_NO_SOCKET_H
 #define QT_NO_SETTINGS
@@ -59,8 +58,11 @@
 #define DIR void *
 #define PATH_MAX 256
 
-#include "../../common/posix/qplatformdefs.h"
 #include <pthread.h>
+
+#include <dirent.h>
+#include <pwd.h>
+#include <grp.h>
 
 #undef QT_LSTAT
 #define QT_LSTAT                QT_STAT

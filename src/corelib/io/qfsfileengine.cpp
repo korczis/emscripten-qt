@@ -111,6 +111,7 @@ QFSFileEnginePrivate::QFSFileEnginePrivate() : QAbstractFileEnginePrivate()
 */
 void QFSFileEnginePrivate::init()
 {
+printf("Initied QFSFileEnginePrivate");
     is_sequential = 0;
     tried_stat = 0;
 #if !defined(Q_OS_WINCE)
@@ -203,6 +204,7 @@ void QFSFileEngine::setFileName(const QString &file)
 */
 bool QFSFileEngine::open(QIODevice::OpenMode openMode)
 {
+qDebug() << "QFSFileEngine:: open";
     Q_D(QFSFileEngine);
     if (d->fileEntry.isEmpty()) {
         qWarning("QFSFileEngine::open: No file name specified");
@@ -224,7 +226,12 @@ bool QFSFileEngine::open(QIODevice::OpenMode openMode)
     d->fh = 0;
     d->fd = -1;
 
-    return d->nativeOpen(openMode);
+qDebug() << "fiddle-dee-dee";
+qDebug() << "about to call native open " << (void*)d;
+qDebug() << "tum-te-tum";
+const bool success = d->nativeOpen(openMode);
+qDebug() << "Succeeded: " << success;
+    return success;
 }
 
 /*!

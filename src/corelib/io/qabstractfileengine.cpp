@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <qdebug.h>
 #include "qabstractfileengine.h"
 #include "private/qabstractfileengine_p.h"
 #ifdef QT_BUILD_CORE_LIB
@@ -204,6 +205,7 @@ QAbstractFileEngine *qt_custom_file_engine_handler_create(const QString &path)
 */
 QAbstractFileEngine *QAbstractFileEngine::create(const QString &fileName)
 {
+qDebug() << "QAbstractFileEngine::create";
     QFileSystemEntry entry(fileName);
     QFileSystemMetaData metaData;
     QAbstractFileEngine *engine = QFileSystemEngine::resolveEntryAndCreateLegacyEngine(entry, metaData);

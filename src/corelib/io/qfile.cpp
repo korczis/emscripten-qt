@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qplatformdefs.h"
-#include "qdebug.h"
 #include "qfile.h"
 #include "qfsfileengine.h"
 #include "qtemporaryfile.h"
@@ -105,9 +104,7 @@ QFilePrivate::~QFilePrivate()
 bool
 QFilePrivate::openExternalFile(int flags, int fd, QFile::FileHandleFlags handleFlags)
 {
-printf("QFilePrivate::openExternalFile");
 #ifdef QT_NO_FSFILEENGINE
-qDebug() << "Whoops";
     Q_UNUSED(flags);
     Q_UNUSED(fd);
     return false;
@@ -116,7 +113,6 @@ qDebug() << "Whoops";
     fileEngine = 0;
     QFSFileEngine *fe = new QFSFileEngine;
     fileEngine = fe;
-qDebug() << "gleep";
     return fe->open(QIODevice::OpenMode(flags), fd, handleFlags);
 #endif
 }
@@ -419,7 +415,6 @@ QFile::QFile(QObject *parent)
 QFile::QFile(const QString &name)
     : QIODevice(*new QFilePrivate, 0)
 {
-qDebug() << "Creoted file object.";
     Q_D(QFile);
     d->fileName = name;
 }
@@ -1017,7 +1012,6 @@ bool QFile::isSequential() const
 */
 bool QFile::open(OpenMode mode)
 {
-printf("QFile::open\n");
     Q_D(QFile);
     if (isOpen()) {
         qWarning("QFile::open: File (%s) already open", qPrintable(fileName()));
@@ -1032,18 +1026,14 @@ printf("QFile::open\n");
         return false;
     }
 
-qDebug() << "Giraffe";
-qDebug() << "about to call fileEngine open";
 #ifdef Q_OS_SYMBIAN
     // For symbian, the unbuffered flag is used to control write-behind cache behaviour
     if (fileEngine()->open(mode))
 #else
     // QIODevice provides the buffering, so there's no need to request it from the file engine.
-qDebug() << "Here goes";
     if (fileEngine()->open(mode | QIODevice::Unbuffered))
 #endif
     {
-printf("baloney\n");
         QIODevice::open(mode);
         if (mode & Append) {
             //The file engine should have done this in open(),
@@ -1875,15 +1865,9 @@ QFile::writeData(const char *data, qint64 len)
 */
 QAbstractFileEngine *QFile::fileEngine() const
 {
-qDebug() << "Parsely";
-qDebug() << "Parsely";
-qDebug() << "Parsely";
-qDebug() << "Parsely";
-qDebug() << "Parsely";
     Q_D(const QFile);
     if(!d->fileEngine)
         d->fileEngine = QAbstractFileEngine::create(d->fileName);
-qDebug() << "Created a file engine, apparently: " << (void*)d->fileEngine;
     return d->fileEngine;
 }
 

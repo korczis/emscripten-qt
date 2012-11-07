@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include <qdebug.h>
 #include "qplatformdefs.h"
 #include "qabstractfileengine.h"
 #include "private/qfsfileengine_p.h"
@@ -54,7 +53,7 @@
 #include "qdatetime.h"
 #include "qvarlengtharray.h"
 
-#include <sys/mman.h> 
+#include <sys/mman.h>
 #include <stdlib.h>
 #include <limits.h>
 #if defined(Q_OS_SYMBIAN)
@@ -95,7 +94,6 @@ static bool isRelativePathSymbian(const QString& fileName)
 static inline QByteArray openModeToFopenMode(QIODevice::OpenMode flags, const QFileSystemEntry &fileEntry,
         QFileSystemMetaData &metaData)
 {
-printf("here");
     QByteArray mode;
     if ((flags & QIODevice::ReadOnly) && !(flags & QIODevice::Truncate)) {
         mode = "rb";
@@ -323,12 +321,6 @@ bool QFSFileEngine::open(QIODevice::OpenMode openMode, const RFile &file, QFile:
 */
 bool QFSFileEnginePrivate::nativeOpen(QIODevice::OpenMode openMode)
 {
-qDebug() << "nativeOpen";
-qDebug() << "nativeOpen";
-qDebug() << "nativeOpen";
-qDebug() << "nativeOpen";
-qDebug() << "nativeOpen";
-qDebug() << "nativeOpen";
     Q_Q(QFSFileEngine);
 
     if (openMode & QIODevice::Unbuffered) {

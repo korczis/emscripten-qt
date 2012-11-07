@@ -45,7 +45,6 @@
 #include "qdatetime.h"
 #include "qdiriterator.h"
 #include "qset.h"
-#include <QtCore/qdebug.h>
 
 #ifndef QT_NO_FSFILEENGINE
 
@@ -111,7 +110,6 @@ QFSFileEnginePrivate::QFSFileEnginePrivate() : QAbstractFileEnginePrivate()
 */
 void QFSFileEnginePrivate::init()
 {
-printf("Initied QFSFileEnginePrivate");
     is_sequential = 0;
     tried_stat = 0;
 #if !defined(Q_OS_WINCE)
@@ -204,7 +202,6 @@ void QFSFileEngine::setFileName(const QString &file)
 */
 bool QFSFileEngine::open(QIODevice::OpenMode openMode)
 {
-qDebug() << "QFSFileEngine:: open";
     Q_D(QFSFileEngine);
     if (d->fileEntry.isEmpty()) {
         qWarning("QFSFileEngine::open: No file name specified");
@@ -226,12 +223,7 @@ qDebug() << "QFSFileEngine:: open";
     d->fh = 0;
     d->fd = -1;
 
-qDebug() << "fiddle-dee-dee";
-qDebug() << "about to call native open " << (void*)d;
-qDebug() << "tum-te-tum";
-const bool success = d->nativeOpen(openMode);
-qDebug() << "Succeeded: " << success;
-    return success;
+    return d->nativeOpen(openMode);
 }
 
 /*!

@@ -53,6 +53,8 @@
 
 #define QT_NO_SOCKET_H
 #define QT_NO_SETTINGS
+#define QT_NO_CODECS
+#define QT_NO_SYSTEMLOCALE
 
 #define DIR void *
 #define PATH_MAX 256

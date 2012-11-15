@@ -484,7 +484,7 @@ void QAbstractEventDispatcher::closingDown()
             \o bps_event_t
     \endtable
 
-    
+
 
     \sa setEventFilter(), filterEvent()
 */
@@ -527,7 +527,7 @@ QAbstractEventDispatcher::EventFilter QAbstractEventDispatcher::setEventFilter(E
     compatibility with any extensions that may be used in the
     application.
 
-    Note that the type of \a message is platform dependent. See 
+    Note that the type of \a message is platform dependent. See
     QAbstractEventDispatcher::EventFilter for details.
 
     \sa setEventFilter()

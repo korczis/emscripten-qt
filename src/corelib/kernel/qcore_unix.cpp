@@ -41,6 +41,7 @@
 
 #include "qcore_unix_p.h"
 #include "qelapsedtimer.h"
+#include <QtCore/QDebug>
 
 #ifdef Q_OS_NACL
 #elif !defined (Q_OS_VXWORKS)
@@ -77,9 +78,11 @@ static inline bool time_update(struct timeval *tv, const struct timeval &start,
 int qt_safe_select(int nfds, fd_set *fdread, fd_set *fdwrite, fd_set *fdexcept,
                    const struct timeval *orig_timeout)
 {
+    qDebug() << "qt_safe_select:";
     if (!orig_timeout) {
         // no timeout -> block forever
         register int ret;
+	qDebug() << "No time out - blocking forever";
         EINTR_LOOP(ret, select(nfds, fdread, fdwrite, fdexcept, 0));
         return ret;
     }
@@ -90,6 +93,7 @@ int qt_safe_select(int nfds, fd_set *fdread, fd_set *fdwrite, fd_set *fdexcept,
     // loop and recalculate the timeout as needed
     int ret;
     forever {
+	qDebug() << "Timeout given - waiting";
         ret = ::select(nfds, fdread, fdwrite, fdexcept, &timeout);
         if (ret != -1 || errno != EINTR)
             return ret;

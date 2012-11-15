@@ -168,3 +168,12 @@ blackberry {
         HEADERS += \
                 kernel/qeventdispatcher_blackberry_p.h
 }
+
+emscripten {
+       SOURCES += \
+                 kernel/qcore_unix.cpp \
+                 kernel/qeventdispatcher_unix.cpp
+       HEADERS += \
+                 kernel/qcore_unix_p.h \
+                 kernel/qeventdispatcher_unix_p.h
+}

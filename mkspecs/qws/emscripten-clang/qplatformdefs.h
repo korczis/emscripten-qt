@@ -54,9 +54,9 @@
 #define QT_NO_SETTINGS
 #define QT_NO_CODECS
 #define QT_NO_SYSTEMLOCALE
+#define QT_NO_PROCESS
 
 #define DIR void *
-#define PATH_MAX 256
 
 #include <pthread.h>
 

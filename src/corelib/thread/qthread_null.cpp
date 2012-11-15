@@ -53,6 +53,7 @@ QT_BEGIN_NAMESPACE
 
 
 static  QThreadData *currentThreadData = 0;
+static  QThread *currentThread = 0;
 
 
 QThreadData *QThreadData::current()
@@ -60,6 +61,7 @@ QThreadData *QThreadData::current()
 	if (currentThreadData == NULL)
 	{
 		currentThreadData = new QThreadData;	
+        currentThreadData->thread = new QThread;
 	}
 	return currentThreadData;
 }

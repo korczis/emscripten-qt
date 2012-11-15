@@ -92,6 +92,7 @@ else:symbian:SOURCES += tools/qelapsedtimer_symbian.cpp tools/qlocale_symbian.cp
 else:unix:SOURCES += tools/qelapsedtimer_unix.cpp tools/qlocale_unix.cpp
 else:win32:SOURCES += tools/qelapsedtimer_win.cpp tools/qlocale_win.cpp
 else:integrity:SOURCES += tools/qelapsedtimer_unix.cpp tools/qlocale_unix.cpp
+else:emscripten:SOURCES += tools/qelapsedtimer_unix.cpp tools/qlocale_unix.cpp
 else:SOURCES += tools/qelapsedtimer_generic.cpp
 
 contains(QT_CONFIG, zlib):include($$PWD/../../3rdparty/zlib.pri)

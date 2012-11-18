@@ -175,6 +175,20 @@ bool QEventLoop::processEvents(ProcessEventsFlags flags)
 #include <iostream> // TODO - remove this
 int QEventLoop::exec(ProcessEventsFlags flags)
 {
+#ifdef QT_NO_LOCALEVENTLOOP
+    static bool mainEventLoopStarted = false;
+    if (!mainEventLoopStarted)
+    {
+        qDebug() << "Starting single main event loop and returning immediately";
+        mainEventLoopStarted = true;
+        return 0;
+    }
+    else
+    {
+        qWarning() << "Main event loop already running; ignoring call to exec.";
+        return -1;
+    }
+#endif
     Q_D(QEventLoop);
     //we need to protect from race condition with QThread::exit
    std::cout << "d->threadData: " << (void*)d->threadData << std::endl;

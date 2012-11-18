@@ -43,7 +43,7 @@ integrity:SOURCES += thread/qmutex_unix.cpp \
                 thread/qthread_unix.cpp \
 		thread/qwaitcondition_unix.cpp
 
-emscripten:SOURCES += thread/qmutex_null.cpp \
-                thread/qthread_null.cpp \
-		thread/qwaitcondition_null.cpp
+emscripten:SOURCES += thread/qmutex_emscripten.cpp \
+                thread/qthread_emscripten.cpp \
+		thread/qwaitcondition_emscripten.cpp
 

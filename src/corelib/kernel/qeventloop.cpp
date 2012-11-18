@@ -47,6 +47,7 @@
 
 #include "qobject_p.h"
 #include <private/qthread_p.h>
+#include "qdebug.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -172,7 +173,6 @@ bool QEventLoop::processEvents(ProcessEventsFlags flags)
 
     \sa QApplication::quit(), exit(), processEvents()
 */
-#include <iostream> // TODO - remove this
 int QEventLoop::exec(ProcessEventsFlags flags)
 {
 #ifdef QT_NO_LOCALEVENTLOOP

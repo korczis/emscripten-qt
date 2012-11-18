@@ -66,11 +66,6 @@ QThreadData *QThreadData::current()
 	return currentThreadData;
 }
 
-
-
-
-
-
 /**************************************************************************
  ** QThread
  *************************************************************************/
@@ -113,7 +108,7 @@ void QThread::terminate()
 
 bool QThread::wait(unsigned long time)
 {
-return true;
+    return true;
 }
 
 

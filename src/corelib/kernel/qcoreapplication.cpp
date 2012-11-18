@@ -73,6 +73,8 @@
 #  include "private/qcore_symbian_p.h"
 #  include "private/qfilesystemengine_p.h"
 #  include <apacmdln.h>
+#elif defined(Q_OS_EMSCRIPTEN)
+#  include "qeventdispatcher_emscripten_p.h"
 #elif defined(Q_OS_UNIX)
 #  if defined(Q_OS_BLACKBERRY)
 #    include "qeventdispatcher_blackberry_p.h"
@@ -491,6 +493,8 @@ void QCoreApplicationPrivate::createEventDispatcher()
     Q_Q(QCoreApplication);
 #if defined(Q_OS_SYMBIAN)
     eventDispatcher = new QEventDispatcherSymbian(q);
+#elif defined (Q_OS_EMSCRIPTEN)
+    eventDispatcher = new QEventDispatcherEmscripten(q);
 #elif defined(Q_OS_UNIX)
 #  if defined(Q_OS_BLACKBERRY)
     eventDispatcher = new QEventDispatcherBlackberry(q);

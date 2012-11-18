@@ -44,6 +44,7 @@
 #include "qthreadstorage.h"
 
 #include "qthread_p.h"
+#include <private/qcoreapplication_p.h>
 
 #include "qdebug.h"
 
@@ -62,6 +63,8 @@ QThreadData *QThreadData::current()
 	{
 		currentThreadData = new QThreadData;	
         currentThreadData->thread = new QThread;
+        if (!QCoreApplicationPrivate::theMainThread)
+            QCoreApplicationPrivate::theMainThread = currentThreadData->thread;
 	}
 	return currentThreadData;
 }

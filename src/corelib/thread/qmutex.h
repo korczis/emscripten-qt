@@ -98,16 +98,13 @@ private:
     QMutexData *d;
 };
 
-#include <iostream> // TODO - remove this!
 class Q_CORE_EXPORT QMutexLocker
 {
 public:
     inline explicit QMutexLocker(QMutex *m)
     {
-        std::cout << "Mutex pointer:" << (void*)m << std::endl;
-        std::cout << "reinterpret_cast<quintptr>(m) & quintptr(1u)) == quintptr(0): " << ((reinterpret_cast<quintptr>(m) & quintptr(1u)) == quintptr(0)) << std::endl;
         Q_ASSERT_X((reinterpret_cast<quintptr>(m) & quintptr(1u)) == quintptr(0),
-                   "QMutexLocker", "Qmutex pointer is misaligned");
+                   "QMutexLocker", "QMutex pointer is misaligned");
         if (m) {
             m->lockInline();
             val = reinterpret_cast<quintptr>(m) | quintptr(1u);

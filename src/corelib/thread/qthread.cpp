@@ -168,7 +168,7 @@ void QAdoptedThread::run()
 /*
   QThreadPrivate
 */
-#include <iostream> // TODO - remove this
+
 QThreadPrivate::QThreadPrivate(QThreadData *d)
     : QObjectPrivate(), running(false), finished(false), terminated(false),
       isInFinish(false), exited(false), returnCode(-1),
@@ -185,8 +185,6 @@ QThreadPrivate::QThreadPrivate(QThreadData *d)
     terminationEnabled = true;
     terminatePending = false;
 #endif
-    
-    std::cout << "Created mutex at: " << (void*)&mutex << std::endl;
 
     if (!data)
         data = new QThreadData;
@@ -790,8 +788,6 @@ QThread::Priority QThread::priority() const
 */
 
 #else // QT_NO_THREAD
-QThreadPrivate::QThreadPrivate(QThreadData *d) : data(d ? d : new QThreadData) {};
-QThreadPrivate::~QThreadPrivate() { delete data; };
 
 QThread::QThread(QObject *parent)
     : QObject(*(new QThreadPrivate), (QObject*)0){
@@ -804,10 +800,8 @@ QThread *QThread::currentThread()
     return QThreadData::current()->thread;
 }
 
-#include <iostream> // TODO - remove this
 QThreadData* QThreadData::current()
 {
-    std::cout << "Blah!" << std::endl;
     static QThreadData *data = 0; // reinterpret_cast<QThreadData *>(pthread_getspecific(current_thread_data_key));
     if (!data) {
         QScopedPointer<QThreadData> newdata(new QThreadData);
@@ -815,7 +809,6 @@ QThreadData* QThreadData::current()
         data = newdata.take();
         data->deref();
     }
-    std::cout << "Returning: " << (void*)data << " for current thread data " << std::endl;
     return data;
 }
 

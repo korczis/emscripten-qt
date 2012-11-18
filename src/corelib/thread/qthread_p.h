@@ -192,8 +192,8 @@ public:
 class QThreadPrivate : public QObjectPrivate
 {
 public:
-    QThreadPrivate(QThreadData *d = 0);
-    ~QThreadPrivate();
+    QThreadPrivate(QThreadData *d = 0) : data(d ? d : new QThreadData) {}
+    ~QThreadPrivate() { delete data; }
 
     QThreadData *data;
 

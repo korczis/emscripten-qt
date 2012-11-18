@@ -214,7 +214,6 @@ Option::parseCommandLine(int argc, char **argv, int skip)
     for(int x = skip; x < argc; x++) {
         if(*argv[x] == '-' && strlen(argv[x]) > 1) { /* options */
             QString opt = argv[x] + 1;
-qDebug() << "Opt: " << opt;
 
             //first param is a mode, or we default
             if(x == 1) {

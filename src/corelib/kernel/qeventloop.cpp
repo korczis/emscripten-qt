@@ -191,8 +191,6 @@ int QEventLoop::exec(ProcessEventsFlags flags)
 #endif
     Q_D(QEventLoop);
     //we need to protect from race condition with QThread::exit
-   std::cout << "d->threadData: " << (void*)d->threadData << std::endl;
-   std::cout << "d->threadData->thread: " << (void*)d->threadData->thread << std::endl;
     QMutexLocker locker(&static_cast<QThreadPrivate *>(QObjectPrivate::get(d->threadData->thread))->mutex);
     if (d->threadData->quitNow)
         return -1;

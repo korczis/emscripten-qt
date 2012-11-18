@@ -52,6 +52,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+
 #if defined(Q_OS_MAC)
 # include <QtCore/private/qcore_mac_p.h>
 #endif

@@ -523,8 +523,14 @@ QThread *QCoreApplicationPrivate::mainThread()
 #if !defined (QT_NO_DEBUG) || defined (QT_MAC_FRAMEWORK_BUILD)
 void QCoreApplicationPrivate::checkReceiverThread(QObject *receiver)
 {
+    qDebug() << "Retrieving current thread";
     QThread *currentThread = QThread::currentThread();
+    qDebug() << "Receiver:" << (void*)receiver;
+    qDebug() << "Done. Retrieving receiver thread";
     QThread *thr = receiver->thread();
+    qDebug() << "Done";
+    qDebug() << "Receiver name: " << receiver->objectName();
+    qDebug() << "Receiver class name: " << receiver->metaObject()->className();
     Q_ASSERT_X(currentThread == thr || !thr,
                "QCoreApplication::sendEvent",
                QString::fromLatin1("Cannot send events to objects owned by a different thread. "
@@ -536,6 +542,7 @@ void QCoreApplicationPrivate::checkReceiverThread(QObject *receiver)
                .toLocal8Bit().data());
     Q_UNUSED(currentThread);
     Q_UNUSED(thr);
+    qDebug() << "All done";
 }
 #elif defined(Q_OS_SYMBIAN) && defined (QT_NO_DEBUG)
 // no implementation in release builds, but keep the symbol present

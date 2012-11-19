@@ -51,6 +51,9 @@
 # endif
 # define _POSIX_MONOTONIC_CLOCK -1
 #endif
+#if defined(QT_NO_CLOCK_MONOTONIC)
+//#error balls
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -113,7 +116,7 @@ QElapsedTimer::ClockType QElapsedTimer::clockType()
     unixCheckClockType();
     return monotonicClockAvailable ? MonotonicClock : SystemTime;
 }
-
+#include <qdebug.h>
 static inline void do_gettime(qint64 *sec, qint64 *frac)
 {
 #if (_POSIX_MONOTONIC_CLOCK-0 >= 0)
@@ -123,6 +126,7 @@ static inline void do_gettime(qint64 *sec, qint64 *frac)
         clock_gettime(CLOCK_MONOTONIC, &ts);
         *sec = ts.tv_sec;
         *frac = ts.tv_nsec;
+    qDebug() << "clock_gettime" << "sec: " << *sec << " frac: " << *frac;
         return;
     }
 #endif
@@ -131,6 +135,7 @@ static inline void do_gettime(qint64 *sec, qint64 *frac)
     ::gettimeofday(&tv, 0);
     *sec = tv.tv_sec;
     *frac = tv.tv_usec;
+    qDebug() << "gettimeofday: " << "sec: " << *sec << " frac: " << *frac;
 }
 
 // used in qcore_unix.cpp and qeventdispatcher_unix.cpp

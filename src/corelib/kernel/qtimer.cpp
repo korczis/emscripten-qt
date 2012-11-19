@@ -298,21 +298,18 @@ protected:
 QSingleShotTimer::QSingleShotTimer(int msec, QObject *receiver, const char *member)
     : QObject(QAbstractEventDispatcher::instance())
 {
-    qDebug() << "Created single shot timer.";
     connect(this, SIGNAL(timeout()), receiver, member);
     timerId = startTimer(msec);
 }
 
 QSingleShotTimer::~QSingleShotTimer()
 {
-    qDebug() << "Deleted single shot timer";
     if (timerId > 0)
         killTimer(timerId);
 }
 
 void QSingleShotTimer::timerEvent(QTimerEvent *)
 {
-    qDebug() << "timer event: " << timerId;
     // need to kill the timer _before_ we emit timeout() in case the
     // slot connected to timeout calls processEvents()
     if (timerId > 0)

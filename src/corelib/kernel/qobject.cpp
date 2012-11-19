@@ -1599,9 +1599,6 @@ int QObject::startTimer(int interval)
 void QObject::killTimer(int id)
 {
     Q_D(QObject);
-    qDebug() << "KillTimer: d: " << (void*)d;
-    qDebug() << "KillTimer: threadData: " << (void*)d->threadData;
-    qDebug() << "KillTimer: eventDispatcher: " << (void*)d->threadData->eventDispatcher;
     if (d->threadData->eventDispatcher)
         d->threadData->eventDispatcher->unregisterTimer(id);
 }

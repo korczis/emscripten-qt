@@ -126,7 +126,6 @@ void QTimerInfoList::repairTimersIfNeeded()
     timeval delta;
     if (timeChanged(&delta))
     {
-        qDebug() << "Repairing  timer, apparently";
         timerRepair(delta);
     }
 }
@@ -278,10 +277,8 @@ QList<QPair<int, int> > QTimerInfoList::registeredTimers(QObject *object) const
  */
 int QTimerInfoList::activateTimers()
 {
-    qDebug() << "Activate timers called";
     if (isEmpty())
     {
-        qDebug() << "No registered timers";
         return 0; // nothing to do
     }
 
@@ -294,14 +291,11 @@ int QTimerInfoList::activateTimers()
 
     // Find out how many timer have expired
     for (QTimerInfoList::const_iterator it = constBegin(); it != constEnd(); ++it) {
-        qDebug() << "Current time: " << currentTime;
-        qDebug() << "Timeout" << (*it)->timeout;
         if (currentTime < (*it)->timeout)
             break;
         maxCount++;
     }
 
-    qDebug() << "Number timers expired: " << maxCount;
 
     //fire the timers.
     while (maxCount--) {
@@ -311,7 +305,6 @@ int QTimerInfoList::activateTimers()
         QTimerInfo *currentTimerInfo = first();
         if (currentTime < currentTimerInfo->timeout)
         {
-            qDebug() << "none expired, apparently";
             break; // no timer has expired
         }
 
@@ -343,15 +336,10 @@ int QTimerInfoList::activateTimers()
                 currentTimerInfo->activateRef = &currentTimerInfo;
 
                 QTimerEvent e(currentTimerInfo->id);
-                qDebug() << "Sending timer event";
                 QCoreApplication::sendEvent(currentTimerInfo->obj, &e);
 
                 if (currentTimerInfo)
                     currentTimerInfo->activateRef = 0;
-            }
-            else
-            {
-                qDebug() << "Timer already active";
             }
     }
 
@@ -433,7 +421,6 @@ QList<QEventDispatcherEmscripten::TimerInfo> QEventDispatcherEmscripten::registe
 
 void QEventDispatcherEmscripten::wakeUp()
 {
-    qDebug() << "QEventDispatcherEmscripten::wakeUp called";
     EMSCRIPTENQT_resetTimerCallback(0);
 }
 void QEventDispatcherEmscripten::interrupt()
@@ -447,7 +434,6 @@ void QEventDispatcherEmscripten::flush()
 
 void QEventDispatcherEmscripten::processEmscriptenCallback()
 {
-    qDebug() << "QEventDispatcherEmscripten::processEmscriptenCallback called";
     processEvents(QEventLoop::AllEvents);
     timerList.activateTimers();
     timeval wait_tm = { 0l, 0l };

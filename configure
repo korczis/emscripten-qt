@@ -5301,6 +5301,17 @@ if [ "$XPLATFORM_INTEGRITY" = "yes" ]; then
     CFG_GIF="no"
 fi
 
+# Adjust all variables for Emscripten
+if [ "$XPLATFORM_EMSCRIPTEN" = "yes" ]; then
+    QMakeVar set gfx-drivers "emscriptencanvas"
+    QMakeVar set kbd-drivers "emscriptencanvas"
+    QMakeVar set mouse-drivers "emscriptencanvas"
+    CFG_TIFF="no"
+    CFG_KBD_ON="emscriptencanvas"
+    CFG_MOUSE_ON="emscriptencanvas"
+    CFG_GFX_ON="emscriptencanvas"
+fi
+
 # check IPC support
 if [ "$XPLATFORM_SYMBIAN_SBSV2" = "no" ]; then
     # Raptor does not support configure tests.

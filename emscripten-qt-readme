@@ -1,6 +1,6 @@
 Configure with:
 
-../qt/configure -xplatform qws/emscripten-clang  -embedded emscripten -static -opensource -debug -static -no-qt3support -no-opengl -sysroot /home/simon/tmp/DONTSYNC/emscripten/system  -system-zlib -no-gif -no-libpng -no-libmng -no-libtiff -no-libjpeg -no-accessibility  -confirm-license -no-webkit -no-phonon -no-script -nomake demos -nomake examples -little-endian -nomake tools 
+../qt/configure -xplatform qws/emscripten-clang  -embedded emscripten -static -opensource -debug -static -no-qt3support -no-opengl -sysroot /home/simon/tmp/DONTSYNC/emscripten/system  -system-zlib -no-gif -no-libpng -no-libmng -no-libtiff -no-libjpeg -no-accessibility  -confirm-license -no-webkit -no-phonon -no-script -no-freetype -nomake demos -nomake examples -little-endian -nomake tools 
 Ensure that the environment variable 
 
 EMSCRIPTENSYSTEM

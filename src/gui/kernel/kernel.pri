@@ -174,8 +174,10 @@ unix:x11 {
 }
 
 embedded {
-	HEADERS += \
+	!emscripten:HEADERS += \
 		kernel/qeventdispatcher_qws_p.h
+    !emscripten:SOURCES += \
+        kernel/qeventdispatcher_qws.cpp \
 
 	SOURCES += \
 		kernel/qapplication_qws.cpp \
@@ -183,7 +185,6 @@ embedded {
 		kernel/qcursor_qws.cpp \
 		kernel/qdesktopwidget_qws.cpp \
 		kernel/qdnd_qws.cpp \
-		kernel/qeventdispatcher_qws.cpp \
 		kernel/qsound_qws.cpp \
 		kernel/qwidget_qws.cpp \
 		kernel/qkeymapper_qws.cpp \
@@ -197,6 +198,11 @@ embedded {
             QMAKE_CXXFLAGS += $$QT_CFLAGS_GLIB
             LIBS_PRIVATE +=$$QT_LIBS_GLIB
 	}
+
+	emscripten {
+        SOURCES += \
+            kernel/qeventdispatcher_emscripten_qws.cpp
+    }
 }
 
 !qpa {

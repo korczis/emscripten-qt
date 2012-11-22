@@ -84,7 +84,11 @@
 #include "private/qcursor_p.h"
 #include "qsettings.h"
 #include "qdebug.h"
-#include "qeventdispatcher_qws_p.h"
+#ifndef Q_OS_EMSCRIPTEN
+#   include "qeventdispatcher_qws_p.h"
+#else
+#   include "qeventdispatcher_emscripten_qws.h"
+#endif
 #if !defined(QT_NO_GLIB)
 #  include "qeventdispatcher_glib_qws_p.h"
 #endif
@@ -209,7 +213,7 @@ QString qws_dataDir()
     if (!S_ISDIR(buf.st_mode))
         qFatal("%s is not a directory", dataDir.constData());
 
-#if !defined(Q_OS_INTEGRITY) && !defined(Q_OS_VXWORKS) && !defined(Q_OS_QNX)
+#if !defined(Q_OS_INTEGRITY) && !defined(Q_OS_VXWORKS) && !defined(Q_OS_QNX) && !defined(Q_OS_EMSCRIPTEN)
     if (buf.st_uid != getuid())
         qFatal("Qt for Embedded Linux data directory is not owned by user %d: %s", getuid(), dataDir.constData());
 
@@ -461,9 +465,13 @@ void QApplicationPrivate::createEventDispatcher()
                            : new QEventDispatcherGlib(q));
     else
 #endif
+#ifndef Q_OS_EMSCRIPTEN
     eventDispatcher = (q->type() != QApplication::Tty
                        ? new QEventDispatcherQWS(q)
                        : new QEventDispatcherUNIX(q));
+#else
+    eventDispatcher = new QEventDispatcherEmscriptenQWS;
+#endif
 }
 
 // Single-process stuff. This should maybe move into qwindowsystem_qws.cpp

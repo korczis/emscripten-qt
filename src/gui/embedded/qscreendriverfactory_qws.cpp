@@ -49,6 +49,7 @@
 #include "qscreenmulti_qws_p.h"
 #include "qscreenqnx_qws.h"
 #include "qscreenintegrityfb_qws.h"
+#include "qscreenemscriptencanvas_qws.h"
 #include <stdlib.h>
 #include "private/qfactoryloader_p.h"
 #include "qscreendriverplugin_qws.h"
@@ -58,6 +59,7 @@
 #ifndef QT_NO_QWS_VNC
 #include "qscreenvnc_qws.h"
 #endif
+#include <qdebug.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -108,7 +110,14 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 */
 QScreen *QScreenDriverFactory::create(const QString& key, int displayId)
 {
-    QString driver = key.toLower();
+    qDebug() << "driver key: " << key;
+    qDebug() << "driver key lower: " << key.toLower();
+    qDebug() << "driver key upper: " << key.toUpper();
+    const QString key2 = key;
+    qDebug() << "driver key2: " << key2;
+    qDebug() << "driver key lower: " << key.toLower();
+    QString driver = key2.toLower();
+    qDebug() << "driver:" << driver;
 #if defined(Q_OS_QNX) && !defined(QT_NO_QWS_QNX)
     if (driver == QLatin1String("qnx") || driver.isEmpty())
         return new QQnxScreen(displayId);
@@ -117,6 +126,11 @@ QScreen *QScreenDriverFactory::create(const QString& key, int displayId)
     if (driver == QLatin1String("integrityfb") || driver.isEmpty())
         return new QIntfbScreen(displayId);
 #endif
+#if defined(Q_OS_EMSCRIPTEN) && !defined(QT_NO_QWS_EMSCRIPTEN)
+    if (driver == QLatin1String("emscriptencanvas") || driver.isEmpty())
+        return new QEmscriptenCanvasScreen(displayId);
+#endif
+
 #ifndef QT_NO_QWS_QVFB
     if (driver == QLatin1String("qvfb") || driver.isEmpty())
         return new QVFbScreen(displayId);
@@ -166,6 +180,9 @@ QStringList QScreenDriverFactory::keys()
 #endif
 #if defined(Q_OS_INTEGRITY) && !defined(QT_NO_QWS_INTEGRITY)
     list << QLatin1String("INTEGRITYFB");
+#endif
+#if defined(Q_OS_EMSCRIPTEN) && !defined(QT_NO_QWS_EMSCRIPTEN)
+    list << QLatin1String("EmscriptenCanvas");
 #endif
 #ifndef QT_NO_QWS_QVFB
     list << QLatin1String("QVFb");

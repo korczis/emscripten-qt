@@ -56,6 +56,8 @@
 #define QT_NO_SYSTEMLOCALE
 #define QT_NO_PROCESS
 #define QT_NO_LOCALEVENTLOOP // Invented just for Emscripten, which cannot handle local event loops (limitation of Javascript)
+#define QT_NO_QWS_MULTIPROCESS
+#define QT_NO_SOUND
 
 #define DIR void *
 

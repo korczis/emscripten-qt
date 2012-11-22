@@ -1397,7 +1397,7 @@ void QWSServerPrivate::initServer(int flags)
 #endif
 
 #ifndef QT_NO_QWS_MULTIPROCESS
-
+#error sausge
     if (!geteuid()) {
 #if defined(Q_OS_LINUX) && !defined(QT_LINUXBASE)
         if(mount(0,"/var/shm", "shm", 0, 0)) {
@@ -4061,7 +4061,9 @@ void QWSServer::startup(int flags)
 {
     if (qwsServer)
         return;
+#ifndef QT_NO_QWS_MULTIPROCESS // Emscripten, but also maybe Qt bug ... ?
     unlink(qws_qtePipeFilename().toLatin1().constData());
+#endif
     (void)new QWSServer(flags);
 }
 

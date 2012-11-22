@@ -58,6 +58,7 @@
 #include <private/qpainter_p.h>
 #include <private/qwidget_p.h>
 #include <private/qgraphicssystem_qws_p.h>
+#include <qdebug.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -2313,12 +2314,14 @@ to make a dynamically loadable driver.
 
 Q_GUI_EXPORT QScreen* qt_get_screen(int display_id, const char *spec)
 {
+    qDebug() << "Spec: " << spec;
     QString displaySpec = QString::fromAscii(spec);
     QString driver = displaySpec;
     int colon = displaySpec.indexOf(QLatin1Char(':'));
     if (colon >= 0)
         driver.truncate(colon);
     driver = driver.trimmed();
+    qDebug() << "driver: " << driver;
 
     bool foundDriver = false;
     QString driverName = driver;
@@ -2329,14 +2332,19 @@ Q_GUI_EXPORT QScreen* qt_get_screen(int display_id, const char *spec)
     else
         driverList = QScreenDriverFactory::keys();
 
+    qDebug() << "driverList.size: " << driverList.size();
+
     for (int i = 0; i < driverList.size(); ++i) {
         const QString driverName = driverList.at(i);
+        qDebug() << "driverName: " << driverName;
         qt_screen = QScreenDriverFactory::create(driverName, display_id);
+        qDebug() << "qt_screen: " << (void*)qt_screen;
         if (qt_screen) {
             foundDriver = true;
             if (qt_screen->connect(displaySpec)) {
                 return qt_screen;
             } else {
+                qDebug() << "Could not connect";
                 delete qt_screen;
                 qt_screen = 0;
             }

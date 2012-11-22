@@ -126,7 +126,7 @@ embedded {
                 LIBS += -lfbdev
         }
 
-        contains( gfx-drivers, integrityfb ) {
+        contains( gfx-drivers, emscriptencanvas ) {
                 HEADERS += embedded/qscreenemscriptencanvas_qws.h
                 SOURCES += embedded/qscreenemscriptencanvas_qws.cpp
         }
@@ -190,7 +190,7 @@ embedded {
                 SOURCES += embedded/qkbdintegrity_qws.cpp
         }
 
-        contains( kbd-drivers, integrity ) {
+        contains( kbd-drivers, emscriptencanvas ) {
                 HEADERS += embedded/qkbdemscriptencanvas_qws.h
                 SOURCES += embedded/qkbdemscriptencanvas_qws.cpp
         }
@@ -234,7 +234,7 @@ embedded {
                 SOURCES += embedded/qmouseintegrity_qws.cpp
         }
 
-    contains( mouse-drivers, integrity ) {
+    contains( mouse-drivers, emscriptencanvas ) {
                 HEADERS += embedded/qmouseemscriptencanvas_qws.h
                 SOURCES += embedded/qmouseemscriptencanvas_qws.cpp
         }

@@ -4321,7 +4321,6 @@ static const QUnicodeTables::Properties uc_properties[] = {
     { 19, 12, 0, 0, 0, -1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6 },
     { 13, 11, 0, 0, 0, -1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
-
 static inline const QUnicodeTables::Properties *qGetProp(uint ucs4)
 {
     int index = GET_PROP_INDEX(ucs4);

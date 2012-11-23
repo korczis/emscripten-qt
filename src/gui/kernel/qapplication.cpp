@@ -814,13 +814,17 @@ void QApplicationPrivate::construct(
 #endif
                                     )
 {
+    qDebug() << "Here";
     initResources();
+    qDebug() << "Here1";
 
     qt_is_gui_used = (qt_appType != QApplication::Tty);
     process_cmdline();
+    qDebug() << "Here2";
     // the environment variable has the lowest precedence of runtime graphicssystem switches
     if (graphics_system_name.isEmpty())
         graphics_system_name = QString::fromLocal8Bit(qgetenv("QT_GRAPHICSSYSTEM"));
+   qDebug() << "Here3: " << graphics_system_name;
 
 #if defined(Q_WS_X11) && !defined(QT_NO_EGL)
     if (graphics_system_name.isEmpty()) {
@@ -840,13 +844,18 @@ void QApplicationPrivate::construct(
             , dpy, visual, cmap
 #endif
             );
+   qDebug() << "Here4: ";
     initialize();
+   qDebug() << "Here5: " << (void*)eventDispatcher;
+   qDebug() << "Here5a: " << eventDispatcher->objectName();
     eventDispatcher->startingUp();
+   qDebug() << "Here6: ";
 
 #ifdef QT_EVAL
     extern void qt_gui_eval_init(uint);
     qt_gui_eval_init(application_type);
 #endif
+   qDebug() << "Here6: ";
 
 #if defined(Q_OS_SYMBIAN) && !defined(QT_NO_SYSTEMLOCALE)
     symbianInit();
@@ -882,6 +891,7 @@ void QApplicationPrivate::construct(
 #ifdef Q_OS_SYMBIAN
     symbianHandleLiteModeStartup();
 #endif
+   qDebug() << "Here6: ";
 }
 
 #if defined(Q_WS_X11)

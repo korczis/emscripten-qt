@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qplatformdefs.h"
 #include "qdecorationfactory_qws.h"
 #include "qdecorationplugin_qws.h"
 #include "private/qfactoryloader_p.h"

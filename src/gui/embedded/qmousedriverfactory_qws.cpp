@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qplatformdefs.h"
 #include "qmousedriverfactory_qws.h"
 
 #include "qapplication.h"
@@ -49,6 +50,7 @@
 #include "qmousetslib_qws.h"
 #include "qmouseqnx_qws.h"
 #include "qmouseintegrity_qws.h"
+#include "qmouseemscriptencanvas_qws.h"
 #include <stdlib.h>
 #include "private/qfactoryloader_p.h"
 #include "qmousedriverplugin_qws.h"
@@ -111,6 +113,10 @@ QWSMouseHandler *QMouseDriverFactory::create(const QString& key, const QString &
 #if defined(Q_OS_INTEGRITY) && !defined(QT_NO_MOUSE_INTEGRITY)
     if (driver == QLatin1String("integrity") || driver.isEmpty())
         return new QIntMouseHandler(key, device);
+#endif
+#if defined(Q_OS_EMSCRIPTEN) && !defined(QT_NO_MOUSE_EMSCRIPTEN)
+    if (driver == QLatin1String("emscriptencanvas") || driver.isEmpty())
+        return new QEmscriptenCanvasMouseHandler(key, device);
 #endif
 #ifndef QT_NO_QWS_MOUSE_LINUXTP
     if (driver == QLatin1String("linuxtp") || driver.isEmpty())

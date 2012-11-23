@@ -202,6 +202,8 @@ embedded {
 	emscripten {
         SOURCES += \
             kernel/qeventdispatcher_emscripten_qws.cpp
+        HEADERS += \
+            kernel/qeventdispatcher_emscripten_qws.h
     }
 }
 

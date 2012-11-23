@@ -423,6 +423,15 @@ void QEventDispatcherEmscripten::wakeUp()
 {
     EMSCRIPTENQT_resetTimerCallback(0);
 }
+
+void QEventDispatcherEmscripten::startingUp()
+{
+    qDebug() << "QEventDispatcherEmscripten::startingUp called";
+}
+void QEventDispatcherEmscripten::closingDown()
+{
+    qDebug() << "QEventDispatcherEmscripten::closingDown called";
+}
 void QEventDispatcherEmscripten::interrupt()
 {
     qDebug() << "QEventDispatcherEmscripten::interrupt called";

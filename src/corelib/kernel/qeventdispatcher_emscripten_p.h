@@ -69,6 +69,10 @@ public:
     QList< TimerInfo > registeredTimers(QObject* object) const;
 
     void wakeUp();
+
+    void startingUp();
+    void closingDown();
+
     void interrupt();
     void flush();
 

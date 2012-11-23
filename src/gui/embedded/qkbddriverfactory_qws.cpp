@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qplatformdefs.h"
 #include "qkbddriverfactory_qws.h"
 
 #ifndef QT_NO_QWS_KEYBOARD
@@ -50,6 +51,7 @@
 #include "qkbdvfb_qws.h"
 #include "qkbdqnx_qws.h"
 #include "qkbdintegrity_qws.h"
+#include "qkbdemscriptencanvas_qws.h"
 #include <stdlib.h>
 #include "private/qfactoryloader_p.h"
 #include "qkbddriverplugin_qws.h"
@@ -110,6 +112,10 @@ QWSKeyboardHandler *QKbdDriverFactory::create(const QString& key, const QString&
 #if defined(Q_OS_INTEGRITY)
     if (driver == QLatin1String("integrity") || driver.isEmpty())
         return new QWSIntKeyboardHandler(device);
+#endif
+#if defined(Q_OS_EMSCRIPTEN)
+    if (driver == QLatin1String("emscriptencanvas") || driver.isEmpty())
+        return new QWSEmscriptenCanvasKeyboardHandler(device);
 #endif
 #ifndef QT_NO_QWS_KEYBOARD
 # ifndef QT_NO_QWS_KBD_TTY

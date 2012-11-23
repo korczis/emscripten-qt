@@ -5025,6 +5025,7 @@ QString QString::rightJustified(int width, QChar fill, bool truncate) const
     \sa toUpper(), QLocale::toLower()
 */
 
+#include <iostream>
 QString QString::toLower() const
 {
     const ushort *p = d->data;
@@ -5034,12 +5035,17 @@ QString QString::toLower() const
         return *this;
 
     const ushort *e = d->data + d->size;
+//     std::cout << "data: " << (void*)d->data << " size: " << d->size << std::endl;
 
     // this avoids one out of bounds check in the loop
     if (QChar(*p).isLowSurrogate())
         ++p;
 
+//     std::cout << "sizeof uchar: " << sizeof(uchar) << std::endl;
+//     std::cout << "sizeof QChar: " << sizeof(QChar) << std::endl;
+
     while (p != e) {
+//     std::cout << "in loop p: " << (void*)p << " e: " << (void*)e << std::endl;
         uint c = *p;
         if (QChar(c).isLowSurrogate() && QChar(*(p - 1)).isHighSurrogate())
             c = QChar::surrogateToUcs4(*(p - 1), c);
@@ -5047,25 +5053,46 @@ QString QString::toLower() const
         if (prop->lowerCaseDiff || prop->lowerCaseSpecial) {
             QString s(d->size, Qt::Uninitialized);
             memcpy(s.d->data, d->data, (p - d->data)*sizeof(ushort));
+            ushort* limit = s.d->data + d->size;
+//             qDebug() << "initial s: " << s;
             ushort *pp = s.d->data + (p - d->data);
             while (p < e) {
+//     std::cout << "in inner loop p: " << (void*)p << " e: " << (void*)e << std::endl;
                 uint c = *p;
                 if (QChar(c).isLowSurrogate() && QChar(*(p - 1)).isHighSurrogate())
                     c = QChar::surrogateToUcs4(*(p - 1), c);
                 prop = qGetProp(c);
+//                 qDebug() << "Char: " << (QChar)c;
+//                 qDebug() << "unicodeVersion: " << prop->unicodeVersion;
+//                 qDebug() << "lowerCaseSpecial: " << prop->lowerCaseSpecial;
+//                 qDebug() << "upperCaseSpecial: " << prop->upperCaseSpecial;
+//                 qDebug() << "titleCaseSpecial: " << prop->titleCaseSpecial;
+//                 qDebug() << "caseFoldSpecial: " << prop->caseFoldSpecial;
+//                 qDebug() << "digitValue: " << prop->digitValue;
+//                 qDebug() << "lowerCaseDiff: " << prop->lowerCaseDiff;
                 if (prop->lowerCaseSpecial) {
                     int pos = pp - s.d->data;
+//                     qDebug() << "About to resize: " << s;
                     s.resize(s.d->size + SPECIAL_CASE_MAX_LEN);
+//                     std::cout << "Resized" << std::endl;
                     pp = s.d->data + pos;
+                    limit = s.d->data + s.d->size;
                     const ushort *specialCase = specialCaseMap + prop->lowerCaseDiff;
                     while (*specialCase)
+                    {
+//                         std::cout << "special case Setting memory at location: " << (void*)pp << " greater than limit? " << (pp > limit) << std::endl;
                         *pp++ = *specialCase++;
+                    }
                 } else {
+//                         std::cout << "Setting memory at location: " << (void*)pp << " greater than limit? " << (pp > limit) << std::endl;
                     *pp++ = *p + prop->lowerCaseDiff;
                 }
                 ++p;
             }
+//             qDebug() << "Untruncated s: " << s << " length: " << s.length();
+//             qDebug() << "s length: " << s.length();
             s.truncate(pp - s.d->data);
+//             qDebug() << "truncated length: " << s.length();
             return s;
         }
         ++p;

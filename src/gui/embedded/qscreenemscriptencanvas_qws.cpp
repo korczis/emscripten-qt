@@ -12,7 +12,7 @@ QEmscriptenCanvasScreen::~QEmscriptenCanvasScreen()
 }
 bool QEmscriptenCanvasScreen::initDevice()
 {
-    qDebug() << "QEmscriptenCanvasScreen::~initDevice";
+    qDebug() << "QEmscriptenCanvasScreen::initDevice";
     return true;
 }
 bool QEmscriptenCanvasScreen::connect(const QString &displaySpec)

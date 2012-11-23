@@ -884,9 +884,11 @@ void QWSDisplay::Data::init()
     {
         create(30);
 
+#ifndef QT_NO_QWS_MULTIPROCESS
         // QWS server
         if (!QWSDisplay::initLock(pipe, true))
             qFatal("Cannot get display lock");
+#endif
 
         QScreen *s = qt_get_screen(qws_display_id, qws_display_spec.constData());
         if (s)

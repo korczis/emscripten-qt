@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qplatformdefs.h"
 #include "qscreendriverfactory_qws.h"
 
 #include "qscreen_qws.h"
@@ -110,14 +111,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 */
 QScreen *QScreenDriverFactory::create(const QString& key, int displayId)
 {
-    qDebug() << "driver key: " << key;
-    qDebug() << "driver key lower: " << key.toLower();
-    qDebug() << "driver key upper: " << key.toUpper();
-    const QString key2 = key;
-    qDebug() << "driver key2: " << key2;
-    qDebug() << "driver key lower: " << key.toLower();
-    QString driver = key2.toLower();
-    qDebug() << "driver:" << driver;
+    QString driver = key.toLower();
 #if defined(Q_OS_QNX) && !defined(QT_NO_QWS_QNX)
     if (driver == QLatin1String("qnx") || driver.isEmpty())
         return new QQnxScreen(displayId);

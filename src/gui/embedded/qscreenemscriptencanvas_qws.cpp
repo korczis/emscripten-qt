@@ -1,6 +1,12 @@
 #include "qscreenemscriptencanvas_qws.h"
 #include <qdebug.h>
 
+extern "C"
+{
+    int EMSCRIPTEN_canvas_width_pixels();
+    int EMSCRIPTEN_canvas_height_pixels();
+}
+
 QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
     : QScreen(display_id, CustomClass)
 {

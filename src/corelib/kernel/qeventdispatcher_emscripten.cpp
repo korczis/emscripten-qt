@@ -7,6 +7,8 @@
 #include "private/qthread_p.h"
 #include <sys/times.h>
 
+Q_CORE_EXPORT bool qt_disable_lowpriority_timers=false;
+
 inline QDebug operator<<(QDebug debug, timeval time)
 {
     debug << time.tv_sec << "." << time.tv_usec;
@@ -21,6 +23,11 @@ extern "C"
     {
         QEventDispatcherEmscripten::emscriptenCallback();
     }
+#ifdef QT_EMSCRIPTEN_NATIVE
+    void EMSCRIPTENQT_resetTimerCallback(long milliseconds)
+    {
+    }
+#endif
 }
 
 QEventDispatcherEmscripten* QEventDispatcherEmscripten::m_instance = NULL;

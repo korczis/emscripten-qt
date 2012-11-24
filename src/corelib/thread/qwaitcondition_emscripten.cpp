@@ -69,10 +69,6 @@ public:
     int waiters;
     int wakeups;
 
-    bool wait(unsigned long time)
-    {
-        // TODO - remove this.
-    }
 };
 
 

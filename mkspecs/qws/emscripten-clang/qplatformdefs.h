@@ -46,20 +46,20 @@
 #undef QT_LARGEFILE_SUPPORT
 #include "../../common/posix/qplatformdefs.h"
 
-#define _POSIX_TIMERS
+//#define _POSIX_TIMERS
 
 #include "qglobal.h"
 
-#define QT_NO_SOCKET_H
-#define QT_NO_SETTINGS
-#define QT_NO_CODECS
-#define QT_NO_TEXTCODECPLUGIN
-#define QT_NO_SYSTEMLOCALE
-#define QT_NO_PROCESS
+//#define QT_NO_SOCKET_H
+//#define QT_NO_SETTINGS
+//#define QT_NO_CODECS
+//#define QT_NO_TEXTCODECPLUGIN
+//#define QT_NO_SYSTEMLOCALE
+//#define QT_NO_PROCESS
 #define QT_NO_LOCALEVENTLOOP // Invented just for Emscripten, which cannot handle local event loops (limitation of Javascript)
-#define QT_NO_QWS_MULTIPROCESS
-#define QT_NO_SOUND
-#define QT_NO_LIBRARY
+//#define QT_NO_QWS_MULTIPROCESS
+//#define QT_NO_SOUND
+//#define QT_NO_LIBRARY
 
 #define DIR void *
 

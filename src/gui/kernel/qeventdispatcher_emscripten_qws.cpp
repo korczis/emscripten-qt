@@ -23,6 +23,11 @@ QEventDispatcherEmscriptenQWS::~QEventDispatcherEmscriptenQWS()
 bool QEventDispatcherEmscriptenQWS::processEvents(QEventLoop::ProcessEventsFlags flags)
 {
     qDebug() << "QEventDispatcherEmscriptenQWS::processEvents";
+    if (flags & QEventLoop::WaitForMoreEvents)
+    {
+        qWarning() << "WaitForMoreEvents is not supported in Emscripten";
+        return false;
+    }
 
     // process events from the QWS server
     int           nevents = 0;
@@ -38,12 +43,18 @@ bool QEventDispatcherEmscriptenQWS::processEvents(QEventLoop::ProcessEventsFlags
         if (!(flags & QEventLoop::ExcludeUserInputEvents)
             && !queuedUserInputEvents.isEmpty()) {
             // process a pending user input event
+            qDebug() << "queuedUserInputEvents size: " << queuedUserInputEvents.size();
             event = queuedUserInputEvents.takeFirst();
+            qDebug() << "Got a queued user input event, apparently." << (void*)event;
+            qDebug() << "Type is " << event->type;
             } else if  (qt_fbdpy->eventPending()) {
                 event = qt_fbdpy->getEvent();        // get next event
+            qDebug() << "Got a pending input event, apparently." << (void*)event;
+            qDebug() << "Type is " << event->type;
                 if (flags & QEventLoop::ExcludeUserInputEvents) {
                     // queue user input events
                     if (event->type == QWSEvent::Mouse || event->type == QWSEvent::Key) {
+                        qDebug() << "It was a mouse or key: appending to queuedUserInputEvents";
                         queuedUserInputEvents.append(event);
                         continue;
                     }
@@ -53,14 +64,17 @@ bool QEventDispatcherEmscriptenQWS::processEvents(QEventLoop::ProcessEventsFlags
             }
 
             if (filterEvent(event)) {
+            qDebug() << "Filtered event";
                 delete event;
                 continue;
             }
             nevents++;
 
             bool ret = qApp->qwsProcessEvent(event) == 1;
+            qDebug() << "Processed event; got: " << ret;
             delete event;
             if (ret) {
+                qDebug() << "QEventDispatcherEmscriptenQWS Exiting after successful event processing";
                 return true;
             }
     }
@@ -74,8 +88,12 @@ bool QEventDispatcherEmscriptenQWS::processEvents(QEventLoop::ProcessEventsFlags
         }
 
         if (QEventDispatcherEmscripten::processEvents(flags))
+        {
+            qDebug() << "QEventDispatcherEmscriptenQWS Exiting after allowing superclass to process events";
             return true;
+        }
     }
+    qDebug() << "QEventDispatcherEmscriptenQWS Exiting";
     return (nevents > 0);
 }
 bool QEventDispatcherEmscriptenQWS::hasPendingEvents()

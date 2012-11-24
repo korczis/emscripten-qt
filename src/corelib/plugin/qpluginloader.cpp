@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-#include "qplatformdefs.h"
-
 #include "qplugin.h"
 #include "qpluginloader.h"
 #include <qfileinfo.h>

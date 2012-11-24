@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qtconcurrentiteratekernel.h"
+#include <qplatformdefs.h>
 
 #if defined(Q_OS_MAC)
 #include <mach/mach.h>
@@ -49,7 +50,9 @@
 #if defined(Q_OS_HURD)
 #include <sys/time.h>
 #endif
-//#include <time.h> // Emscripten
+#if !defined(Q_OS_EMSCRIPTEN) || defined(QT_EMSCRIPTEN_NATIVE)
+#include <time.h> // Emscripten
+#endif
 #include <sys/time.h>
 #include <unistd.h>
 #elif defined(Q_OS_WIN)

@@ -834,6 +834,7 @@ void QWSClient::sendEvent(QWSEvent* event)
     else
 #endif
     {
+        qDebug() << "QWSClient::sendEvent queueing event of type: " << event->type;
         qt_client_enqueue(event);
     }
 }

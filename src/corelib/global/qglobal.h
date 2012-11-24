@@ -1161,6 +1161,11 @@ redefine to built-in booleans to make autotests work properly */
 #  define QT_FASTCALL
 #endif
 
+#if (defined (Q_OS_EMSCRIPTEN)) // TODO - find a better way to do this - __i386__ should not be defined for Emscripten!
+#  undef QT_FASTCALL
+#  define QT_FASTCALL
+#endif
+
 #ifdef Q_COMPILER_CONSTEXPR
 # define Q_DECL_CONSTEXPR constexpr
 #else

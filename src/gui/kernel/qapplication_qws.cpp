@@ -480,11 +480,23 @@ static bool qws_single_process;
 static QList<QWSEvent*> incoming;
 static QList<QWSCommand*> outgoing;
 
+extern "C"
+{
+    void printSizeOfIncoming()
+    {
+        qDebug() << "Size of incoming: " << incoming.size();
+    }
+}
+
 void qt_client_enqueue(const QWSEvent *event)
 {
+    qDebug() << "Enqueueing event of type: " << event->type;
+    printSizeOfIncoming();
     QWSEvent *copy = QWSEvent::factory(event->type);
     copy->copyFrom(event);
+    qDebug() << "Cloned event of type: " << copy->type;
     incoming.append(copy);
+    qDebug() << "incoming now has " << incoming.size() << " elements";
 }
 
 QList<QWSCommand*> *qt_get_server_queue()
@@ -954,6 +966,7 @@ void QWSDisplay::Data::init()
 QWSEvent* QWSDisplay::Data::readMore()
 {
 #ifdef QT_NO_QWS_MULTIPROCESS
+    qDebug() << "readMore(): incoming has " << incoming.size() << " elements";
     return incoming.isEmpty() ? 0 : incoming.takeFirst();
 #else
     if (!csocket)
@@ -985,11 +998,21 @@ void QWSDisplay::Data::fillQueue()
 {
     QWSServer::processEventQueue();
     QWSEvent *e = readMore();
+    if (e)
+    {
+        qDebug() << "Read event of type: " << e->type;
+    }
+    else
+    {
+        qDebug() << "Could not read any more events";
+    }
+    qDebug() << "Apparently " << incoming.size() << " remaining";
 #ifndef QT_NO_QWS_MULTIPROCESS
     int bytesAvailable = csocket ? csocket->bytesAvailable() : 0;
     int bytesRead = 0;
 #endif
     while (e) {
+        qDebug() << "In loop; e is of type: " << e->type;
 #ifndef QT_NO_QWS_MULTIPROCESS
         bytesRead += QWS_PROTOCOL_ITEM_SIZE((*e));
 #endif
@@ -2340,6 +2363,7 @@ void qt_init(QApplicationPrivate *priv, int type)
 
 void qt_cleanup()
 {
+    qDebug() << "qt_cleanup";
     QPixmapCache::clear();
 #ifndef QT_NO_CURSOR
     QCursorData::cleanup();

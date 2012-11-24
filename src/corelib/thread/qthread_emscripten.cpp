@@ -44,6 +44,7 @@
 #include "qthreadstorage.h"
 
 #include "qthread_p.h"
+#include "../kernel/qeventdispatcher_emscripten_p.h"
 #include <private/qcoreapplication_p.h>
 
 #include "qdebug.h"
@@ -121,6 +122,17 @@ void QThread::setTerminationEnabled(bool enabled)
 
 void QThread::setPriority(Priority priority)
 {
+}
+
+void QThreadPrivate::createEventDispatcher(QThreadData *data)
+{
+    data->eventDispatcher = new QEventDispatcherEmscripten;
+    data->eventDispatcher->startingUp();
+}
+
+void QAdoptedThread::init()
+{
+    qDebug() << "QAdoptedThread::init() unimplemented";
 }
 
 

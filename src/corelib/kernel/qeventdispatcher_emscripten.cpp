@@ -23,11 +23,6 @@ extern "C"
     {
         QEventDispatcherEmscripten::emscriptenCallback();
     }
-#ifdef QT_EMSCRIPTEN_NATIVE
-    void EMSCRIPTENQT_resetTimerCallback(long milliseconds)
-    {
-    }
-#endif
 }
 
 QEventDispatcherEmscripten* QEventDispatcherEmscripten::m_instance = NULL;

@@ -31,6 +31,8 @@ bool QEmscriptenCanvasScreen::connect(const QString &displaySpec)
     // Handle display physical size
     physWidth = qRound(dw * 25.4 / defaultDpi);
     physHeight = qRound(dh * 25.4 / defaultDpi);
+    // Canvas is rgba
+    d = 32;
     return true;
 }
 void QEmscriptenCanvasScreen::disconnect()

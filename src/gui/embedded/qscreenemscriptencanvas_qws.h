@@ -25,6 +25,7 @@ public:
     virtual void setMode(int nw,int nh,int nd);
     virtual void setDirty(const QRect& r);
     virtual void blank(bool);
+    virtual void exposeRegion(QRegion r, int changing);
     static void setBrightness(int b);
 };
 

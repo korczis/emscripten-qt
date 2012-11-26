@@ -5,6 +5,7 @@ extern "C"
 {
     int EMSCRIPTEN_canvas_width_pixels();
     int EMSCRIPTEN_canvas_height_pixels();
+    int EMSCRIPTEN_flush_pixels(uchar* data);
 }
 
 QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
@@ -34,7 +35,11 @@ bool QEmscriptenCanvasScreen::connect(const QString &displaySpec)
     physHeight = qRound(dh * 25.4 / defaultDpi);
     // Canvas is rgba
     d = 32;
-    data = static_cast<uchar*>(malloc( w * h * 4));
+    lstep = 4 * w;
+    size = lstep * h;
+    data = static_cast<uchar*>(malloc(size));
+    //memset(static_cast<void*>(data), 255, size);
+    setPixelFormat(QImage::Format_ARGB32);
     return true;
 }
 void QEmscriptenCanvasScreen::disconnect()
@@ -65,6 +70,17 @@ void QEmscriptenCanvasScreen::blank(bool something)
 {
     qDebug() << "QEmscriptenCanvasScreen::blank: something: " << something;
 }
+
+void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
+{
+    qDebug() << "QEmscriptenCanvasScreen::exposeRegion: region: " << r << " changing: " << changing;
+    // first, call the parent implementation. The parent implementation will update
+    // the region on our in-memory surface
+    QScreen::exposeRegion(r, changing);
+    EMSCRIPTEN_flush_pixels(data);
+}
+
+
 static void setBrightness(int b)
 {
     qDebug() << "QEmscriptenCanvasScreen::setBrightness: b: " << b;

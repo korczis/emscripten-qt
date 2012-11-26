@@ -15,6 +15,7 @@ QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
 QEmscriptenCanvasScreen::~QEmscriptenCanvasScreen()
 {
     qDebug() << "QEmscriptenCanvasScreen::~QEmscriptenCanvasScreen: display_id: ";
+    free(data);
 }
 bool QEmscriptenCanvasScreen::initDevice()
 {
@@ -33,6 +34,7 @@ bool QEmscriptenCanvasScreen::connect(const QString &displaySpec)
     physHeight = qRound(dh * 25.4 / defaultDpi);
     // Canvas is rgba
     d = 32;
+    data = static_cast<uchar*>(malloc( w * h * 4));
     return true;
 }
 void QEmscriptenCanvasScreen::disconnect()

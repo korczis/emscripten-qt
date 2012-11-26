@@ -1337,22 +1337,31 @@ QWSDisplay::~QWSDisplay()
 
 bool QWSDisplay::grabbed()
 {
+#ifndef QT_NO_QWS_MULTIPROCESS
     return lock->locked();
+#else
+    return false;
+#endif
 }
 
 void QWSDisplay::grab()
 {
+#ifndef QT_NO_QWS_MULTIPROCESS
     lock->lock(QLock::Read);
+#endif
 }
 
 void QWSDisplay::grab(bool write)
 {
+#ifndef QT_NO_QWS_MULTIPROCESS
     lock->lock(write ? QLock::Write : QLock::Read);
-
+#endif
 }
 void QWSDisplay::ungrab()
 {
+#ifndef QT_NO_QWS_MULTIPROCESS
     lock->unlock();
+#endif
 }
 
 #if 0

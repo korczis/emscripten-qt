@@ -24,6 +24,13 @@ bool QEmscriptenCanvasScreen::initDevice()
 bool QEmscriptenCanvasScreen::connect(const QString &displaySpec)
 {
     qDebug() << "QEmscriptenCanvasScreen::connect: displaySpec: " << displaySpec;
+    w = dw = EMSCRIPTEN_canvas_width_pixels();
+    h = dh = EMSCRIPTEN_canvas_height_pixels();
+    // assume 72 dpi as default, to calculate the physical dimensions if not specified
+    const int defaultDpi = 72;
+    // Handle display physical size
+    physWidth = qRound(dw * 25.4 / defaultDpi);
+    physHeight = qRound(dh * 25.4 / defaultDpi);
     return true;
 }
 void QEmscriptenCanvasScreen::disconnect()

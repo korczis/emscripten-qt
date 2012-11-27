@@ -145,6 +145,7 @@ QScreenCursor::~QScreenCursor()
 */
 void QScreenCursor::hide()
 {
+    qDebug() << "Hiding cursor";
     if (enable) {
         enable = false;
         if (!hwaccel)
@@ -159,6 +160,7 @@ void QScreenCursor::hide()
 */
 void QScreenCursor::show()
 {
+    qDebug() << "Showing cursor";
     if (!enable) {
         enable = true;
         if (!hwaccel)
@@ -218,10 +220,12 @@ void QScreenCursor::set(const QImage &image, int hotx, int hoty)
 */
 void QScreenCursor::move(int x, int y)
 {
+    qDebug() << "QScreenCursor::move(int x, int y) pos:" << pos << " enable: " << enable << " hwaccel: " << hwaccel;
     QRegion r = boundingRect();
     pos = QPoint(x,y);
     if (enable && !hwaccel) {
         r |= boundingRect();
+        qDebug() << "Exposing region: " << r;
         qt_screen->exposeRegion(r, 0);
     }
 }

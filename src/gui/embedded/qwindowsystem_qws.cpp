@@ -70,6 +70,9 @@
 #include "qevent.h"
 #include "qinputcontext.h"
 #include "qpainter.h"
+#ifdef EMSCRIPTEN
+#include "qeventdispatcher_emscripten_qws.h"
+#endif
 
 #include <qdebug.h>
 
@@ -836,6 +839,9 @@ void QWSClient::sendEvent(QWSEvent* event)
     {
         qDebug() << "QWSClient::sendEvent queueing event of type: " << event->type;
         qt_client_enqueue(event);
+#ifdef EMSCRIPTEN
+        QEventDispatcherEmscriptenQWS::newUserEventsToProcess();
+#endif
     }
 }
 
@@ -1857,6 +1863,7 @@ QWSCommand* QWSClient::readMoreCommand()
 */
 void QWSServer::processEventQueue()
 {
+    qDebug() << "QWSServer::processEventQueue()";
     if (qwsServerPrivate)
         qwsServerPrivate->doClient(qwsServerPrivate->clientMap.value(-1));
 }
@@ -1894,6 +1901,7 @@ void QWSServerPrivate::_q_doClient()
 
 void QWSServerPrivate::doClient(QWSClient *client)
 {
+    qDebug() << "QWSServerPrivate::doClient(QWSClient *client)";
     QWSCommand* command=client->readMoreCommand();
 
     while (command) {
@@ -2220,12 +2228,16 @@ void QWSServer::sendMouseEvent(const QPoint& pos, int state, int wheel)
 #ifdef EVENT_BLOCK_DEBUG
     qDebug() << "sendMouseEvent" << pos.x() << pos.y() << state << (block ? "block" : "pass");
 #endif
+    qDebug() << "sendMouseEvent" << pos.x() << pos.y() << state << (block ? "block" : "pass"); // TODO - remove this!
 
     if (state || wheel)
         qwsServerPrivate->_q_screenSaverWake();
 
     if ( block )
+    {
+        qDebug() << "Returning due to block";
         return;
+    }
 
     QPoint tpos;
     // transformations
@@ -2270,6 +2282,7 @@ void QWSServer::sendMouseEvent(const QPoint& pos, int state, int wheel)
 
 void QWSServerPrivate::sendMouseEventUnfiltered(const QPoint &pos, int state, int wheel)
 {
+    qDebug() << " QWSServerPrivate::sendMouseEventUnfiltered(const QPoint &pos, int state, int wheel)";
     const int btnMask = Qt::LeftButton | Qt::RightButton | Qt::MidButton;
     QWSMouseEvent event;
 
@@ -2304,6 +2317,7 @@ void QWSServerPrivate::sendMouseEventUnfiltered(const QPoint &pos, int state, in
     event.simpleData.window = win ? win->id : 0;
 
 #ifndef QT_NO_QWS_CURSOR
+    qDebug() << "qt_screencursor: " << (void*)qt_screencursor;
     if (qt_screencursor)
         qt_screencursor->move(pos.x(),pos.y());
 
@@ -2344,10 +2358,18 @@ void QWSServerPrivate::sendMouseEventUnfiltered(const QPoint &pos, int state, in
         current_IM->mouseHandler(-1, QWSServer::MouseOutside);
 #endif
 
+    qDebug() << "Checking whether to send:";
     if (serverClient)
+    {
+        qDebug() << "Sending to servrClient";
        serverClient->sendEvent(&event);
+    }
     if (winClient && winClient != serverClient)
+    {
+        qDebug() << "Sending to winClient";
        winClient->sendEvent(&event);
+    }
+    qDebug() << "Finished checking whether to send";
 
     if ( !imMouse ) {
         // Make sure that if we leave a window, that window gets one last mouse
@@ -3618,6 +3640,7 @@ void QWSServer::openMouse()
 {
     Q_D(QWSServer);
     QString mice = QString::fromLatin1(qgetenv("QWS_MOUSE_PROTO"));
+    qDebug() << "openMouse: mice:" << mice;
 #if defined(QT_QWS_CASSIOPEIA)
     if (mice.isEmpty())
         mice = QLatin1String("TPanel:/dev/tpanel");
@@ -3675,6 +3698,7 @@ void QWSServer::resumeMouse()
 
 QWSMouseHandler* QWSServerPrivate::newMouseHandler(const QString& spec)
 {
+    qDebug() << "newMouseHandler spec: " << spec;
     int c = spec.indexOf(QLatin1Char(':'));
     QString mouseProto;
     QString mouseDev;

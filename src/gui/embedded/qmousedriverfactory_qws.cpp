@@ -105,6 +105,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 */
 QWSMouseHandler *QMouseDriverFactory::create(const QString& key, const QString &device)
 {
+    qDebug() << "QMouseDriverFactory::create key: " << key << " device: " << device;
     QString driver = key.toLower();
 #if defined(Q_OS_QNX) && !defined(QT_NO_QWS_MOUSE_QNX)
     if (driver == QLatin1String("qnx") || driver.isEmpty())
@@ -115,8 +116,11 @@ QWSMouseHandler *QMouseDriverFactory::create(const QString& key, const QString &
         return new QIntMouseHandler(key, device);
 #endif
 #if defined(Q_OS_EMSCRIPTEN) && !defined(QT_NO_MOUSE_EMSCRIPTEN)
-    if (driver == QLatin1String("emscriptencanvas") || driver.isEmpty())
+    if (driver == QLatin1String("emscriptencanvas") || driver == QLatin1String("auto")|| driver.isEmpty())
+    {
+        qDebug() << "Creating mouse";
         return new QEmscriptenCanvasMouseHandler(key, device);
+    }
 #endif
 #ifndef QT_NO_QWS_MOUSE_LINUXTP
     if (driver == QLatin1String("linuxtp") || driver.isEmpty())
@@ -153,6 +157,7 @@ QWSMouseHandler *QMouseDriverFactory::create(const QString& key, const QString &
         return factory->create(driver, device);
 #endif
 #endif
+    qDebug() << "No mouse";
     return 0;
 }
 

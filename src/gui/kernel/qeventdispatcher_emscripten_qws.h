@@ -33,8 +33,11 @@ public:
 
     void startingUp();
     void closingDown();
+
+    static void newUserEventsToProcess();
 private:
     QList<QWSEvent*> queuedUserInputEvents;
+    static QEventDispatcherEmscripten* m_instance;
 };
 
 QT_END_NAMESPACE

@@ -11,9 +11,12 @@
 // from qapplication_qws.cpp
 extern QWSDisplay* qt_fbdpy; // QWS `display'
 
+QEventDispatcherEmscripten* QEventDispatcherEmscriptenQWS::m_instance = NULL;
+
 QEventDispatcherEmscriptenQWS::QEventDispatcherEmscriptenQWS(QObject *parent)
 {
     qDebug() << "QEventDispatcherEmscriptenQWS::QEventDispatcherEmscriptenQWS";
+    m_instance = this;
 }
 QEventDispatcherEmscriptenQWS::~QEventDispatcherEmscriptenQWS()
 {
@@ -22,7 +25,7 @@ QEventDispatcherEmscriptenQWS::~QEventDispatcherEmscriptenQWS()
 
 bool QEventDispatcherEmscriptenQWS::processEvents(QEventLoop::ProcessEventsFlags flags)
 {
-    qDebug() << "QEventDispatcherEmscriptenQWS::processEvents";
+    qDebug() << "QEventDispatcherEmscriptenQWS::processEvents flags: " << flags;
     if (flags & QEventLoop::WaitForMoreEvents)
     {
         qWarning() << "WaitForMoreEvents is not supported in Emscripten";
@@ -42,41 +45,41 @@ bool QEventDispatcherEmscriptenQWS::processEvents(QEventLoop::ProcessEventsFlags
         QWSEvent *event;
         if (!(flags & QEventLoop::ExcludeUserInputEvents)
             && !queuedUserInputEvents.isEmpty()) {
-            // process a pending user input event
-            qDebug() << "queuedUserInputEvents size: " << queuedUserInputEvents.size();
-            event = queuedUserInputEvents.takeFirst();
-            qDebug() << "Got a queued user input event, apparently." << (void*)event;
-            qDebug() << "Type is " << event->type;
-            } else if  (qt_fbdpy->eventPending()) {
-                event = qt_fbdpy->getEvent();        // get next event
+                // process a pending user input event
+                qDebug() << "queuedUserInputEvents size: " << queuedUserInputEvents.size();
+                event = queuedUserInputEvents.takeFirst();
+                qDebug() << "Got a queued user input event, apparently." << (void*)event;
+                qDebug() << "Type is " << event->type;
+        } else if  (qt_fbdpy->eventPending()) {
+            event = qt_fbdpy->getEvent();        // get next event
             qDebug() << "Got a pending input event, apparently." << (void*)event;
             qDebug() << "Type is " << event->type;
-                if (flags & QEventLoop::ExcludeUserInputEvents) {
-                    // queue user input events
-                    if (event->type == QWSEvent::Mouse || event->type == QWSEvent::Key) {
-                        qDebug() << "It was a mouse or key: appending to queuedUserInputEvents";
-                        queuedUserInputEvents.append(event);
-                        continue;
-                    }
+            if (flags & QEventLoop::ExcludeUserInputEvents) {
+                // queue user input events
+                if (event->type == QWSEvent::Mouse || event->type == QWSEvent::Key) {
+                    qDebug() << "It was a mouse or key: appending to queuedUserInputEvents";
+                    queuedUserInputEvents.append(event);
+                    continue;
                 }
-            } else {
-                break;
             }
+        } else {
+            break;
+        }
 
-            if (filterEvent(event)) {
+        if (filterEvent(event)) {
             qDebug() << "Filtered event";
-                delete event;
-                continue;
-            }
-            nevents++;
-
-            bool ret = qApp->qwsProcessEvent(event) == 1;
-            qDebug() << "Processed event; got: " << ret;
             delete event;
-            if (ret) {
-                qDebug() << "QEventDispatcherEmscriptenQWS Exiting after successful event processing";
-                return true;
-            }
+            continue;
+        }
+        nevents++;
+
+        bool ret = qApp->qwsProcessEvent(event) == 1;
+        qDebug() << "Processed event; got: " << ret;
+        delete event;
+        if (ret) {
+            qDebug() << "QEventDispatcherEmscriptenQWS Exiting after successful event processing";
+            return true;
+        }
     }
 
     // XXX There should be a check of d->interrupt here.
@@ -98,6 +101,7 @@ bool QEventDispatcherEmscriptenQWS::processEvents(QEventLoop::ProcessEventsFlags
 }
 bool QEventDispatcherEmscriptenQWS::hasPendingEvents()
 {
+    qDebug() << "QEventDispatcherEmscriptenQWS::hasPendingEvents()";
     extern uint qGlobalPostedEventsCount(); // from qapplication.cpp
     return qGlobalPostedEventsCount() || qt_fbdpy->eventPending();
 }
@@ -117,4 +121,9 @@ void QEventDispatcherEmscriptenQWS::startingUp()
 void QEventDispatcherEmscriptenQWS::closingDown()
 {
     qDebug() << "QEventDispatcherEmscriptenQWS::closingDown";
+}
+
+void QEventDispatcherEmscriptenQWS::newUserEventsToProcess()
+{
+    m_instance->wakeUp();
 }

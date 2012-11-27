@@ -923,11 +923,13 @@ bool QCoreApplication::testAttribute(Qt::ApplicationAttribute attribute)
 */
 bool QCoreApplication::notifyInternal(QObject *receiver, QEvent *event)
 {
+    qDebug() << "notifyInternal: " << event->type();
     // Make it possible for Qt Jambi and QSA to hook into events even
     // though QApplication is subclassed...
     bool result = false;
     void *cbdata[] = { receiver, event, &result };
     if (QInternal::activateCallbacks(QInternal::EventNotifyCallback, cbdata)) {
+        qDebug() << "Exiting because we activateCallbacks successfully";
         return result;
     }
 
@@ -949,6 +951,7 @@ bool QCoreApplication::notifyInternal(QObject *receiver, QEvent *event)
 
     bool returnValue;
     QT_TRY {
+        qDebug() << "About to call notify";
         returnValue = notify(receiver, event);
     } QT_CATCH (...) {
         --threadData->loopLevel;
@@ -1011,15 +1014,21 @@ bool QCoreApplication::notifyInternal(QObject *receiver, QEvent *event)
 
 bool QCoreApplication::notify(QObject *receiver, QEvent *event)
 {
+    qDebug() << "notify";
     Q_D(QCoreApplication);
     // no events are delivered after ~QCoreApplication() has started
     if (QCoreApplicationPrivate::is_app_closing)
+    {
+        qDebug() << "Ignored because we are closing";
         return true;
+    }
 
     if (receiver == 0) {                        // serious error
         qWarning("QCoreApplication::notify: Unexpected null receiver");
         return true;
     }
+
+    qDebug() << "Notify: isWidgetType(): " << receiver->isWidgetType();
 
 #ifndef QT_NO_DEBUG
     d->checkReceiverThread(receiver);
@@ -1072,6 +1081,7 @@ bool QCoreApplicationPrivate::sendThroughObjectEventFilters(QObject *receiver, Q
  */
 bool QCoreApplicationPrivate::notify_helper(QObject *receiver, QEvent * event)
 {
+    qDebug() << "notify_helper";
     // send to all application event filters
     if (sendThroughApplicationEventFilters(receiver, event))
         return true;

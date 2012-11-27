@@ -25,6 +25,23 @@ extern "C"
     }
 }
 
+namespace
+{
+    long nextScheduledTimerCallbackMS = -1;
+    void scheduleNextTimerCallback(long milliseconds)
+    {
+        if (milliseconds < 0)
+        {
+            return;
+        }
+        if (nextScheduledTimerCallbackMS == -1 || milliseconds < nextScheduledTimerCallbackMS)
+        {
+            EMSCRIPTENQT_resetTimerCallback(milliseconds);
+            nextScheduledTimerCallbackMS = milliseconds;
+        }
+    }
+}
+
 QEventDispatcherEmscripten* QEventDispatcherEmscripten::m_instance = NULL;
 
 static inline void do_gettime(qint64 *sec, qint64 *frac)
@@ -392,7 +409,7 @@ void QEventDispatcherEmscripten::registerTimer(int timerId, int interval, QObjec
     timeval wait_tm = { 0l, 0l };
     if (timerList.timerWait(wait_tm))
     {
-        EMSCRIPTENQT_resetTimerCallback(wait_tm.tv_usec / 1000);
+        scheduleNextTimerCallback(wait_tm.tv_usec / 1000);
     }
 }
 bool QEventDispatcherEmscripten::unregisterTimer(int timerId)
@@ -412,18 +429,18 @@ bool QEventDispatcherEmscripten::unregisterTimer(int timerId)
 bool QEventDispatcherEmscripten::unregisterTimers(QObject *object)
 {
     qDebug() << "QEventDispatcherEmscripten::unregisterTimers called";
-    return false;
+    return timerList.unregisterTimers(object);
 }
 QList<QEventDispatcherEmscripten::TimerInfo> QEventDispatcherEmscripten::registeredTimers(QObject *object) const
 {
     qDebug() << "QEventDispatcherEmscripten::registeredTimers called";
-    return QList<TimerInfo>();
-
+    return  timerList.registeredTimers(object);
 }
 
 void QEventDispatcherEmscripten::wakeUp()
 {
-    EMSCRIPTENQT_resetTimerCallback(0);
+    qDebug() << "Wake up called";
+    scheduleNextTimerCallback(0);
 }
 
 void QEventDispatcherEmscripten::startingUp()
@@ -445,11 +462,12 @@ void QEventDispatcherEmscripten::flush()
 
 void QEventDispatcherEmscripten::processEmscriptenCallback()
 {
+    nextScheduledTimerCallbackMS = -1;
     processEvents(QEventLoop::AllEvents);
     timerList.activateTimers();
     timeval wait_tm = { 0l, 0l };
     if (timerList.timerWait(wait_tm))
     {
-        EMSCRIPTENQT_resetTimerCallback(wait_tm.tv_usec / 1000);
+        scheduleNextTimerCallback(wait_tm.tv_usec / 1000);
     }
 }

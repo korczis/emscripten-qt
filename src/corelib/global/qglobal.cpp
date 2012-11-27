@@ -3103,8 +3103,10 @@ struct QInternal_CallBackTable {
 
 Q_GLOBAL_STATIC(QInternal_CallBackTable, global_callback_table)
 
+#include <iostream>
 bool QInternal::registerCallback(Callback cb, qInternalCallback callback)
 {
+    std::cout << "registerCallback" << std::endl;
     if (cb >= 0 && cb < QInternal::LastCallback) {
         QInternal_CallBackTable *cbt = global_callback_table();
         cbt->callbacks.resize(cb + 1);
@@ -3125,14 +3127,24 @@ bool QInternal::unregisterCallback(Callback cb, qInternalCallback callback)
 
 bool QInternal::activateCallbacks(Callback cb, void **parameters)
 {
+    std::cout << "activateCallbacks" << std::endl;
     Q_ASSERT_X(cb >= 0, "QInternal::activateCallback()", "Callback id must be a valid id");
 
     QInternal_CallBackTable *cbt = global_callback_table();
+    std::cout << "Callback table: " << (void*)cbt << std::endl;
+    if (cbt)
+    {
+        std::cout << "Callback table size: " << cbt->callbacks.size() << std::endl;
+    }
     if (cbt && cb < cbt->callbacks.size()) {
         QList<qInternalCallback> callbacks = cbt->callbacks[cb];
         bool ret = false;
+        std::cout << "#callbacks: " << callbacks.size() << std::endl;
         for (int i=0; i<callbacks.size(); ++i)
+        {
+            std::cout << " callback " << i << std::endl;
             ret |= (callbacks.at(i))(parameters);
+        }
         return ret;
     }
     return false;

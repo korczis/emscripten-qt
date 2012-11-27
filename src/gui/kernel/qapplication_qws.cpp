@@ -480,23 +480,11 @@ static bool qws_single_process;
 static QList<QWSEvent*> incoming;
 static QList<QWSCommand*> outgoing;
 
-extern "C"
-{
-    void printSizeOfIncoming()
-    {
-        qDebug() << "Size of incoming: " << incoming.size();
-    }
-}
-
 void qt_client_enqueue(const QWSEvent *event)
 {
-    qDebug() << "Enqueueing event of type: " << event->type;
-    printSizeOfIncoming();
     QWSEvent *copy = QWSEvent::factory(event->type);
     copy->copyFrom(event);
-    qDebug() << "Cloned event of type: " << copy->type;
     incoming.append(copy);
-    qDebug() << "incoming now has " << incoming.size() << " elements";
 }
 
 QList<QWSCommand*> *qt_get_server_queue()
@@ -966,7 +954,6 @@ void QWSDisplay::Data::init()
 QWSEvent* QWSDisplay::Data::readMore()
 {
 #ifdef QT_NO_QWS_MULTIPROCESS
-    qDebug() << "readMore(): incoming has " << incoming.size() << " elements";
     return incoming.isEmpty() ? 0 : incoming.takeFirst();
 #else
     if (!csocket)
@@ -998,21 +985,11 @@ void QWSDisplay::Data::fillQueue()
 {
     QWSServer::processEventQueue();
     QWSEvent *e = readMore();
-    if (e)
-    {
-        qDebug() << "Read event of type: " << e->type;
-    }
-    else
-    {
-        qDebug() << "Could not read any more events";
-    }
-    qDebug() << "Apparently " << incoming.size() << " remaining";
 #ifndef QT_NO_QWS_MULTIPROCESS
     int bytesAvailable = csocket ? csocket->bytesAvailable() : 0;
     int bytesRead = 0;
 #endif
     while (e) {
-        qDebug() << "In loop; e is of type: " << e->type;
 #ifndef QT_NO_QWS_MULTIPROCESS
         bytesRead += QWS_PROTOCOL_ITEM_SIZE((*e));
 #endif
@@ -2372,7 +2349,6 @@ void qt_init(QApplicationPrivate *priv, int type)
 
 void qt_cleanup()
 {
-    qDebug() << "qt_cleanup";
     QPixmapCache::clear();
 #ifndef QT_NO_CURSOR
     QCursorData::cleanup();
@@ -2760,14 +2736,24 @@ int QApplication::qwsProcessEvent(QWSEvent* event)
         mouse_x_root = mouse.x_root;
         mouse_y_root = mouse.y_root;
         mouse_state = mouse.state;
+        qDebug() << "mouse_x_root: " << mouse_x_root;
+        qDebug() << "mouse_y_root: " << mouse_y_root;
+        qDebug() << "mouse_state: " << mouse_state;
     }
+
 
     long unused;
     if (filterEvent(event, &unused))                  // send through app filter
+    {
+        qDebug() << "Returning because filtered";
         return 1;
+    }
 
     if (qwsEventFilter(event))                        // send through app filter
+    {
+        qDebug() << "Returning because filtered (qws)";
         return 1;
+    }
 
 
 #ifndef QT_NO_QWS_PROPERTIES
@@ -2878,6 +2864,7 @@ int QApplication::qwsProcessEvent(QWSEvent* event)
                  event->asMouse()->simpleData.y_root);
         int mouseButtonState = event->asMouse()->simpleData.state & btnMask;
         static int btnstate = 0;
+        qDebug() << "Here, I suppose" << btnMask << "," << mouseButtonState << "," << p;
 
         QETWidget *w = static_cast<QETWidget*>(QWidget::mouseGrabber());
         if (w && !mouseButtonState && qt_pressGrab == w)
@@ -2995,8 +2982,12 @@ int QApplication::qwsProcessEvent(QWSEvent* event)
             return 1;
         }
 
+    qDebug() << "Abut to send through widget filter";
     if (widget->qwsEvent(event))                // send through widget filter
+    {
+        qDebug() << "Sent through; returning";
         return 1;
+    }
     switch (event->type) {
 
     case QWSEvent::Mouse: {                        // mouse event
@@ -3011,9 +3002,11 @@ int QApplication::qwsProcessEvent(QWSEvent* event)
         if (isMove) {
             QWSMouseEvent move = *me;
             move.simpleData.state = oldstate;
+            qDebug() << "translateMouseEvent";
             widget->translateMouseEvent(&move, oldstate);
         }
         if ((mouse.state&Qt::MouseButtonMask) != (oldstate&Qt::MouseButtonMask)) {
+            qDebug() << "translateMouseEvent";
             widget->translateMouseEvent(me, oldstate);
         }
 
@@ -3367,6 +3360,7 @@ bool QETWidget::translateWheelEvent(const QWSMouseEvent *me)
 
 bool QETWidget::translateMouseEvent(const QWSMouseEvent *event, int prevstate)
 {
+    qDebug() << "QETWidget::translateMouseEvent(const QWSMouseEvent *event, int prevstate)";
     static bool manualGrab = false;
     QPoint pos;
     QPoint globalPos;
@@ -3376,6 +3370,7 @@ bool QETWidget::translateMouseEvent(const QWSMouseEvent *event, int prevstate)
         return true;
     const QWSMouseEvent::SimpleData &mouse = event->simpleData;
     pos = mapFromGlobal(QPoint(mouse.x_root, mouse.y_root));
+    qDebug() << "Pos: " << pos;
 //     if (qt_last_x) {
 //         *qt_last_x=mouse.x_root;
 //         *qt_last_y=mouse.y_root;
@@ -3391,7 +3386,9 @@ bool QETWidget::translateMouseEvent(const QWSMouseEvent *event, int prevstate)
     if (mouse.state == prevstate) {
         // mouse move
         type = QEvent::MouseMove;
+        qDebug() << "Move";
     } else if ((mouse.state&AnyButton) != (prevstate&AnyButton)) {
+        qDebug() << "Button";
         Qt::MouseButtons current_buttons = Qt::MouseButtons(prevstate&Qt::MouseButtonMask);
         for (button = Qt::LeftButton; !type && button <= Qt::MidButton; button<<=1) {
             if ((mouse.state&button) != (current_buttons&button)) {
@@ -3440,10 +3437,12 @@ bool QETWidget::translateMouseEvent(const QWSMouseEvent *event, int prevstate)
     //XXX mouseActWindow = winId();                        // save some event params
 
     if (type == 0) {                                // event consumed
+        qDebug() << "type == 0 - exiting";
         return false; //EXIT in the normal case
     }
 
     if (qApp->d_func()->inPopupMode()) {                        // in popup mode
+        qDebug() << "in popup mode";
         QWidget *popup = qApp->activePopupWidget();
         // in X11, this would be the window we are over.
         // in QWS this is the top level popup.  to allow mouse
@@ -3519,7 +3518,9 @@ bool QETWidget::translateMouseEvent(const QWSMouseEvent *event, int prevstate)
             qt_button_down = 0;
 
     } else { //qApp not in popup mode
+        qDebug() << "Not in popup mode";
         QWidget *widget = this;
+        qDebug() << "widget class: " << widget->metaObject()->className();
         QWidget *w = QWidget::mouseGrabber();
         if (!w && qt_button_down)
             w = qt_button_down;
@@ -3558,6 +3559,7 @@ bool QETWidget::translateMouseEvent(const QWSMouseEvent *event, int prevstate)
                 QApplicationPrivate::dispatchEnterLeave(0, *mouseInWidget);
                 (*mouseInWidget) = 0;
             }
+            qDebug() << "Leaving widget(?)";
             QApplication::sendSpontaneousEvent(widget->d_func()->topData()->qwsManager, &e);
             qApp->d_func()->last_manager = widget->d_func()->topData()->qwsManager;
         } else
@@ -3568,6 +3570,7 @@ bool QETWidget::translateMouseEvent(const QWSMouseEvent *event, int prevstate)
                 (*mouseInWidget) = widget;
                 qt_last_mouse_receiver = widget;
             }
+            qDebug() << "Sending the spontaneous event to the widget:" << widget->metaObject()->className() << " type: " << e.type() << " pos: "<< pos << " global pos: " << globalPos << " button state:" << buttonstate;
             QApplication::sendSpontaneousEvent(widget, &e);
             if (leaveAfterRelease && !QWidget::mouseGrabber()) {
                 *mouseInWidget = QApplication::widgetAt(globalPos);
@@ -3578,6 +3581,7 @@ bool QETWidget::translateMouseEvent(const QWSMouseEvent *event, int prevstate)
         }
 #ifndef QT_NO_CONTEXTMENU
         if (type == QEvent::MouseButtonPress && button == Qt::RightButton && (openPopupCount == oldOpenPopupCount)) {
+            qDebug() << "Context menu";
             QContextMenuEvent e(QContextMenuEvent::Mouse, pos, globalPos, keystate);
             QApplication::sendSpontaneousEvent(widget, &e);
         }

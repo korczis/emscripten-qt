@@ -20,6 +20,10 @@ public:
 
     void resume();
     void suspend();
+
+    static void canvasMouseChanged(int x, int y, int buttons);
+private:
+    static QEmscriptenCanvasMouseHandler *m_instance;
 };
 
 QT_END_NAMESPACE

@@ -1,4 +1,5 @@
 #include "qmouseemscriptencanvas_qws.h"
+#include "private/qeventdispatcher_emscripten_p.h"
 #include "qdebug.h"
 
 namespace
@@ -57,6 +58,5 @@ void QEmscriptenCanvasMouseHandler::suspend()
 
 void QEmscriptenCanvasMouseHandler::canvasMouseChanged(int x, int y, int buttons)
 {
-    qDebug() << "canvasMouseChanged: x: " << x << " y: " << y << " buttons: " << buttons;
     m_instance->mouseChanged(QPoint(x, y), buttons, 0);
 }

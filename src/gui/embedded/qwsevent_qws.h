@@ -60,11 +60,9 @@ struct QWSMouseEvent;
 struct QWSEvent : QWSProtocolItem {
 
     QWSEvent(int t, int len, char *ptr) : QWSProtocolItem(t,len,ptr) {
-        qDebug() << "Created QWSEvent at " << (void*)this;
     }
     ~QWSEvent()
     {
-        qDebug() << "Deleted QWSEvent at " << (void*)this;
     }
 
 

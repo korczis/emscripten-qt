@@ -463,7 +463,10 @@ void QEventDispatcherEmscripten::flush()
 void QEventDispatcherEmscripten::processEmscriptenCallback()
 {
     nextScheduledTimerCallbackMS = -1;
-    processEvents(QEventLoop::AllEvents);
+    while (hasPendingEvents())
+    {
+        processEvents(QEventLoop::AllEvents);
+    }
     timerList.activateTimers();
     timeval wait_tm = { 0l, 0l };
     if (timerList.timerWait(wait_tm))

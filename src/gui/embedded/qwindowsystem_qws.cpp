@@ -837,7 +837,6 @@ void QWSClient::sendEvent(QWSEvent* event)
     else
 #endif
     {
-        qDebug() << "QWSClient::sendEvent queueing event of type: " << event->type;
         qt_client_enqueue(event);
 #ifdef EMSCRIPTEN
         QEventDispatcherEmscriptenQWS::newUserEventsToProcess();
@@ -1863,7 +1862,6 @@ QWSCommand* QWSClient::readMoreCommand()
 */
 void QWSServer::processEventQueue()
 {
-    qDebug() << "QWSServer::processEventQueue()";
     if (qwsServerPrivate)
         qwsServerPrivate->doClient(qwsServerPrivate->clientMap.value(-1));
 }
@@ -1901,7 +1899,6 @@ void QWSServerPrivate::_q_doClient()
 
 void QWSServerPrivate::doClient(QWSClient *client)
 {
-    qDebug() << "QWSServerPrivate::doClient(QWSClient *client)";
     QWSCommand* command=client->readMoreCommand();
 
     while (command) {
@@ -2358,18 +2355,14 @@ void QWSServerPrivate::sendMouseEventUnfiltered(const QPoint &pos, int state, in
         current_IM->mouseHandler(-1, QWSServer::MouseOutside);
 #endif
 
-    qDebug() << "Checking whether to send:";
     if (serverClient)
     {
-        qDebug() << "Sending to servrClient";
        serverClient->sendEvent(&event);
     }
     if (winClient && winClient != serverClient)
     {
-        qDebug() << "Sending to winClient";
        winClient->sendEvent(&event);
     }
-    qDebug() << "Finished checking whether to send";
 
     if ( !imMouse ) {
         // Make sure that if we leave a window, that window gets one last mouse
@@ -3640,7 +3633,6 @@ void QWSServer::openMouse()
 {
     Q_D(QWSServer);
     QString mice = QString::fromLatin1(qgetenv("QWS_MOUSE_PROTO"));
-    qDebug() << "openMouse: mice:" << mice;
 #if defined(QT_QWS_CASSIOPEIA)
     if (mice.isEmpty())
         mice = QLatin1String("TPanel:/dev/tpanel");
@@ -3698,7 +3690,6 @@ void QWSServer::resumeMouse()
 
 QWSMouseHandler* QWSServerPrivate::newMouseHandler(const QString& spec)
 {
-    qDebug() << "newMouseHandler spec: " << spec;
     int c = spec.indexOf(QLatin1Char(':'));
     QString mouseProto;
     QString mouseDev;

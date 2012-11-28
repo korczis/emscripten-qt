@@ -58,5 +58,7 @@ void QEmscriptenCanvasMouseHandler::suspend()
 
 void QEmscriptenCanvasMouseHandler::canvasMouseChanged(int x, int y, int buttons)
 {
+    QEventDispatcherEmscripten::setWillScheduleCallBack();
     m_instance->mouseChanged(QPoint(x, y), buttons, 0);
+    QEventDispatcherEmscripten::batchProcessEventsAndScheduleNextCallback();
 }

@@ -345,6 +345,10 @@ QSettings *QCoreApplicationPrivate::trolltechConf()
 Q_CORE_EXPORT uint qGlobalPostedEventsCount()
 {
     QThreadData *currentThreadData = QThreadData::current();
+    for (int i = currentThreadData->postEventList.startOffset; i < currentThreadData->postEventList.size(); i++)
+    {
+        qDebug() << "Have posted event of type: " << currentThreadData->postEventList.at(i).event->type();
+    }
     return currentThreadData->postEventList.size() - currentThreadData->postEventList.startOffset;
 }
 

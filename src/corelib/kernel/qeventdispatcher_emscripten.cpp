@@ -2,8 +2,10 @@
 #include "qcore_unix_p.h"
 #include "qdebug.h"
 #include "qcoreapplication.h"
+#include "../../../examples/help/simpletextviewer/assistant.h"
 #include "private/qcoreapplication_p.h"
 #include "qelapsedtimer.h"
+#include "qdatetime.h"
 #include "private/qthread_p.h"
 #include <sys/times.h>
 
@@ -27,17 +29,17 @@ extern "C"
 
 namespace
 {
-    long nextScheduledTimerCallbackMS = -1;
+    QDateTime nextCallbackTime;
+    bool wakeUpScheduled = false;
     void scheduleNextTimerCallback(long milliseconds)
     {
         if (milliseconds < 0)
         {
             return;
         }
-        if (nextScheduledTimerCallbackMS == -1 || milliseconds < nextScheduledTimerCallbackMS)
+        if (!nextCallbackTime.isNull() && QDateTime::currentDateTime().addMSecs(milliseconds) >= nextCallbackTime)
         {
-            EMSCRIPTENQT_resetTimerCallback(milliseconds);
-            nextScheduledTimerCallbackMS = milliseconds;
+            nextCallbackTime = QDateTime::currentDateTime();
         }
     }
 }
@@ -368,6 +370,8 @@ int QTimerInfoList::activateTimers()
 
 
 QEventDispatcherEmscripten::QEventDispatcherEmscripten(QObject *parent)
+    :  m_batchProcessingEvents(false),
+       m_willScheduleNextCallback(false)
 {
     m_instance = this;
 }
@@ -407,7 +411,7 @@ void QEventDispatcherEmscripten::registerTimer(int timerId, int interval, QObjec
     qDebug() << "QEventDispatcherEmscripten::registerTimer called";
     timerList.registerTimer(timerId, interval, object);
     timeval wait_tm = { 0l, 0l };
-    if (timerList.timerWait(wait_tm))
+    if (timerList.timerWait(wait_tm) && !m_willScheduleNextCallback)
     {
         scheduleNextTimerCallback(wait_tm.tv_usec / 1000);
     }
@@ -439,8 +443,23 @@ QList<QEventDispatcherEmscripten::TimerInfo> QEventDispatcherEmscripten::registe
 
 void QEventDispatcherEmscripten::wakeUp()
 {
-    qDebug() << "Wake up called";
-    scheduleNextTimerCallback(0);
+    qDebug() << "Wake up called" << m_batchProcessingEvents << "," << wakeUpScheduled;
+    if (!m_batchProcessingEvents && !wakeUpScheduled) // If we're batch processing events, then we're already awake.
+    {
+        wakeUpScheduled = true;
+        if (!m_willScheduleNextCallback)
+        {
+            EMSCRIPTENQT_resetTimerCallback(0);
+        }
+        else
+        {
+            scheduleNextTimerCallback(0);
+        }
+    }
+    else
+    {
+        qDebug() << "Ignoring";
+    }
 }
 
 void QEventDispatcherEmscripten::startingUp()
@@ -460,17 +479,63 @@ void QEventDispatcherEmscripten::flush()
     qDebug() << "QEventDispatcherEmscripten::flush called";
 }
 
+void QEventDispatcherEmscripten::emscriptenCallback()
+{
+    m_instance->processEmscriptenCallback();
+};
+void QEventDispatcherEmscripten::batchProcessEventsAndScheduleNextCallback()
+{
+    m_instance->m_willScheduleNextCallback = true;
+    m_instance->batchProcessEvents();
+    m_instance->m_willScheduleNextCallback = false;
+};
+
 void QEventDispatcherEmscripten::processEmscriptenCallback()
 {
-    nextScheduledTimerCallbackMS = -1;
-    while (hasPendingEvents())
+    qDebug() << "Got callback";
+    nextCallbackTime = QDateTime(); // This is what was the "next" callback, so nextCallbackTime is now obsolete.
+    wakeUpScheduled = false;
+    batchProcessEventsAndScheduleNextCallback();
+}
+
+void QEventDispatcherEmscripten::batchProcessEvents()
+{
+    const QDateTime processingBeginTime = QDateTime::currentDateTime();
+    m_batchProcessingEvents = true;
+    const QDateTime eventProcessingStart = QDateTime::currentDateTime();
+    do
     {
-        processEvents(QEventLoop::AllEvents);
-    }
-    timerList.activateTimers();
+        while (hasPendingEvents())
+        {
+            processEvents(QEventLoop::AllEvents);
+        }
+        // Activating timers might trigger yet more events to deal with.
+        timerList.activateTimers();
+        if (hasPendingEvents() && processingBeginTime.msecsTo(QDateTime::currentDateTime()) > 100)
+        {
+            // If processing events a) takes a long time, and b) repeatedly sets timers, then
+            // we could potentially end up in an infinite loop - add this safety valve.
+            // Schedule a callback so that we can continue where we left off.
+            scheduleNextTimerCallback(0);
+            qDebug() << "Bailing while processing events due to timeout";
+            break;
+        }
+    } while (hasPendingEvents());
+    m_batchProcessingEvents = false;
+}
+
+void QEventDispatcherEmscripten::scheduleNextCallback()
+{
     timeval wait_tm = { 0l, 0l };
     if (timerList.timerWait(wait_tm))
     {
         scheduleNextTimerCallback(wait_tm.tv_usec / 1000);
+    }
+
+    qDebug() << "Schedule next callback: " << nextCallbackTime << "-" << QDateTime::currentDateTime();
+    if (!nextCallbackTime.isNull())
+    {
+        const long millisecondsUntilCallback = qMax(static_cast<qint64>(0), QDateTime::currentDateTime().msecsTo(nextCallbackTime));
+        EMSCRIPTENQT_resetTimerCallback(millisecondsUntilCallback);
     }
 }

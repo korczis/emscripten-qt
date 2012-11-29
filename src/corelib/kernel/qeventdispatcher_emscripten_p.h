@@ -78,12 +78,11 @@ public:
 
     static void emscriptenCallback();
     static void batchProcessEventsAndScheduleNextCallback();
-    static void setWillScheduleCallBack() { m_instance->m_willScheduleNextCallback = true; };
+    static void setBatchProcessingEvents() { m_instance->m_batchProcessingEvents = true; };
 private:
     QTimerInfoList timerList;
     static QEventDispatcherEmscripten *m_instance;
     bool m_batchProcessingEvents;
-    bool m_willScheduleNextCallback;
 
     void processEmscriptenCallback();
     void batchProcessEvents();

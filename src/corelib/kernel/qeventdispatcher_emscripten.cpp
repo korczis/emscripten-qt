@@ -29,18 +29,13 @@ extern "C"
 
 namespace
 {
-    QDateTime nextCallbackTime;
-    bool wakeUpScheduled = false;
     void scheduleNextTimerCallback(long milliseconds)
     {
         if (milliseconds < 0)
         {
             return;
         }
-        if (!nextCallbackTime.isNull() && QDateTime::currentDateTime().addMSecs(milliseconds) >= nextCallbackTime)
-        {
-            nextCallbackTime = QDateTime::currentDateTime();
-        }
+        EMSCRIPTENQT_resetTimerCallback(milliseconds);
     }
 }
 
@@ -194,6 +189,8 @@ bool QTimerInfoList::timerWait(timeval &tm)
     timeval currentTime = updateCurrentTime();
     repairTimersIfNeeded();
 
+    qDebug() << "timerWait: # timers in list: " << size();
+
     // Find first waiting timer not already active
     QTimerInfo *t = 0;
     for (QTimerInfoList::const_iterator it = constBegin(); it != constEnd(); ++it) {
@@ -211,6 +208,7 @@ bool QTimerInfoList::timerWait(timeval &tm)
         tm = t->timeout - currentTime;
     } else {
         // no time to wait
+        qDebug() << "The timer with id: " << t->id << " has no time to wait!";
         tm.tv_sec  = 0;
         tm.tv_usec = 0;
     }
@@ -220,6 +218,7 @@ bool QTimerInfoList::timerWait(timeval &tm)
 
 void QTimerInfoList::registerTimer(int timerId, int interval, QObject *object)
 {
+    qDebug() << "Unregister timer: " << timerId << " for object: " << object;
     QTimerInfo *t = new QTimerInfo;
     t->id = timerId;
     t->interval.tv_sec  = interval / 1000;
@@ -233,10 +232,12 @@ void QTimerInfoList::registerTimer(int timerId, int interval, QObject *object)
 
 bool QTimerInfoList::unregisterTimer(int timerId)
 {
+    qDebug() << "Unregister timer: " << timerId;
     // set timer inactive
     for (int i = 0; i < count(); ++i) {
         register QTimerInfo *t = at(i);
         if (t->id == timerId) {
+            qDebug() << "Unregistered timer was connected to object: " << t->obj;
             // found it
             removeAt(i);
             if (t == firstTimerInfo)
@@ -258,6 +259,7 @@ bool QTimerInfoList::unregisterTimer(int timerId)
 
 bool QTimerInfoList::unregisterTimers(QObject *object)
 {
+    qDebug() << "unregisterTimers for object: " << object;
     if (isEmpty())
         return false;
     for (int i = 0; i < count(); ++i) {
@@ -272,13 +274,21 @@ bool QTimerInfoList::unregisterTimers(QObject *object)
 
             // release the timer id
             if (!QObjectPrivate::get(t->obj)->inThreadChangeEvent)
+            {
+                qDebug() << "released timer with id: " << t->id;
                 QAbstractEventDispatcherPrivate::releaseTimerId(t->id);
+            }
+            else
+            {
+                qDebug() << "did not release timer with id: " << t->id;
+            }
 
             delete t;
             // move back one so that we don't skip the new current item
             --i;
         }
     }
+    qDebug() << "There are now " << size() << " timers";
     return true;
 }
 
@@ -370,8 +380,7 @@ int QTimerInfoList::activateTimers()
 
 
 QEventDispatcherEmscripten::QEventDispatcherEmscripten(QObject *parent)
-    :  m_batchProcessingEvents(false),
-       m_willScheduleNextCallback(false)
+    :  m_batchProcessingEvents(false)
 {
     m_instance = this;
 }
@@ -411,7 +420,7 @@ void QEventDispatcherEmscripten::registerTimer(int timerId, int interval, QObjec
     qDebug() << "QEventDispatcherEmscripten::registerTimer called";
     timerList.registerTimer(timerId, interval, object);
     timeval wait_tm = { 0l, 0l };
-    if (timerList.timerWait(wait_tm) && !m_willScheduleNextCallback)
+    if (timerList.timerWait(wait_tm))
     {
         scheduleNextTimerCallback(wait_tm.tv_usec / 1000);
     }
@@ -443,18 +452,10 @@ QList<QEventDispatcherEmscripten::TimerInfo> QEventDispatcherEmscripten::registe
 
 void QEventDispatcherEmscripten::wakeUp()
 {
-    qDebug() << "Wake up called" << m_batchProcessingEvents << "," << wakeUpScheduled;
-    if (!m_batchProcessingEvents && !wakeUpScheduled) // If we're batch processing events, then we're already awake.
+    qDebug() << "Wake up called" << m_batchProcessingEvents;
+    if (!m_batchProcessingEvents) // If we're batch processing events, then we're already awake.
     {
-        wakeUpScheduled = true;
-        if (!m_willScheduleNextCallback)
-        {
-            EMSCRIPTENQT_resetTimerCallback(0);
-        }
-        else
-        {
-            scheduleNextTimerCallback(0);
-        }
+        EMSCRIPTENQT_resetTimerCallback(0);
     }
     else
     {
@@ -485,16 +486,13 @@ void QEventDispatcherEmscripten::emscriptenCallback()
 };
 void QEventDispatcherEmscripten::batchProcessEventsAndScheduleNextCallback()
 {
-    m_instance->m_willScheduleNextCallback = true;
     m_instance->batchProcessEvents();
-    m_instance->m_willScheduleNextCallback = false;
+    m_instance->scheduleNextCallback();
 };
 
 void QEventDispatcherEmscripten::processEmscriptenCallback()
 {
     qDebug() << "Got callback";
-    nextCallbackTime = QDateTime(); // This is what was the "next" callback, so nextCallbackTime is now obsolete.
-    wakeUpScheduled = false;
     batchProcessEventsAndScheduleNextCallback();
 }
 
@@ -502,7 +500,6 @@ void QEventDispatcherEmscripten::batchProcessEvents()
 {
     const QDateTime processingBeginTime = QDateTime::currentDateTime();
     m_batchProcessingEvents = true;
-    const QDateTime eventProcessingStart = QDateTime::currentDateTime();
     do
     {
         while (hasPendingEvents())
@@ -511,7 +508,7 @@ void QEventDispatcherEmscripten::batchProcessEvents()
         }
         // Activating timers might trigger yet more events to deal with.
         timerList.activateTimers();
-        if (hasPendingEvents() && processingBeginTime.msecsTo(QDateTime::currentDateTime()) > 100)
+        if (hasPendingEvents() && processingBeginTime.msecsTo(QDateTime::currentDateTime()) > 500)
         {
             // If processing events a) takes a long time, and b) repeatedly sets timers, then
             // we could potentially end up in an infinite loop - add this safety valve.
@@ -529,13 +526,7 @@ void QEventDispatcherEmscripten::scheduleNextCallback()
     timeval wait_tm = { 0l, 0l };
     if (timerList.timerWait(wait_tm))
     {
+        qDebug() << "next timer event in " << wait_tm.tv_usec / 1000 << "ms callback";
         scheduleNextTimerCallback(wait_tm.tv_usec / 1000);
-    }
-
-    qDebug() << "Schedule next callback: " << nextCallbackTime << "-" << QDateTime::currentDateTime();
-    if (!nextCallbackTime.isNull())
-    {
-        const long millisecondsUntilCallback = qMax(static_cast<qint64>(0), QDateTime::currentDateTime().msecsTo(nextCallbackTime));
-        EMSCRIPTENQT_resetTimerCallback(millisecondsUntilCallback);
     }
 }

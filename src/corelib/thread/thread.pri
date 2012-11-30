@@ -1,7 +1,4 @@
 # Qt core thread module
-message("gloop")
- message($$QMAKESPEC)
-
 
 # public headers
 HEADERS += thread/qmutex.h \

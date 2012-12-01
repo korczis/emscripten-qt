@@ -131,5 +131,8 @@ emscripten {
 	SOURCES += io/qfsfileengine_unix.cpp \
             io/qfsfileengine_iterator.cpp \
             io/qfilesystemengine_unix.cpp \
-            io/qfilesystemiterator_unix.cpp
+            io/qfilesystemiterator_unix.cpp \
+            io/qfilesystemwatcher_emscripten.cpp
+
+    HEADERS += io/qfilesystemwatcher_emscripten_p.h
 }

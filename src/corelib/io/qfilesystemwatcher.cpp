@@ -68,6 +68,10 @@
 #  include "qfilesystemwatcher_symbian_p.h"
 #endif
 
+#if defined(Q_OS_EMSCRIPTEN)
+#  include "qfilesystemwatcher_emscripten_p.h"
+#endif
+
 QT_BEGIN_NAMESPACE
 
 enum { PollingInterval = 1000 };
@@ -252,6 +256,8 @@ QFileSystemWatcherEngine *QFileSystemWatcherPrivate::createNativeEngine()
     return new QWindowsFileSystemWatcherEngine;
 #elif defined(Q_OS_QNX) && !defined(QT_NO_INOTIFY)
     return QInotifyFileSystemWatcherEngine::create();
+#elif defined(Q_OS_EMSCRIPTEN)
+    return QEmscriptenFileSystemWatcherEngine::create();
 #elif defined(Q_OS_LINUX)
     QFileSystemWatcherEngine *eng = QInotifyFileSystemWatcherEngine::create();
     if(!eng)

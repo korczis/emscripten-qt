@@ -43,10 +43,13 @@
 #define QPLATFORMDEFS_H
 
 // Get Qt defines/settings
-#undef QT_LARGEFILE_SUPPORT
 #include "../../common/posix/qplatformdefs.h"
+#undef QT_OPEN_LARGEFILE
+#undef QT_LARGEFILE_SUPPORT
+#define QT_OPEN_LARGEFILE 0
 
 //#define _POSIX_TIMERS
+#include <sys/time.h>
 
 #include "qglobal.h"
 

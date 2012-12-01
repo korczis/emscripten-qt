@@ -56,7 +56,7 @@
 #endif
 
 #include <time.h>
-#ifdef QT_EMSCRIPTEN_NATIVE
+#ifdef QT_OS_EMSCRIPTEN
 #include <sys/time.h>
 #endif
 #if defined(Q_OS_WINCE)

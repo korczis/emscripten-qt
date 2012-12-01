@@ -67,12 +67,26 @@ function EMSCRIPTENQT_mouseMoved(e)
 function EMSCRIPTENQT_mouseDown(e)
 {
         var canvas = document.getElementById('canvas');
-        cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number'])(1, 1);
+	try
+	{
+		cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number'])(1, 1);
+	}
+	catch (e)
+	{
+		Module.print("Exception during mouseDown event: " + e);
+	}
 }
 function EMSCRIPTENQT_mouseUp(e)
 {
         var canvas = document.getElementById('canvas');
-        cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number'])(1, 0);
+	try
+	{
+		cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number'])(1, 0);
+	}
+	catch (e)
+	{
+		Module.print("Exception during mouseUp event: " + e);
+	}
 }
 Module.noExitRuntime = true;
 Module['preRun'] = function() {

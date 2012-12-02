@@ -47,6 +47,13 @@
 #include "qwindowsystem_p.h"
 #include "qwscursor_qws.h"
 
+#ifdef Q_OS_EMSCRIPTEN
+extern "C"
+{
+    void EMSCRIPTENQT_cursorChanged(int newCursorShape /* Will be one of Qt::CursorShape */);
+}
+#endif
+
 QT_BEGIN_NAMESPACE
 
 #ifndef QT_NO_QWS_CURSOR
@@ -361,6 +368,18 @@ void QWSServerPrivate::setCursor(QWSCursor *curs)
 
     if (!haveviscurs || !curs)
         curs = QWSCursor::systemCursor(Qt::BlankCursor);
+
+#ifdef Q_OS_EMSCRIPTEN
+    int cursorShape = 0;
+    for (int i = 0; i <= Qt::LastCursor; i++)
+    {
+        if (systemCursorTable[i] == curs) {
+            cursorShape = i;
+            break;
+        }
+    }
+    EMSCRIPTENQT_cursorChanged(cursorShape);
+#endif
 
     if (qt_screencursor) {
         qt_screencursor->set(curs->image(),

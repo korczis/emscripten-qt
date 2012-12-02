@@ -88,6 +88,92 @@ function EMSCRIPTENQT_mouseUp(e)
 		Module.print("Exception during mouseUp event: " + e);
 	}
 }
+function _EMSCRIPTENQT_cursorChanged(newCursorShape)
+{
+	Module.print("Qt cursor changed: " + newCursorShape);
+        var cssCursorStyle;
+
+	switch(newCursorShape)
+        {
+        case 0: /* ArrowCursor */
+		cssCursorStyle = "default";
+		break;
+        case 1: /* UpArrowCursor */
+		cssCursorStyle = "default";
+		break;
+        case 2: /* CrossCursor */
+		cssCursorStyle = "crosshair";
+		break;
+        case 3: /* WaitCursor */
+		cssCursorStyle = "progress";
+		break;
+        case 4: /* IBeamCursor */
+		cssCursorStyle = "text";
+		break;
+        case 5: /* SizeVerCursor */
+		// Qt doesn't discriminate between "resize top" and "resize bottom", so pick one at random
+		// Update: just don't change the cursor - it will be impossible to get this right, sadly :/
+		//cssCursorStyle = "n-resize"; 
+		cssCursorStyle = "default";
+		break;
+        case 6: /* SizeHorCursor */
+		// Qt doesn't discriminate between "resize left" and "resize right", so pick one at random
+		// Update: just don't change the cursor - it will be impossible to get this right, sadly :/
+		//cssCursorStyle = "e-resize";
+		cssCursorStyle = "default";
+		break;
+        case 7: /* SizeBDiagCursor */
+		// Qt doesn't discriminate between "resize bottom-left" and "resize top-right", so pick one at random
+		// Update: just don't change the cursor - it will be impossible to get this right, sadly :/
+		//cssCursorStyle = "ne-resize";
+		cssCursorStyle = "default";
+		break;
+        case 8: /* SizeFDiagCursor */
+		// Qt doesn't discriminate between "resize bottom-right" and "resize top-left", so pick one at random
+		// Update: just don't change the cursor - it will be impossible to get this right, sadly :/
+		//cssCursorStyle = "se-resize";
+		cssCursorStyle = "default";
+		break;
+        case 9: /* SizeAllCursor */
+		cssCursorStyle = "default";
+		break;
+        case 10: /* BlankCursor */
+		cssCursorStyle = "default";
+		break;
+        case 11: /* SplitVCursor */
+		cssCursorStyle = "row-resize";
+		break;
+        case 12: /* SplitHCursor */
+		cssCursorStyle = "col-resize";
+		break;
+        case 13: /* PointingHandCursor */
+		cssCursorStyle = "hand";
+		break;
+        case 14: /* ForbiddenCursor */
+		cssCursorStyle = "not-allowed";
+		break;
+        case 15: /* WhatsThisCursor */
+		cssCursorStyle = "help";
+		break;
+        case 16: /* BusyCursor */
+		cssCursorStyle = "wait";
+		break;
+        case 17: /* OpenHandCursor */
+		cssCursorStyle = "hand";
+		break;
+        case 18: /* ClosedHandCursor */
+		cssCursorStyle = "hand";
+		break;
+        case 20: /* DragMoveCursor */
+		cssCursorStyle = "move";
+		break;
+        case 21: /* DragLinkCursor */
+		cssCursorStyle = "default";
+		break;
+	}
+	var canvas = document.getElementById('canvas');
+	canvas.style.cursor = cssCursorStyle;
+}
 Module.noExitRuntime = true;
 Module['preRun'] = function() {
 	try

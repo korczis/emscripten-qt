@@ -1,14 +1,1 @@
-Configure with:
-
-../qt/configure -xplatform qws/emscripten-clang  -embedded emscripten -static -opensource -debug -static -no-qt3support -no-opengl   -system-zlib -no-gif -no-libpng -no-libmng -no-libtiff -no-libjpeg -no-accessibility -no-icu  -confirm-license -no-webkit -no-phonon -no-script -no-freetype -nomake demos -nomake examples -little-endian -no-feature-socket -no-feature-settings -no-feature-codecs -no-feature-textcodecplugin -no-feature-systemlocale -no-feature-process -no-feature-qws_multiprocess -no-feature-sound -no-feature-library -no-feature-printer -no-feature-printdialog -no-feature-printpreviewwidget  -no-feature-printpreviewdialog -no-feature-filesystemwatcher  -no-feature-systemsemaphore -no-feature-sharedmemory -feature-qws_clientblit -nomake tools  
-
-Ensure that the environment variable 
-
-EMSCRIPTENSYSTEM
-
-is set to a path containing Emscripten's usr, and make sure it ends with a /
-
-The native analogue of Emscripten-Qt (handy for debugging, since we can use gdb and also it compiles much faster) cam be built via:
-
-
-../qt/configure -xplatform qws/emscripten-clang-native  -embedded emscripten -static -opensource -debug -static -no-qt3support -no-opengl   -system-zlib -no-gif -no-libpng -no-libmng -no-libtiff -no-libjpeg -no-accessibility  -confirm-license -no-webkit -no-phonon -no-script -no-freetype -nomake demos -nomake examples -little-endian -no-feature-socket -no-feature-settings -no-feature-codecs -no-feature-textcodecplugin -no-feature-systemlocale -no-feature-process -no-feature-qws_multiprocess -no-feature-sound -no-feature-library -no-feature-printer -no-feature-printdialog -no-feature-printpreviewwidget  -no-feature-printpreviewdialog -no-feature-filesystemwatcher -no-feature-systemsemaphore -no-feature-sharedmemory -feature-qws_clientblit  -nomake tools  
+Please refer to the wiki: http://vps2.etotheipiplusone.com:30176/redmine/projects/emscripten-qt/wiki

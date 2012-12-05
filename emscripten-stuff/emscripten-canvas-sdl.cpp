@@ -35,6 +35,9 @@ extern "C"
 //		qDebug() << rgb;
 		return 0;
 	}
+	void EMSCRIPTENQT_cursorChanged(int)
+	{
+	}
 
 }
 

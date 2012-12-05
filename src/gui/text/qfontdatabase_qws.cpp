@@ -254,7 +254,11 @@ static QString qwsFontPath()
 #ifndef EMSCRIPTEN
     QString fontpath = QString::fromLocal8Bit(qgetenv("QT_QWS_FONTDIR"));
 #else
+#  ifndef EMSCRIPTEN_NATIVE
     QString fontpath = "/qt-fonts";
+#  else
+    QString fontpath = "./qt-fonts";
+#  endif
 #endif
     if (fontpath.isEmpty()) {
 #ifdef QT_FONTS_ARE_RESOURCES

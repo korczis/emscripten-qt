@@ -1,4 +1,5 @@
 #ifdef EMSCRIPTEN_NATIVE
+#include "emscripten-canvas-sdl.h"
 #include <QtCore/QDebug>
 
 extern "C" 

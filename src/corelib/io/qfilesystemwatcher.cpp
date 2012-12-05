@@ -252,12 +252,12 @@ void QPollingFileSystemWatcherEngine::timeout()
 
 QFileSystemWatcherEngine *QFileSystemWatcherPrivate::createNativeEngine()
 {
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_EMSCRIPTEN)
+    return QEmscriptenFileSystemWatcherEngine::create();
+#elif defined(Q_OS_WIN)
     return new QWindowsFileSystemWatcherEngine;
 #elif defined(Q_OS_QNX) && !defined(QT_NO_INOTIFY)
     return QInotifyFileSystemWatcherEngine::create();
-#elif defined(Q_OS_EMSCRIPTEN)
-    return QEmscriptenFileSystemWatcherEngine::create();
 #elif defined(Q_OS_LINUX)
     QFileSystemWatcherEngine *eng = QInotifyFileSystemWatcherEngine::create();
     if(!eng)
@@ -305,7 +305,7 @@ void QFileSystemWatcherPrivate::initForcedEngine(const QString &forceName)
 
     Q_Q(QFileSystemWatcher);
 
-#if defined(Q_OS_LINUX)
+#if defined(Q_OS_LINUX) && !(defined(EMSCRIPTEN))
     if(forceName == QLatin1String("inotify")) {
         forced = QInotifyFileSystemWatcherEngine::create();
     } else if(forceName == QLatin1String("dnotify")) {
@@ -644,7 +644,7 @@ QT_END_NAMESPACE
 
 #include "moc_qfilesystemwatcher.cpp"
 
-//#include "qfilesystemwatcher.moc" // Emscripten, but looks like it might be bug anyway(?)
+#include "qfilesystemwatcher.moc"
 
 #endif // QT_NO_FILESYSTEMWATCHER
 

@@ -56,7 +56,7 @@
 #endif
 
 #include <time.h>
-#ifdef QT_OS_EMSCRIPTEN
+#if defined(QT_OS_EMSCRIPTEN) || defined(EMSCRIPTEN_NATIVE) // TODO find out why emscripten native isn't defining QT_OS_EMSCRIPTEN.
 #include <sys/time.h>
 #endif
 #if defined(Q_OS_WINCE)

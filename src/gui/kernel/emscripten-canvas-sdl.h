@@ -11,7 +11,8 @@ QT_MODULE(Gui)
 
 class Q_GUI_EXPORT EmscriptenSDL
 {
-	static int startEmscriptenSDL();
+public:
+	static int exec();
 };
 
 QT_END_NAMESPACE

@@ -1,6 +1,7 @@
 #ifdef EMSCRIPTEN_NATIVE
 #include "emscripten-canvas-sdl.h"
 #include <QtCore/QDebug>
+#include <SDL/SDL.h>
 
 extern "C" 
 {
@@ -41,5 +42,20 @@ extern "C"
 	}
 
 }
+
+int EmscriptenSDL::exec()
+{
+	SDL_Init( SDL_INIT_EVERYTHING );
+	SDL_Surface *screen = SDL_SetVideoMode( 640, 480, 32, SDL_SWSURFACE );
+	SDL_Event event;
+
+	qDebug() << "SDL - woo!";
+
+	while( SDL_PollEvent( &event ) )
+        {
+	}
+	return 0;
+}
+
 
 #endif

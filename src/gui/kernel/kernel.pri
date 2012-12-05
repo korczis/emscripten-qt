@@ -201,7 +201,8 @@ embedded {
 
 	emscripten {
         SOURCES += \
-            kernel/qeventdispatcher_emscripten_qws.cpp
+            kernel/qeventdispatcher_emscripten_qws.cpp \
+            ../../emscripten-stuff/emscripten-canvas-sdl.cpp
         HEADERS += \
             kernel/qeventdispatcher_emscripten_qws.h
     }

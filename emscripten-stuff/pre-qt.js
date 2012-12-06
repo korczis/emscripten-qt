@@ -88,6 +88,70 @@ function EMSCRIPTENQT_mouseUp(e)
 		Module.print("Exception during mouseUp event: " + e);
 	}
 }
+function EMSCRIPTENQT_keyEvent(e, isPress)
+{
+	var jsKeyCode = e.keyCode;
+	var qtKeyCode = 0;
+	var qtModifiers = 0;
+	Module.print("keyCode: "  + jsKeyCode + " shifted: " + e.shiftKey + 'a'.charCodeAt());
+	if (jsKeyCode >= 'a'.charCodeAt() && jsKeyCode <= 'z'.charCodeAt())
+	{
+		qtKeyCode = 0x41 + (jsKeyCode - 'a'.charCodeAt());
+		Module.print("keyCode lower: "  + jsKeyCode + " shifted: " + e.shiftKey);
+	}
+	else if (jsKeyCode >= 'A'.charCodeAt() && jsKeyCode <= 'Z'.charCodeAt())
+	{
+		Module.print("keyCode upper: "  + jsKeyCode + " shifted: " + e.shiftKey);
+		if (!e.shiftKey)
+		{
+			Module.print("Unshifting keycode");
+			jsKeyCode -= 'A'.charCodeAt() - 'a'.charCodeAt();
+			qtKeyCode = 0x41 + (jsKeyCode - 'a'.charCodeAt());
+		}
+		else
+		{
+			qtKeyCode = 0x41 + (jsKeyCode - 'A'.charCodeAt());
+		}
+	}
+	else
+	{
+		switch(jsKeyCode)
+		{
+		case 37: // Left
+			qtKeyCode = 0x01000012;
+			break;
+		case 38: // Up
+			qtKeyCode = 0x01000013;
+			break;
+		case 39: // Right
+			qtKeyCode = 0x01000014;
+			break;
+		case 40: // Down
+			qtKeyCode = 0x01000015;
+			break;
+		case 8: // Backspace
+			qtKeyCode = 0x01000003;
+			break;
+		case 13: // Enter
+			qtKeyCode = 0x01000004;
+			break;
+		};
+	}
+	Module.print("keyCode unshifted: "  + jsKeyCode);
+	if (e.shiftKey)
+	{
+		qtModifiers += 0x02000000;
+	}
+	_EMSCRIPTENQT_canvasKeyChanged(jsKeyCode, qtKeyCode, qtModifiers, isPress, false);
+}
+function EMSCRIPTENQT_keyUp(e)
+{
+	EMSCRIPTENQT_keyEvent(e, false);
+}
+function EMSCRIPTENQT_keyDown(e)
+{
+	EMSCRIPTENQT_keyEvent(e, true);
+}
 function _EMSCRIPTENQT_cursorChanged(newCursorShape)
 {
 	Module.print("Qt cursor changed: " + newCursorShape);
@@ -182,6 +246,9 @@ Module['preRun'] = function() {
                 canvas.addEventListener("mousemove", EMSCRIPTENQT_mouseMoved, false);
                 canvas.addEventListener("mousedown", EMSCRIPTENQT_mouseDown, false);
                 canvas.addEventListener("mouseup", EMSCRIPTENQT_mouseUp, false);
+                canvas.addEventListener("keydown", EMSCRIPTENQT_keyDown, true);
+                canvas.addEventListener("keyup", EMSCRIPTENQT_keyUp, true);
+		canvas.tabIndex = 1;
 		// Data cache dir for QWS
 		Module['FS_createFolder']("/tmp/", 'qtembedded-0', true, true);
 

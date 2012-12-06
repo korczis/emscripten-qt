@@ -12,7 +12,7 @@ QT_MODULE(Gui)
 class Q_GUI_EXPORT EmscriptenSDL
 {
 public:
-	static int exec();
+	static int exec(int canvasWidthPixels, int canvasHeightPixels);
 };
 
 QT_END_NAMESPACE

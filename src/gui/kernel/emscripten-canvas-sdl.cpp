@@ -3,6 +3,13 @@
 #include <QtCore/QDebug>
 #include <SDL/SDL.h>
 
+namespace
+{
+	int canvasWidthPixels = 800;
+	int canvasHeightPixels = 640;
+	SDL_Surface *sdlCanvas = NULL;
+}
+
 extern "C" 
 {
 	void EMSCRIPTENQT_resetTimerCallback(long milliseconds)
@@ -11,11 +18,11 @@ extern "C"
 	}
 	int EMSCRIPTEN_canvas_width_pixels()
 	{
-		return 520;
+		return canvasWidthPixels;
 	}
 	int EMSCRIPTEN_canvas_height_pixels()
 	{
-		return 440;
+		return canvasHeightPixels;
 	}
 	int EMSCRIPTEN_flush_pixels(uchar* data)
 	{
@@ -43,17 +50,38 @@ extern "C"
 
 }
 
-int EmscriptenSDL::exec()
+int EmscriptenSDL::exec(int canvasWidthPixels, int canvasHeightPixels)
 {
-	SDL_Init( SDL_INIT_EVERYTHING );
-	SDL_Surface *screen = SDL_SetVideoMode( 640, 480, 32, SDL_SWSURFACE );
-	SDL_Event event;
+	::canvasWidthPixels = canvasWidthPixels;
+	::canvasHeightPixels = canvasHeightPixels;
+	if (SDL_Init( SDL_INIT_EVERYTHING ) == -1)
+	{
+		qDebug() << "SDL init failed!";
+		return -1;
+	}
+	sdlCanvas = SDL_SetVideoMode( canvasWidthPixels, canvasHeightPixels, 32, SDL_SWSURFACE );
+	if (!sdlCanvas)
+	{
+		qDebug() << "Creation of " << canvasWidthPixels << "x" << canvasHeightPixels << " SDL surface failed!";
+		return -1;
+	}
 
 	qDebug() << "SDL - woo!";
 
-	while( SDL_PollEvent( &event ) )
-        {
+	SDL_Event event;
+	bool quit = false;
+	while (!quit)
+	{
+		while( SDL_PollEvent( &event ) )
+		{
+			if( event.type == SDL_QUIT )
+			{
+qDebug() << "Quitting";
+				quit = true;
+			}    
+		}
 	}
+qDebug() << "Exiting SDL::exec";
 	return 0;
 }
 

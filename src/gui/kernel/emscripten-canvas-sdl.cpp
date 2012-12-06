@@ -163,6 +163,14 @@ int EmscriptenSDL::exec(int canvasWidthPixels, int canvasHeightPixels)
 		{
 			EMSCRIPTENQT_mouseCanvasPosChanged(event.motion.x, event.motion.y);
 		}
+		else if (event.type == SDL_MOUSEBUTTONUP)
+		{
+			EMSCRIPTENQT_mouseCanvasButtonChanged(1, 0);
+		}
+		else if (event.type == SDL_MOUSEBUTTONDOWN)
+		{
+			EMSCRIPTENQT_mouseCanvasButtonChanged(1, 1);
+		}
 
 	}
 	qDebug() << "Exiting SDL::exec";

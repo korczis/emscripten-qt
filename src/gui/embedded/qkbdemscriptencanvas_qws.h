@@ -17,6 +17,11 @@ class Q_GUI_EXPORT QWSEmscriptenCanvasKeyboardHandler : public QObject, public Q
 public:
     QWSEmscriptenCanvasKeyboardHandler(const QString &device);
     ~QWSEmscriptenCanvasKeyboardHandler();
+    static void canvasKeyChanged(int unicode, int keycode, int modifiers,
+                                 int isPress, int autoRepeat);
+private:
+    static QWSEmscriptenCanvasKeyboardHandler *m_instance;
+
 };
 
 

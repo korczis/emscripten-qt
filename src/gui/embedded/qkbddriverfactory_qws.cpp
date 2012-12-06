@@ -102,9 +102,13 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 
     \sa keys()
 */
+#include <qdebug.h>
 QWSKeyboardHandler *QKbdDriverFactory::create(const QString& key, const QString& device)
 {
     QString driver = key.toLower();
+#if defined(Q_OS_EMSCRIPTEN)
+    return new QWSEmscriptenCanvasKeyboardHandler(device);
+#endif
 #if defined(Q_OS_QNX) && !defined(QT_NO_QWS_KBD_QNX)
     if (driver == QLatin1String("qnx") || driver.isEmpty())
         return new QWSQnxKeyboardHandler(device);
@@ -112,10 +116,6 @@ QWSKeyboardHandler *QKbdDriverFactory::create(const QString& key, const QString&
 #if defined(Q_OS_INTEGRITY)
     if (driver == QLatin1String("integrity") || driver.isEmpty())
         return new QWSIntKeyboardHandler(device);
-#endif
-#if defined(Q_OS_EMSCRIPTEN)
-    if (driver == QLatin1String("emscriptencanvas") || driver.isEmpty())
-        return new QWSEmscriptenCanvasKeyboardHandler(device);
 #endif
 #ifndef QT_NO_QWS_KEYBOARD
 # ifndef QT_NO_QWS_KBD_TTY
@@ -159,6 +159,9 @@ QStringList QKbdDriverFactory::keys()
 {
     QStringList list;
 
+#if defined(Q_OS_EMSCRIPTEN)
+    list << QLatin1String("emscriptencanvas");
+#endif
 #if defined(Q_OS_QNX) && !defined(QT_NO_QWS_KBD_QNX)
     list << QLatin1String("QNX");
 #endif

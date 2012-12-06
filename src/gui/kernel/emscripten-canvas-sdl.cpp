@@ -16,6 +16,8 @@ extern "C"
 {
 	void EMSCRIPTENQT_mouseCanvasPosChanged(int x, int y); 
 	void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state);
+	void EMSCRIPTENQT_canvasKeyChanged(int unicode, int keycode, int modifiers, int isPress, int autoRepeat);
+
 
 	void setpixel(SDL_Surface *screen, int x, int y, Uint8 r, Uint8 g, Uint8 b)
 	{
@@ -145,6 +147,7 @@ int EmscriptenSDL::exec(int canvasWidthPixels, int canvasHeightPixels)
 
 	SDL_Event event;
 	bool quit = false;
+	SDL_EnableUNICODE( 1 );
 	while (!quit)
 	{
 		SDL_WaitEvent(&event);
@@ -170,6 +173,18 @@ int EmscriptenSDL::exec(int canvasWidthPixels, int canvasHeightPixels)
 		else if (event.type == SDL_MOUSEBUTTONDOWN)
 		{
 			EMSCRIPTENQT_mouseCanvasButtonChanged(1, 1);
+		}
+		else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+		{
+			const int unicode = event.key.keysym.unicode;
+			const SDLKey sdlKey = event.key.keysym.sym;
+			const bool isPress = (event.type == SDL_KEYDOWN);
+			Qt::Key qtKey = static_cast<Qt::Key>(0);
+			if (sdlKey >= SDLK_a && sdlKey <= SDLK_z)
+			{
+				qtKey = static_cast<Qt::Key>((sdlKey - SDLK_a) + Qt::Key_A);
+			}
+			EMSCRIPTENQT_canvasKeyChanged(unicode, qtKey, 0, isPress, false);
 		}
 
 	}

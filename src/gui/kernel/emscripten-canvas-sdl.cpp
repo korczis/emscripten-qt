@@ -158,22 +158,27 @@ Qt::KeyboardModifiers sdlModifiersToQtModifiers(SDLMod sdlMod)
 	return qtModifiers;
 }
 
-int EmscriptenSDL::exec(int canvasWidthPixels, int canvasHeightPixels)
+bool EmscriptenSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
 {
 	::canvasWidthPixels = canvasWidthPixels;
 	::canvasHeightPixels = canvasHeightPixels;
 	if (SDL_Init( SDL_INIT_EVERYTHING ) == -1)
 	{
 		qDebug() << "SDL init failed!";
-		return -1;
+		return false;
 	}
 	sdlCanvas = SDL_SetVideoMode( canvasWidthPixels, canvasHeightPixels, 32, SDL_SWSURFACE );
 	if (!sdlCanvas)
 	{
 		qDebug() << "Creation of " << canvasWidthPixels << "x" << canvasHeightPixels << " SDL surface failed!";
-		return -1;
+		return false;
 	}
 	sdlInited = true;
+	return true;
+}
+
+int EmscriptenSDL::exec()
+{
 
 	qDebug() << "SDL - woo!";
 	// Any requested timers from before we called SDL_Init would have been ignored, so let's

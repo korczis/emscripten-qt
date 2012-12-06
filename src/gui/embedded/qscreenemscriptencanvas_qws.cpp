@@ -5,7 +5,7 @@ extern "C"
 {
     int EMSCRIPTEN_canvas_width_pixels();
     int EMSCRIPTEN_canvas_height_pixels();
-    int EMSCRIPTEN_flush_pixels(uchar* data);
+    int EMSCRIPTEN_flush_pixels(uchar* data, int x, int y, int w, int h);
 }
 
 QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
@@ -77,7 +77,7 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
     // first, call the parent implementation. The parent implementation will update
     // the region on our in-memory surface
     QScreen::exposeRegion(r, changing);
-    EMSCRIPTEN_flush_pixels(data);
+    EMSCRIPTEN_flush_pixels(data + r.boundingRect().top() * lstep + 4 * r.boundingRect().left(), r.boundingRect().left(), r.boundingRect().top(), r.boundingRect().width(), r.boundingRect().height());
 }
 
 

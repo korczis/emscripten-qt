@@ -85,7 +85,7 @@ extern "C"
 	{
 		return canvasHeightPixels;
 	}
-	int EMSCRIPTEN_flush_pixels(uchar* data)
+	int EMSCRIPTEN_flush_pixels(uchar* data, int regionX, int regionY, int regionW, int regionH)
 	{
 		int x, y, ytimesw;
 		const int BPP = 4;
@@ -96,10 +96,10 @@ extern "C"
 		}
 
 		uchar *pos = data;
-		for(y = 0; y < sdlCanvas->h; y++ ) 
+		for(y = regionY; y < regionY + regionH; y++ )
 		{
 			ytimesw = y*sdlCanvas->pitch/BPP;
-			for( x = 0; x < sdlCanvas->w; x++ ) 
+			for( x = regionX; x < regionX + regionW; x++ )
 			{
 				const int b = *pos;
 				pos++;
@@ -110,6 +110,7 @@ extern "C"
 				pos++;
 				setpixel(sdlCanvas, x, ytimesw, r, g, b);
 			}
+            pos += 4 * (canvasWidthPixels - regionW);
 		}
 
 		if(SDL_MUSTLOCK(sdlCanvas)) SDL_UnlockSurface(sdlCanvas);

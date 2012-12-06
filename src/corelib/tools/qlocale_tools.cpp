@@ -2285,7 +2285,7 @@ Q_CORE_EXPORT char *qdtoa ( double d, int mode, int ndigits, int *decpt, int *si
     _control87(MCW_EM, MCW_EM);
 #endif
 
-#if defined(Q_OS_LINUX) && !defined(__UCLIBC__)
+#if defined(Q_OS_LINUX) && !defined(__UCLIBC__) && !defined(Q_OS_EMSCRIPTEN)
     fenv_t envp;
     feholdexcept(&envp);
 #endif
@@ -2301,7 +2301,7 @@ Q_CORE_EXPORT char *qdtoa ( double d, int mode, int ndigits, int *decpt, int *si
 #endif //_M_X64
 #endif //Q_OS_WIN
 
-#if defined(Q_OS_LINUX) && !defined(__UCLIBC__)
+#if defined(Q_OS_LINUX) && !defined(__UCLIBC__) && !defined(Q_OS_EMSCRIPTEN)
     fesetenv(&envp);
 #endif
 

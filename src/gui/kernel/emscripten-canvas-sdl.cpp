@@ -123,6 +123,40 @@ extern "C"
 
 }
 
+Qt::Key sdlToQtKey(SDLKey sdlKey)
+{
+	if (sdlKey >= SDLK_a && sdlKey <= SDLK_z)
+	{
+		return static_cast<Qt::Key>((sdlKey - SDLK_a) + Qt::Key_A);
+	}
+	switch (sdlKey)
+	{
+	case SDLK_BACKSPACE:
+		return Qt::Key_Backspace;
+	case SDLK_LEFT:
+		qDebug() << "Left";
+		return Qt::Key_Left;
+	case SDLK_RIGHT:
+		return Qt::Key_Right;
+	case SDLK_UP:
+		return Qt::Key_Up;
+	case SDLK_DOWN:
+		return Qt::Key_Down;
+	default:
+		return static_cast<Qt::Key>(0);
+	}
+}
+
+Qt::KeyboardModifiers sdlModifiersToQtModifiers(SDLMod sdlMod)
+{
+	Qt::KeyboardModifiers qtModifiers = Qt::NoModifier;
+	if ((sdlMod & KMOD_RSHIFT) != 0 || (sdlMod & KMOD_LSHIFT) != 0)
+	{
+		qtModifiers = qtModifiers | Qt::ShiftModifier;
+	}
+	return qtModifiers;
+}
+
 int EmscriptenSDL::exec(int canvasWidthPixels, int canvasHeightPixels)
 {
 	::canvasWidthPixels = canvasWidthPixels;
@@ -179,12 +213,9 @@ int EmscriptenSDL::exec(int canvasWidthPixels, int canvasHeightPixels)
 			const int unicode = event.key.keysym.unicode;
 			const SDLKey sdlKey = event.key.keysym.sym;
 			const bool isPress = (event.type == SDL_KEYDOWN);
-			Qt::Key qtKey = static_cast<Qt::Key>(0);
-			if (sdlKey >= SDLK_a && sdlKey <= SDLK_z)
-			{
-				qtKey = static_cast<Qt::Key>((sdlKey - SDLK_a) + Qt::Key_A);
-			}
-			EMSCRIPTENQT_canvasKeyChanged(unicode, qtKey, 0, isPress, false);
+			const Qt::Key qtKey = sdlToQtKey(sdlKey);
+			const Qt::KeyboardModifiers qtModifiers = sdlModifiersToQtModifiers(event.key.keysym.mod);
+			EMSCRIPTENQT_canvasKeyChanged(unicode, qtKey, qtModifiers, isPress, false);
 		}
 
 	}

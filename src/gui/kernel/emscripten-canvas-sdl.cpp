@@ -14,6 +14,17 @@ namespace
 
 extern "C" 
 {
+	void setpixel(SDL_Surface *screen, int x, int y, Uint8 r, Uint8 g, Uint8 b)
+	{
+		Uint32 *pixmem32;
+		Uint32 colour;  
+
+		colour = SDL_MapRGB( screen->format, r, g, b );
+
+		pixmem32 = (Uint32*) screen->pixels  + y + x;
+		*pixmem32 = colour;
+	}
+
 	Uint32 timerCallback(Uint32 interval, void *param)
 	{
 		qDebug() << "timerCallback";
@@ -71,22 +82,34 @@ extern "C"
 	}
 	int EMSCRIPTEN_flush_pixels(uchar* data)
 	{
-		uchar *pos = data;
-		QString rgb;
-		for (int y = 0; y < 440; y++)
+		int x, y, ytimesw;
+		const int BPP = 4;
+
+		if(SDL_MUSTLOCK(sdlCanvas)) 
 		{
-			for (int x = 0; x < 520; x++)
+			if(SDL_LockSurface(sdlCanvas) < 0) return -1;
+		}
+
+		uchar *pos = data;
+		for(y = 0; y < sdlCanvas->h; y++ ) 
+		{
+			ytimesw = y*sdlCanvas->pitch/BPP;
+			for( x = 0; x < sdlCanvas->w; x++ ) 
 			{
+				const int b = *pos;
 				pos++;
-				rgb += QString::number(*pos) + " ";
+				const int g = *pos;
 				pos++;
-				rgb += QString::number(*pos) + " ";
+				const int r = *pos;
 				pos++;
-				rgb += QString::number(*pos) + " ";
 				pos++;
+				setpixel(sdlCanvas, x, ytimesw, r, g, b);
 			}
 		}
-		//		qDebug() << rgb;
+
+		if(SDL_MUSTLOCK(sdlCanvas)) SDL_UnlockSurface(sdlCanvas);
+
+		SDL_Flip(sdlCanvas); 
 		return 0;
 	}
 	void EMSCRIPTENQT_cursorChanged(int)

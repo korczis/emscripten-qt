@@ -72,16 +72,14 @@ int EmscriptenSDL::exec(int canvasWidthPixels, int canvasHeightPixels)
 	bool quit = false;
 	while (!quit)
 	{
-		while( SDL_PollEvent( &event ) )
+		SDL_WaitEvent(&event);
+		if( event.type == SDL_QUIT )
 		{
-			if( event.type == SDL_QUIT )
-			{
-qDebug() << "Quitting";
-				quit = true;
-			}    
-		}
+			qDebug() << "Quitting";
+			quit = true;
+		}    
 	}
-qDebug() << "Exiting SDL::exec";
+	qDebug() << "Exiting SDL::exec";
 	return 0;
 }
 

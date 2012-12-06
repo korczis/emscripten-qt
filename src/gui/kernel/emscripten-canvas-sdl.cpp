@@ -14,6 +14,9 @@ namespace
 
 extern "C" 
 {
+	void EMSCRIPTENQT_mouseCanvasPosChanged(int x, int y); 
+	void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state);
+
 	void setpixel(SDL_Surface *screen, int x, int y, Uint8 r, Uint8 g, Uint8 b)
 	{
 		Uint32 *pixmem32;
@@ -155,6 +158,10 @@ int EmscriptenSDL::exec(int canvasWidthPixels, int canvasHeightPixels)
 			// Qt timer.
 			qDebug() << "Calling Qt event loop";
 			EMSCRIPTENQT_timerCallback();
+		}
+		else if (event.type == SDL_MOUSEMOTION)
+		{
+			EMSCRIPTENQT_mouseCanvasPosChanged(event.motion.x, event.motion.y);
 		}
 
 	}

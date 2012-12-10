@@ -865,8 +865,6 @@ void QWSClient::sendRegionEvent(int winid, QRegion rgn, int type
     event.simpleData.id = id;
 #endif
 
-//    qDebug() << "Sending Region event to" << winid << "rgn" << rgn << "type" << type;
-
     sendEvent(&event);
 }
 
@@ -2225,14 +2223,12 @@ void QWSServer::sendMouseEvent(const QPoint& pos, int state, int wheel)
 #ifdef EVENT_BLOCK_DEBUG
     qDebug() << "sendMouseEvent" << pos.x() << pos.y() << state << (block ? "block" : "pass");
 #endif
-    qDebug() << "sendMouseEvent" << pos.x() << pos.y() << state << (block ? "block" : "pass"); // TODO - remove this!
 
     if (state || wheel)
         qwsServerPrivate->_q_screenSaverWake();
 
     if ( block )
     {
-        qDebug() << "Returning due to block";
         return;
     }
 
@@ -2279,7 +2275,6 @@ void QWSServer::sendMouseEvent(const QPoint& pos, int state, int wheel)
 
 void QWSServerPrivate::sendMouseEventUnfiltered(const QPoint &pos, int state, int wheel)
 {
-    qDebug() << " QWSServerPrivate::sendMouseEventUnfiltered(const QPoint &pos, int state, int wheel)";
     const int btnMask = Qt::LeftButton | Qt::RightButton | Qt::MidButton;
     QWSMouseEvent event;
 
@@ -2314,7 +2309,6 @@ void QWSServerPrivate::sendMouseEventUnfiltered(const QPoint &pos, int state, in
     event.simpleData.window = win ? win->id : 0;
 
 #ifndef QT_NO_QWS_CURSOR
-    qDebug() << "qt_screencursor: " << (void*)qt_screencursor;
     if (qt_screencursor)
         qt_screencursor->move(pos.x(),pos.y());
 

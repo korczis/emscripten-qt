@@ -64,7 +64,7 @@ void QEmscriptenCanvasScreen::setMode(int nw,int nh,int nd)
 }
 void QEmscriptenCanvasScreen::setDirty(const QRect& r)
 {
-    qDebug() << "QEmscriptenCanvasScreen::setDirty: r: " << r;
+    //qDebug() << "QEmscriptenCanvasScreen::setDirty: r: " << r;
 }
 void QEmscriptenCanvasScreen::blank(bool something)
 {
@@ -73,7 +73,6 @@ void QEmscriptenCanvasScreen::blank(bool something)
 
 void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
 {
-    qDebug() << "QEmscriptenCanvasScreen::exposeRegion: region: " << r << " changing: " << changing;
     // first, call the parent implementation. The parent implementation will update
     // the region on our in-memory surface
     QScreen::exposeRegion(r, changing);

@@ -189,7 +189,7 @@ bool QTimerInfoList::timerWait(timeval &tm)
     timeval currentTime = updateCurrentTime();
     repairTimersIfNeeded();
 
-    qDebug() << "timerWait: # timers in list: " << size();
+    //qDebug() << "timerWait: # timers in list: " << size();
 
     // Find first waiting timer not already active
     QTimerInfo *t = 0;
@@ -208,7 +208,7 @@ bool QTimerInfoList::timerWait(timeval &tm)
         tm = t->timeout - currentTime;
     } else {
         // no time to wait
-        qDebug() << "The timer with id: " << t->id << " has no time to wait!";
+        //qDebug() << "The timer with id: " << t->id << " has no time to wait!";
         tm.tv_sec  = 0;
         tm.tv_usec = 0;
     }
@@ -218,7 +218,7 @@ bool QTimerInfoList::timerWait(timeval &tm)
 
 void QTimerInfoList::registerTimer(int timerId, int interval, QObject *object)
 {
-    qDebug() << "Unregister timer: " << timerId << " for object: " << object;
+    //qDebug() << "Unregister timer: " << timerId << " for object: " << object;
     QTimerInfo *t = new QTimerInfo;
     t->id = timerId;
     t->interval.tv_sec  = interval / 1000;
@@ -232,12 +232,12 @@ void QTimerInfoList::registerTimer(int timerId, int interval, QObject *object)
 
 bool QTimerInfoList::unregisterTimer(int timerId)
 {
-    qDebug() << "Unregister timer: " << timerId;
+    //qDebug() << "Unregister timer: " << timerId;
     // set timer inactive
     for (int i = 0; i < count(); ++i) {
         register QTimerInfo *t = at(i);
         if (t->id == timerId) {
-            qDebug() << "Unregistered timer was connected to object: " << t->obj;
+            //qDebug() << "Unregistered timer was connected to object: " << t->obj;
             // found it
             removeAt(i);
             if (t == firstTimerInfo)
@@ -259,7 +259,7 @@ bool QTimerInfoList::unregisterTimer(int timerId)
 
 bool QTimerInfoList::unregisterTimers(QObject *object)
 {
-    qDebug() << "unregisterTimers for object: " << object;
+    //qDebug() << "unregisterTimers for object: " << object;
     if (isEmpty())
         return false;
     for (int i = 0; i < count(); ++i) {
@@ -275,12 +275,12 @@ bool QTimerInfoList::unregisterTimers(QObject *object)
             // release the timer id
             if (!QObjectPrivate::get(t->obj)->inThreadChangeEvent)
             {
-                qDebug() << "released timer with id: " << t->id;
+                //qDebug() << "released timer with id: " << t->id;
                 QAbstractEventDispatcherPrivate::releaseTimerId(t->id);
             }
             else
             {
-                qDebug() << "did not release timer with id: " << t->id;
+                //qDebug() << "did not release timer with id: " << t->id;
             }
 
             delete t;
@@ -288,7 +288,7 @@ bool QTimerInfoList::unregisterTimers(QObject *object)
             --i;
         }
     }
-    qDebug() << "There are now " << size() << " timers";
+    //qDebug() << "There are now " << size() << " timers";
     return true;
 }
 
@@ -391,7 +391,7 @@ QEventDispatcherEmscripten::~QEventDispatcherEmscripten()
 
 bool QEventDispatcherEmscripten::processEvents(QEventLoop::ProcessEventsFlags flags)
 {
-    qDebug() << "QEventDispatcherEmscripten::processEvents called";
+    //qDebug() << "QEventDispatcherEmscripten::processEvents called";
     QCoreApplicationPrivate::sendPostedEvents(0, 0, QThreadData::current());
     if (flags & QEventLoop::WaitForMoreEvents)
     {
@@ -402,7 +402,7 @@ bool QEventDispatcherEmscripten::processEvents(QEventLoop::ProcessEventsFlags fl
 }
 bool QEventDispatcherEmscripten::hasPendingEvents()
 {
-    qDebug() << "QEventDispatcherEmscripten::hasPendingEvents called";
+    //qDebug() << "QEventDispatcherEmscripten::hasPendingEvents called";
     return false;
 }
 
@@ -417,7 +417,7 @@ void QEventDispatcherEmscripten::unregisterSocketNotifier(QSocketNotifier *notif
 
 void QEventDispatcherEmscripten::registerTimer(int timerId, int interval, QObject *object)
 {
-    qDebug() << "QEventDispatcherEmscripten::registerTimer called";
+    //qDebug() << "QEventDispatcherEmscripten::registerTimer called";
     timerList.registerTimer(timerId, interval, object);
     timeval wait_tm = { 0l, 0l };
     if (timerList.timerWait(wait_tm))
@@ -441,7 +441,7 @@ bool QEventDispatcherEmscripten::unregisterTimer(int timerId)
 }
 bool QEventDispatcherEmscripten::unregisterTimers(QObject *object)
 {
-    qDebug() << "QEventDispatcherEmscripten::unregisterTimers called";
+    //qDebug() << "QEventDispatcherEmscripten::unregisterTimers called";
     return timerList.unregisterTimers(object);
 }
 QList<QEventDispatcherEmscripten::TimerInfo> QEventDispatcherEmscripten::registeredTimers(QObject *object) const
@@ -452,28 +452,28 @@ QList<QEventDispatcherEmscripten::TimerInfo> QEventDispatcherEmscripten::registe
 
 void QEventDispatcherEmscripten::wakeUp()
 {
-    qDebug() << "Wake up called" << m_batchProcessingEvents;
+    //qDebug() << "Wake up called" << m_batchProcessingEvents;
     if (!m_batchProcessingEvents) // If we're batch processing events, then we're already awake.
     {
         EMSCRIPTENQT_resetTimerCallback(0);
     }
     else
     {
-        qDebug() << "Ignoring";
+        //qDebug() << "Ignoring";
     }
 }
 
 void QEventDispatcherEmscripten::startingUp()
 {
-    qDebug() << "QEventDispatcherEmscripten::startingUp called";
+    //qDebug() << "QEventDispatcherEmscripten::startingUp called";
 }
 void QEventDispatcherEmscripten::closingDown()
 {
-    qDebug() << "QEventDispatcherEmscripten::closingDown called";
+    //qDebug() << "QEventDispatcherEmscripten::closingDown called";
 }
 void QEventDispatcherEmscripten::interrupt()
 {
-    qDebug() << "QEventDispatcherEmscripten::interrupt called";
+    //qDebug() << "QEventDispatcherEmscripten::interrupt called";
 }
 void QEventDispatcherEmscripten::flush()
 {
@@ -492,7 +492,7 @@ void QEventDispatcherEmscripten::batchProcessEventsAndScheduleNextCallback()
 
 void QEventDispatcherEmscripten::processEmscriptenCallback()
 {
-    qDebug() << "Got callback";
+    //qDebug() << "Got callback";
     batchProcessEventsAndScheduleNextCallback();
 }
 
@@ -514,7 +514,7 @@ void QEventDispatcherEmscripten::batchProcessEvents()
             // we could potentially end up in an infinite loop - add this safety valve.
             // Schedule a callback so that we can continue where we left off.
             scheduleNextTimerCallback(0);
-            qDebug() << "Bailing while processing events due to timeout";
+            //qDebug() << "Bailing while processing events due to timeout";
             break;
         }
     } while (hasPendingEvents());
@@ -526,7 +526,7 @@ void QEventDispatcherEmscripten::scheduleNextCallback()
     timeval wait_tm = { 0l, 0l };
     if (timerList.timerWait(wait_tm))
     {
-        qDebug() << "next timer event in " << wait_tm.tv_usec / 1000 << "ms callback";
+        //qDebug() << "next timer event in " << wait_tm.tv_usec / 1000 << "ms callback";
         scheduleNextTimerCallback(wait_tm.tv_usec / 1000);
     }
 }

@@ -4,7 +4,7 @@ function _EMSCRIPTENQT_timerCallback_springboard()
 	try
 	{
 		_EMSCRIPTENQT_timerCallback();
-		Module.print("Completed without exceptions");
+		//Module.print("Completed without exceptions");
 	}
 	catch (e)
 	{
@@ -20,7 +20,7 @@ function _EMSCRIPTENQT_resetTimerCallback(milliseconds)
 		EMSCRIPTENQT_callbackTimer = null;
 	}
 	EMSCRIPTENQT_callbackTimer = setTimeout(_EMSCRIPTENQT_timerCallback_springboard, milliseconds);
-	Module.print("callback requested in " + milliseconds + "ms");
+	//Module.print("callback requested in " + milliseconds + "ms");
 }
 function _EMSCRIPTEN_canvas_width_pixels()
 {
@@ -63,7 +63,7 @@ function _EMSCRIPTEN_flush_pixels(data, regionX, regionY, regionW, regionH)
 function EMSCRIPTENQT_mouseMoved(e)
 {
         var canvas = document.getElementById('canvas');
-        Module.print("Mouse moved: " + (e.pageX - canvas.offsetLeft) + "," + (e.pageY - canvas.offsetTop));
+        //Module.print("Mouse moved: " + (e.pageX - canvas.offsetLeft) + "," + (e.pageY - canvas.offsetTop));
 	cwrap('EMSCRIPTENQT_mouseCanvasPosChanged', 'number', ['number', 'number'])(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
 }
 function EMSCRIPTENQT_mouseDown(e)
@@ -156,7 +156,7 @@ function EMSCRIPTENQT_keyDown(e)
 }
 function _EMSCRIPTENQT_cursorChanged(newCursorShape)
 {
-	Module.print("Qt cursor changed: " + newCursorShape);
+	//Module.print("Qt cursor changed: " + newCursorShape);
         var cssCursorStyle;
 
 	switch(newCursorShape)

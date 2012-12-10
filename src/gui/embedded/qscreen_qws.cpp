@@ -2503,9 +2503,7 @@ void QScreen::exposeRegion(QRegion r, int windowIndex)
 */
 void QScreen::blit(const QImage &img, const QPoint &topLeft, const QRegion &reg)
 {
-    qDebug() << "QScreen blit: " << img.size() << " ," << topLeft << " , " << reg;
     const QRect bound = (region() & QRect(topLeft, img.size())).boundingRect();
-    qDebug() << "bound: " << bound;
     QWSDisplay::grab();
     d_ptr->blit(this, img, topLeft - offset(),
             (reg & bound).translated(-topLeft));

@@ -554,7 +554,7 @@ class Settings:
     Settings = Settings2
     Settings.load() # load defaults
 
-Settings.reset()
+#Settings.reset()
 
 # Building
 

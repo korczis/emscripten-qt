@@ -9,6 +9,7 @@ def path_from_root(*pathelems):
   return os.path.join(__rootpath__, *pathelems)
 
 JS_OPTIMIZER = path_from_root('tools', 'js-optimizer.js')
+JS_GLOBAL_LISTER = path_from_root('tools', 'js-global-lister.js')
 
 BEST_JS_PROCESS_SIZE = 1024*1024
 
@@ -35,6 +36,8 @@ def run(filename, passes, js_engine, jcache):
   js = open(filename).read()
   if os.linesep != '\n':
     js = js.replace(os.linesep, '\n') # we assume \n in the splitting code
+
+  #print "All: " + js + "\n---- endall ----\n"
 
   # Find suffix
   suffix_marker = '// EMSCRIPTEN_GENERATED_FUNCTIONS'
@@ -71,10 +74,45 @@ def run(filename, passes, js_engine, jcache):
     assert gen_end > gen_start
     pre = js[:gen_start]
     post = js[gen_end:]
+    global_allocs_start = pre.find("// === Body ===")
+    if global_allocs_start == None:
+      raise AssertionError("Could not find start of global allocations!")
+    heap_alloc_start = pre.find("\nHEAP", global_allocs_start)
+    if heap_alloc_start == None:
+      raise AssertionError("Could not find start of heap allocations!")
+    not_heap_alloc = re.compile('\n[^H]')
+    heap_alloc_end = not_heap_alloc.search(pre, heap_alloc_start)
+    if heap_alloc_end == None:
+      raise AssertionError("Could not find end of heap allocations!")
+    global_allocs_end = heap_alloc_end.start() - 1
+
+    #print "global allocs:\n" + pre[global_allocs_start:global_allocs_end] + "\n------"
+    real_pre = pre[:global_allocs_start] + pre[global_allocs_end:]
+    
+    
     js = js[gen_start:gen_end]
   else:
     pre = ''
     post = ''
+
+  #print("pre(" + str(len(pre)) + "):" + pre);
+  #print("\n---------endpre--------");
+  #print("post(" + str(len(post)) + "):" + post);
+  #print("\n---------endpost--------");
+  #print("js(" + str(len(js)) + "):" + js);
+  #print("\n---------endjs--------");
+  #print("real_pre(" + str(len(real_pre)) + "):" + real_pre);
+  #print("\n---------endreal_pre--------");
+  non_generated = real_pre + post
+  #print("non-generated: " + non_generated + "\n-----\n")
+  non_generated_filename = temp_files.get('jsnongen.js').name
+  f = open(non_generated_filename, 'w')
+  f.write(non_generated)
+  f.close()
+  all_globals_filename = run_on_chunk([js_engine, JS_GLOBAL_LISTER, non_generated_filename, ''])
+  all_globals = open(all_globals_filename).read()
+  print "all_globals: "  + all_globals + "\n-------\n"
+
 
   # Pick where to split into chunks, so that (1) they do not oom in node/uglify, and (2) we can run them in parallel
   # If we have metadata, we split only the generated code, and save the pre and post on the side (and do not optimize them)
@@ -131,7 +169,7 @@ def run(filename, passes, js_engine, jcache):
   if len(filenames) > 0:
     # XXX Use '--nocrankshaft' to disable crankshaft to work around v8 bug 1895, needed for older v8/node (node 0.6.8+ should be ok)
     commands = map(lambda filename: [js_engine, JS_OPTIMIZER, filename, 'noPrintMetadata'] + passes, filenames)
-    if DEBUG: print >>sys.stderr, 'commands: ' , commands
+    print >>sys.stderr, 'commands: ' , commands
 
     cores = min(multiprocessing.cpu_count(), filenames)
     if len(chunks) > 1 and cores >= 2:

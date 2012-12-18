@@ -85,6 +85,7 @@ def run(filename, passes, js_engine, jcache):
     if heap_alloc_end == None:
       raise AssertionError("Could not find end of heap allocations!")
     global_allocs_end = heap_alloc_end.start() - 1
+    global_allocs = pre[global_allocs_start:global_allocs_end]
 
     #print "global allocs:\n" + pre[global_allocs_start:global_allocs_end] + "\n------"
     real_pre = pre[:global_allocs_start] + pre[global_allocs_end:]
@@ -110,9 +111,22 @@ def run(filename, passes, js_engine, jcache):
   f.write(non_generated)
   f.close()
   all_globals_filename = run_on_chunk([js_engine, JS_GLOBAL_LISTER, non_generated_filename, ''])
-  all_globals = open(all_globals_filename).read()
-  print "all_globals: "  + all_globals + "\n-------\n"
+  all_globals = open(all_globals_filename).read().split("\n")
+  #print "all_globals: "  , all_globals , "\n-------\n"
+  reserved_names = all_globals + ["Module", "var", "do",   "break",
+        "case", "catch", "const", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile"]; 
+  obfuscatable_names = list(generated)
+  global_dec_regex = re.compile("\nvar ([^;\s]+);")
+  next_global_var_dec_search_pos = 0
+  while True:
+	global_var_dec = global_dec_regex.search(global_allocs, next_global_var_dec_search_pos)
+	if global_var_dec == None:
+		break
+	obfuscatable_names.append(global_var_dec.group(1))
+	
+	next_global_var_dec_search_pos = global_var_dec.end() + 1
 
+  print ("obfuscatable names: " , obfuscatable_names)
 
   # Pick where to split into chunks, so that (1) they do not oom in node/uglify, and (2) we can run them in parallel
   # If we have metadata, we split only the generated code, and save the pre and post on the side (and do not optimize them)

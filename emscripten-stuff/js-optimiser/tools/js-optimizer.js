@@ -1887,6 +1887,19 @@ function eliminateMemSafe(ast) {
   eliminate(ast, true);
 }
 
+function squeeze(ast) {
+  throw 'not yet working - uglifyjs will hang when squeezing some functions in Qt';
+  traverseGeneratedFunctions(ast,
+	function(fun)
+	{
+		printErr("squeezing function: " + fun[1]);
+		var function_as_ast = ['toplevel', [fun]];
+		var squeezed = uglify.uglify.ast_squeeze(function_as_ast);
+		// Replace the original function 'body' with the new, squeezed function 'body'.
+		Array.prototype.splice.apply(fun, [2, fun.length - 2].concat(squeezed[1][0].slice(2)));
+	});
+}
+
 // Passes table
 
 var compress = false, printMetadata = true;
@@ -1907,7 +1920,8 @@ var passes = {
   eliminate: eliminate,
   eliminateMemSafe: eliminateMemSafe,
   compress: function() { compress = true; },
-  noPrintMetadata: function() { printMetadata = false; }
+  noPrintMetadata: function() { printMetadata = false; },
+  squeeze: squeeze
 };
 
 // Main

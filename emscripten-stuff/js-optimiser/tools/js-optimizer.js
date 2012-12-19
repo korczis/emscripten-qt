@@ -1911,8 +1911,9 @@ var passes = {
 };
 
 // Main
-
+//printErr("Here!");
 var src = read(arguments_[0]);
+//printErr("src: " + src);
 var ast = srcToAst(src);
 //printErr(JSON.stringify(ast)); throw 1;
 var metadata = src.split('\n').filter(function(line) { return line.indexOf(GENERATED_FUNCTIONS_MARKER) >= 0 })[0];

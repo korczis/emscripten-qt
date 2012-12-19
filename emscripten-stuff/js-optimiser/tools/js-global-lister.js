@@ -90,3 +90,7 @@ for (var i = 0; i < toplevel.length; i++)
 			print (toplevel[i][1]);
 	}
 }
+
+//var js = astToSrc(uglify.uglify.ast_mangle(ast), true);
+//print("js:" + js);
+

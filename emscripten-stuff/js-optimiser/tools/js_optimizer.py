@@ -76,9 +76,6 @@ def run(filename, passes, js_engine, jcache):
     assert gen_end > gen_start
     pre = js[:gen_start]
     post = js[gen_end:]
-    global_allocs_start = pre.find("// === Body ===")
-    
-    
     js = js[gen_start:gen_end]
   else:
     pre = ''
@@ -93,6 +90,7 @@ def run(filename, passes, js_engine, jcache):
   #print("real_pre(" + str(len(real_pre)) + "):" + real_pre);
   #print("\n---------endreal_pre--------");
   if obfuscate_globals:
+	  global_allocs_start = pre.find("// === Body ===")
 	  if global_allocs_start == None:
               raise AssertionError("Could not find start of global allocations!")
           heap_alloc_start = pre.find("\nHEAP", global_allocs_start)
@@ -256,8 +254,7 @@ def run(filename, passes, js_engine, jcache):
   f = open(filename, 'w')
   f.write(pre);
   for out_file in filenames:
-    chunk = open(out_file).read()
-    f.write(chunk)
+    f.write(open(out_file).read())
     f.write('\n')
   if jcache:
     for cached in cached_outputs:

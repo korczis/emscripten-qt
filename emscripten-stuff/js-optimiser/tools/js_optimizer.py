@@ -2,6 +2,8 @@
 import os, sys, subprocess, multiprocessing, re
 import shared
 
+obfuscate_globals = True
+
 temp_files = shared.TempFiles()
 
 __rootpath__ = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -113,9 +115,14 @@ def run(filename, passes, js_engine, jcache):
   all_globals_filename = run_on_chunk([js_engine, JS_GLOBAL_LISTER, non_generated_filename, ''])
   all_globals = open(all_globals_filename).read().split("\n")
   #print "all_globals: "  , all_globals , "\n-------\n"
-  reserved_names = all_globals + ["Module", "var", "do",   "break",
-        "case", "catch", "const", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile"]; 
+  reserved_names = set(all_globals + ["Module", "var", "do",   "break",
+        "case", "catch", "const", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile"]) 
+  no_obfuscate = ["_malloc", "_free", "_main", "_EMSCRIPTENQT_mouseCanvasPosChanged", "_EMSCRIPTENQT_mouseCanvasButtonChanged", "_EMSCRIPTENQT_canvasKeyChanged", "_EMSCRIPTENQT_timerCallback" ] + all_globals
   obfuscatable_names = list(generated)
+  for not_obfuscatable in no_obfuscate:
+	if not_obfuscatable in obfuscatable_names:
+		obfuscatable_names.remove(not_obfuscatable)
+  obfuscatable_names = ["HEAP32"] + obfuscatable_names
   global_dec_regex = re.compile("\nvar ([^;\s]+);")
   next_global_var_dec_search_pos = 0
   while True:
@@ -124,9 +131,38 @@ def run(filename, passes, js_engine, jcache):
 		break
 	obfuscatable_names.append(global_var_dec.group(1))
 	
-	next_global_var_dec_search_pos = global_var_dec.end() + 1
+	next_global_var_dec_search_pos = global_var_dec.end()
 
   print ("obfuscatable names: " , obfuscatable_names)
+  obfuscated_name = {}
+  obfuscated_name_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
+  current_obfuscated_name = ['a', 'a']
+  for obfuscatable_name in obfuscatable_names:
+	while True:
+		current_char_index = len(current_obfuscated_name) - 1
+		while True:
+			blah = obfuscated_name_chars.find(current_obfuscated_name[current_char_index])
+			if blah + 1 == len(obfuscated_name_chars):
+				current_obfuscated_name[current_char_index] = obfuscated_name_chars[0]
+				if current_char_index == 0:
+					current_obfuscated_name = [obfuscated_name_chars[0]] + current_obfuscated_name
+				else:
+				   current_char_index = current_char_index - 1
+			else:
+				current_obfuscated_name[current_char_index] = obfuscated_name_chars[blah + 1]
+				break
+	        if "".join(current_obfuscated_name) not in reserved_names:
+			break
+	obfuscated_name[obfuscatable_name] = "".join(current_obfuscated_name)
+	print "obfuscating " + obfuscatable_name + " as " + "".join(current_obfuscated_name)
+			
+	
+  obfuscated_names_by_size = sorted(list(obfuscatable_names), key=lambda name: len(name))
+  obfuscated_names_by_size.reverse()
+  
+  for obfuscatable_name in obfuscated_names_by_size:
+	print "goobles: " + obfuscatable_name
+	
 
   # Pick where to split into chunks, so that (1) they do not oom in node/uglify, and (2) we can run them in parallel
   # If we have metadata, we split only the generated code, and save the pre and post on the side (and do not optimize them)
@@ -171,6 +207,16 @@ def run(filename, passes, js_engine, jcache):
     def write_chunk(chunk, i):
       temp_file = temp_files.get('.jsfunc_%d.ll' % i).name
       f = open(temp_file, 'w')
+      if obfuscate_globals:
+	    print "About to obfuscated names in a chunk\n"
+	    name_num = 0
+	    total_names = len(obfuscated_names_by_size)
+	    for obfuscatable_name in obfuscated_names_by_size:
+		chunk = chunk.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
+		name_num = name_num + 1
+		if (name_num % 100 == 0):
+			print "Done " + str(name_num) + " of " + str(total_names)
+	    print "... done\n"
       f.write(chunk)
       f.write(suffix)
       f.close()
@@ -199,11 +245,19 @@ def run(filename, passes, js_engine, jcache):
     if DEBUG: print >>sys.stderr, 'no file names' 
     filenames = []
 
+  if obfuscate_globals:
+    for obfuscatable_name in obfuscated_names_by_size:
+	    global_allocs = global_allocs.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
+	    post = post.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
+    global_allocs = "var " + obfuscated_name["HEAP32"] + " = HEAP32;\n" + global_allocs
+
   filename += '.jo.js'
   f = open(filename, 'w')
-  f.write(pre);
+  #f.write(real_pre + global_allocs);
+  f.write(pre[:global_allocs_start] + global_allocs + pre[global_allocs_end:]);
   for out_file in filenames:
-    f.write(open(out_file).read())
+    chunk = open(out_file).read()
+    f.write(chunk)
     f.write('\n')
   if jcache:
     for cached in cached_outputs:

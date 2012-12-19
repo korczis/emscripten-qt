@@ -1923,7 +1923,7 @@ arguments_.slice(1).forEach(function(arg) {
   passes[arg](ast);
 });
 
-var js = astToSrc(uglify.uglify.ast_mangle(ast), false), old;
+var js = astToSrc(uglify.uglify.ast_mangle(ast), compress), old;
 
 // remove unneeded newlines+spaces, and print
 do {

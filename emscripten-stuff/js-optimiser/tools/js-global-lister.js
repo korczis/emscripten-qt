@@ -77,7 +77,6 @@ print = function(x) {
 var toplevel = ast[1];
 for (var i = 0; i < toplevel.length; i++)
 {
-	print ("top level type:" + toplevel[i][0]);
 	if (toplevel[i][0] == "var")
 	{
 		var num_declared_variables = toplevel[i][1].length; 
@@ -88,7 +87,6 @@ for (var i = 0; i < toplevel.length; i++)
 	}
 	else if (toplevel[i][0] == "defun")
 	{
-		print ("gobbles\n");
 			print (toplevel[i][1]);
 	}
 }

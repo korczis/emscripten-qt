@@ -260,7 +260,7 @@ function traverseWithVariables(ast, callback) {
 }
 
 function emptyNode() { // XXX do we need to create new nodes here? can't we reuse?
-  return ['toplevel', []]
+  return ['block', []] // XXX This is a hack around the fact that vacuum doesn't always remove empty nodes, and 'toplevel' nodes in the middle of functions break uglifyjs :) blocks are safe, though.
 }
 
 // Passes

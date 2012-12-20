@@ -1368,10 +1368,71 @@ function registerize(ast) {
     // Add vars at the beginning
     if (nextReg > 1) {
       var vars = [];
+      var varNames = [];
       for (var i = 1; i < nextReg; i++) {
         vars.push([fullNames[i]]);
+	varNames.push(fullNames[i]);
       }
       getStatements(fun).unshift(['var', vars]);
+      var reduceUnusedDecs = true;
+      if (reduceUnusedDecs)
+      {
+	      // Now reduce them by changing some of the assignments into declarations.
+	      var doNotNeedEmptyDec = [];
+	      var usedVars = [];
+	      function collectVarUsages(ast)
+	      {
+		var varUsages = [];
+		traverseChildren(ast, function(node) {
+			if (node[0] == 'name' && varNames.indexOf(node[1]) != -1)
+			{
+				varUsages = varUsages.concat([node[1]]);
+			}
+			});
+		return varUsages;
+	      }
+	      for (var statementNum = 1; statementNum < getStatements(fun).length; statementNum++)
+	      {
+		var statement = getStatements(fun)[statementNum];
+                var isAssignmentOfLocalVar = false;
+		if (statement[0] == 'stat' && statement[1][0] == 'assign' && statement[1][2][0] == 'name')
+		{
+		    var varAssigned = statement[1][2][1]; 
+		    usedVars = usedVars.concat(collectVarUsages(statement[1][3]));
+                    if (varNames.indexOf(varAssigned) != -1)
+		    {
+			    isAssignmentOfLocalVar = true;
+			    if (usedVars.indexOf(varAssigned) == -1) 
+			    {
+				// This variable has not been used prior to this assignment; make it into a declaration.
+				doNotNeedEmptyDec = doNotNeedEmptyDec.concat([varAssigned]);
+				getStatements(fun)[statementNum] = ['var' , [[varAssigned, statement[1][3]]]];
+			    }
+		    }
+		}
+                if (!isAssignmentOfLocalVar)
+		{
+		    usedVars = usedVars.concat(collectVarUsages(statement));
+		}
+	      }
+	      // Remove the empty declarations
+	      var emptyDeclarations = getStatements(fun)[0][1];
+              for (var varDecNum = 0; varDecNum < emptyDeclarations.length; varDecNum++)
+	      {
+		if (doNotNeedEmptyDec.indexOf(emptyDeclarations[varDecNum][0]) != -1)
+		{
+			emptyDeclarations.splice(varDecNum, 1);
+		}
+		else
+		{
+			varDecNum++;
+		}
+	      }
+	      if (emptyDeclarations.length == 0)
+	      {
+		getStatements(fun).splice(0, 1);
+	      }
+      }
     }
     //printErr(fun[1] + ': saved ' + saved + ' / ' + (saved + nextReg - 1) + ' vars through registerization'); // not totally accurate
   });
@@ -1931,6 +1992,7 @@ var src = read(arguments_[0]);
 //printErr("src: " + src);
 var ast = srcToAst(src);
 //printErr(JSON.stringify(ast)); throw 1;
+//printErr(JSON.stringify(ast, null, 4));
 var metadata = src.split('\n').filter(function(line) { return line.indexOf(GENERATED_FUNCTIONS_MARKER) >= 0 })[0];
 //assert(metadata, 'Must have EMSCRIPTEN_GENERATED_FUNCTIONS metadata');
 if (metadata) setGeneratedFunctions(metadata);
@@ -1938,6 +2000,8 @@ if (metadata) setGeneratedFunctions(metadata);
 arguments_.slice(1).forEach(function(arg) {
   passes[arg](ast);
 });
+
+//printErr(JSON.stringify(ast, null, 4));
 
 if (mangle)
 {

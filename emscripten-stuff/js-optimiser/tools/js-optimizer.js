@@ -2025,7 +2025,7 @@ function reduceVariableScopes(ast) {
 		}
 		var localsPossiblyBeInitialisedAnywhere = [];
 		var blocks  = [];
-		var stacktopReassigned = false;
+		var stacktopReassigned = false; // TODO - update this, and factor it into evaluatesTheSameAnywherInFunction
 		traverse(functionBodyAsBlock, function(node, type)
 		{
 			function evaluatesTheSameAnywherInFunction(expression)
@@ -2124,6 +2124,9 @@ function reduceVariableScopes(ast) {
 		var localsThatCanBeInitialisedAnywhere = [];
 		localsPossiblyBeInitialisedAnywhere.forEach( function(local) { if (localsReAssigned.indexOf(local) == -1) { localsThatCanBeInitialisedAnywhere.push(local); }});
 		printErr("localsThatCanBeInitialisedAnywhere:  " + localsThatCanBeInitialisedAnywhere);
+		var localsToRelocate = [];
+		var blockToRelocateTo = {};
+		var initialiserForRelocated = {};
 		localsThatCanBeInitialisedAnywhere.forEach(function(local) {
 				var blocksThatUseVariableThatCanBeInitialisedAnywhere = [];
 				blocks.forEach(function(block) {
@@ -2163,9 +2166,82 @@ function reduceVariableScopes(ast) {
 						//printErr(JSON.stringify(targetBlock));
 						//targetBlock[1].splice(0, 0, ['var', [[local, ['name', 'RELOCATED']]]]);
 						//printErr(JSON.stringify(targetBlock));
+						localsToRelocate.push(local);
+						blockToRelocateTo[local] = targetBlock;
 					}
 				}
 			});
+			// Do the relocations.
+			// First, remove the declaration and definition/ assignment.
+			var blocksThatAreRelocationTargets = [];
+			var definitionsForBlock = {};
+			localsToRelocate.forEach(function(localToRelocate) 
+				{
+					printErr("Removing declaration/ initialisation of " + localToRelocate);
+					traverse(functionBodyAsBlock, function(node, type)
+						{
+							if (type == 'var')
+							{
+								var declarations = node[1];
+								for (var declarationNum = 0; declarationNum < declarations.length; declarationNum++)
+								{
+									var declaration = declarations[declarationNum];
+									if (declaration[0] == localToRelocate)
+									{
+										printErr("Removing declaration: " + declaration);
+										if (declaration.length > 1)
+										{
+											initialiserForRelocated[localToRelocate] = declaration[1];
+										}
+										declarations.splice(declarationNum, 1);
+										if (declarations.length == 0)
+										{
+											return emptyNode();
+										}
+									}
+								}
+							}
+							else if (type == 'assign')
+							{
+								printErr("Found assignment: " + node);
+								if (node[2][0] == 'name')
+								{
+									var localName = node[2][1];
+									if (localName == localToRelocate)
+									{
+										printErr("Removing assignment");
+										initialiserForRelocated[localToRelocate] = node[3];
+										return emptyNode();
+									}
+								}
+							}
+						});
+					if (initialiserForRelocated[localToRelocate] == undefined)
+					{
+						throw "what the hell";
+					}
+					var targetBlock = blockToRelocateTo[localToRelocate];
+					if (definitionsForBlock[targetBlock] == undefined)
+					{
+						definitionsForBlock[targetBlock] = [];
+					}
+					definitionsForBlock[targetBlock].push([localToRelocate, initialiserForRelocated[localToRelocate]]);
+					if (blocksThatAreRelocationTargets.indexOf(targetBlock) == -1)
+					{
+						blocksThatAreRelocationTargets.push(targetBlock);	
+					}
+				});
+				blocksThatAreRelocationTargets.forEach(function(block) 
+					{
+						var bloo = ['var', definitionsForBlock[block]];
+						printErr("bloo: " + JSON.stringify(bloo, null, 4));
+						printErr("blee: " + JSON.stringify(block, null, 4));
+						block[1].splice(0, 0, bloo);
+						//block[1].splice(0, 0, ['var', [['balls', ['name', 'RELOCATED']]]]);
+						printErr("blaa: " + JSON.stringify(block, null, 4));
+					});
+			
+			
 	});
 }
 // Passes table
@@ -2200,7 +2276,7 @@ var src = read(arguments_[0]);
 //printErr("src: " + src);
 var ast = srcToAst(src);
 //printErr(JSON.stringify(ast)); throw 1;
-//printErr(JSON.stringify(ast, null, 4));
+printErr(JSON.stringify(srcToAst("var a = 1, b = 2"), null, 4));
 var metadata = src.split('\n').filter(function(line) { return line.indexOf(GENERATED_FUNCTIONS_MARKER) >= 0 })[0];
 //assert(metadata, 'Must have EMSCRIPTEN_GENERATED_FUNCTIONS metadata');
 if (metadata) setGeneratedFunctions(metadata);

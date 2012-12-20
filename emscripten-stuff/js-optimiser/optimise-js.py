@@ -11,7 +11,7 @@ filename = sys.argv[1]
 with file(filename) as f:
     final = f.read()
 
-#final = js_optimizer.run(filename, ['registerize', 'compress'], shared.NODE_JS, False)
+final = js_optimizer.run(filename, ['registerize', 'compress', 'mangle'], shared.NODE_JS, False)
 final = js_optimizer.run(filename, ['registerize'], shared.NODE_JS, False)
 
 #final = shared.Building.js_optimizer(final, ['registerize'], false)

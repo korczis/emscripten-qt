@@ -2,7 +2,7 @@
 import os, sys, subprocess, multiprocessing, re
 import shared
 
-obfuscate_globals = False
+obfuscate_globals = True
 
 temp_files = shared.TempFiles()
 

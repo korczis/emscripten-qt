@@ -1405,7 +1405,7 @@ function registerize(ast) {
 			    if (usedVars.indexOf(varAssigned) == -1) 
 			    {
 				// This variable has not been used prior to this assignment; make it into a declaration.
-				doNotNeedEmptyDec = doNotNeedEmptyDec.concat([varAssigned]);
+				doNotNeedEmptyDec.push(varAssigned);
 				getStatements(fun)[statementNum] = ['var' , [[varAssigned, statement[1][3]]]];
 			    }
 		    }
@@ -1417,7 +1417,7 @@ function registerize(ast) {
 	      }
 	      // Remove the empty declarations
 	      var emptyDeclarations = getStatements(fun)[0][1];
-              for (var varDecNum = 0; varDecNum < emptyDeclarations.length; varDecNum++)
+              for (var varDecNum = 0; varDecNum < emptyDeclarations.length; )
 	      {
 		if (doNotNeedEmptyDec.indexOf(emptyDeclarations[varDecNum][0]) != -1)
 		{

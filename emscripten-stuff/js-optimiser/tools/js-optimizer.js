@@ -2026,6 +2026,7 @@ function reduceVariableScopes(ast) {
 		var localsPossiblyBeInitialisedAnywhere = [];
 		var blocks  = [];
 		var stacktopReassigned = false; // TODO - update this, and factor it into evaluatesTheSameAnywherInFunction
+		var blockId = 0;
 		traverse(functionBodyAsBlock, function(node, type)
 		{
 			function evaluatesTheSameAnywherInFunction(expression)
@@ -2052,6 +2053,8 @@ function reduceVariableScopes(ast) {
 					node["tempblockinfo"] = new Object;
 				}
 				node["tempblockinfo"]["ancestorblocks"] = blockStack.slice();
+				node["tempblockinfo"]["blockid"] = blockId;
+				blockId++;
 
 				blocks.push(node);
 				blockStack.push(node);
@@ -2174,7 +2177,6 @@ function reduceVariableScopes(ast) {
 			// Do the relocations.
 			// First, remove the declaration and definition/ assignment.
 			var blocksThatAreRelocationTargets = [];
-			var definitionsForBlock = {};
 			localsToRelocate.forEach(function(localToRelocate) 
 				{
 					//printErr("Removing declaration/ initialisation of " + localToRelocate);
@@ -2221,19 +2223,24 @@ function reduceVariableScopes(ast) {
 						throw "what the hell";
 					}
 					var targetBlock = blockToRelocateTo[localToRelocate];
-					if (definitionsForBlock[targetBlock] == undefined)
+					if (!targetBlock["tempblockinfo"].hasOwnProperty("vardefinitions"))
 					{
-						definitionsForBlock[targetBlock] = [];
+						targetBlock["tempblockinfo"]["vardefinitions"] = [];
 					}
-					definitionsForBlock[targetBlock].push([localToRelocate, initialiserForRelocated[localToRelocate]]);
+					targetBlock["tempblockinfo"]["vardefinitions"].push([localToRelocate, initialiserForRelocated[localToRelocate]]);
 					if (blocksThatAreRelocationTargets.indexOf(targetBlock) == -1)
 					{
 						blocksThatAreRelocationTargets.push(targetBlock);	
 					}
+					//printErr("Presumably have a definition for block: " + targetBlock["tempblockinfo"]["blockid"]);
 				});
 				blocksThatAreRelocationTargets.forEach(function(block) 
 					{
-						var bloo = ['var', definitionsForBlock[block]];
+						if (block["tempblockinfo"]["vardefinitions"] == null)
+						{
+							throw "what the hell" + block["tempblockinfo"]["blockid"];
+						}
+						var bloo = ['var', block["tempblockinfo"]["vardefinitions"] ];
 						//printErr("bloo: " + JSON.stringify(bloo, null, 4));
 						//printErr("blee: " + JSON.stringify(block, null, 4));
 						block[1].splice(0, 0, bloo);

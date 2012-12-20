@@ -1966,7 +1966,7 @@ function reduceVariableScopes(ast) {
 	function(fun)
 	{
 		printErr("reducing variable scopes for:" + fun[1]);
-		printErr(JSON.stringify(fun, null, 4));
+		//printErr(JSON.stringify(fun, null, 4));
 		var functionBodyAsBlock = [ 'block', fun[3]];
 		var topLevelBlock = functionBodyAsBlock;
 		var locals = [];
@@ -1981,7 +1981,7 @@ function reduceVariableScopes(ast) {
 				}
 				if (type == 'assign')
 				{
-					printErr("assign: " + JSON.stringify(node));
+					//printErr("assign: " + JSON.stringify(node));
 					if (node[2][0] == 'name')
 					{
 						var localName = node[2][1];
@@ -1989,7 +1989,7 @@ function reduceVariableScopes(ast) {
 						{
 							// Already been declared; assume we are now changing its value TODO - this is too strict - 
 							// declaration does not necessarily mean definition!
-							printErr(indent + "The variable: " + localName + " was re-assigned");
+							//printErr(indent + "The variable: " + localName + " was re-assigned");
 							localsReAssigned.push(localName);
 						}
 					}
@@ -2004,7 +2004,7 @@ function reduceVariableScopes(ast) {
 					for (var declarationNum = 0; declarationNum < declarations.length; declarationNum++)
 					{		
 						var declaration = declarations[declarationNum];
-						printErr("New local: " + declaration);
+						//printErr("New local: " + declaration);
 						locals.push(declaration[0]);
 					}
 				}
@@ -2014,7 +2014,7 @@ function reduceVariableScopes(ast) {
 				if (type == "block")
 				{
 					blockStack.pop();
-					printErr("popped: " + blockStack.length);
+					//printErr("popped: " + blockStack.length);
 					indent = indent.substr(0, -1);
 				}
 			});
@@ -2032,17 +2032,17 @@ function reduceVariableScopes(ast) {
 			{
 				if (expression[0] == 'name' && expression[1] == 'STACKTOP')
 				{
-					printErr("woohoo: " + expression);
+					//printErr("woohoo: " + expression);
 					return true;
 				}
 				if (expression[0] == 'binary' && expression[1] == '+' && expression[2][0] == 'name' && localsPossiblyBeInitialisedAnywhere.indexOf(expression[2][1]) != -1 &&
 				    localsReAssigned.indexOf(expression[2][1]) == -1 &&
 				    expression[3][0] == 'num')
 				{
-					printErr("woohoo" + expression + "|" + expression[0] + "|" + expression[1] + "|" + expression[2][0] + "|" + expression[2][1] + "|" + localsPossiblyBeInitialisedAnywhere + "|" + localsReAssigned);
+					//printErr("woohoo" + expression + "|" + expression[0] + "|" + expression[1] + "|" + expression[2][0] + "|" + expression[2][1] + "|" + localsPossiblyBeInitialisedAnywhere + "|" + localsReAssigned);
 					return true;
 				}
-				printErr("wahwah:" + JSON.stringify(expression) + "|" + localsReAssigned + "|" + localsPossiblyBeInitialisedAnywhere);
+				//printErr("wahwah:" + JSON.stringify(expression) + "|" + localsReAssigned + "|" + localsPossiblyBeInitialisedAnywhere);
 				return false;
 			}
 			if (type == "block")
@@ -2055,7 +2055,7 @@ function reduceVariableScopes(ast) {
 
 				blocks.push(node);
 				blockStack.push(node);
-				printErr("pushed: " + blockStack.length);
+				//printErr("pushed: " + blockStack.length);
 				indent = indent + " ";
 			}
 			else if (type == 'var')
@@ -2075,14 +2075,14 @@ function reduceVariableScopes(ast) {
 			}
 			else if (type == 'name' && locals.indexOf(node[1]) != -1)
 			{
-				printErr(indent + "using : " + node[1]);
+				//printErr(indent + "using : " + node[1]);
 				var currentBlock = blockStack[blockStack.length - 1];
 				if (!currentBlock["tempblockinfo"].hasOwnProperty("localsused"))
 				{
 					currentBlock["tempblockinfo"]["localsused"] = [];
 				}
 				currentBlock["tempblockinfo"]["localsused"] = currentBlock["tempblockinfo"]["localsused"].concat(node[1]);
-				printErr(indent + "total : " + currentBlock["tempblockinfo"]["localsused"]);
+				//printErr(indent + "total : " + currentBlock["tempblockinfo"]["localsused"]);
 				if (blocks.indexOf(currentBlock) == -1)
 				{
 					throw "what the hell";
@@ -2090,7 +2090,7 @@ function reduceVariableScopes(ast) {
 			}
 			else if (type == 'assign')
 			{
-				printErr("assign: " + JSON.stringify(node));
+				//printErr("assign: " + JSON.stringify(node));
 				if (node[2][0] == 'name')
 				{
 					var localName = node[2][1];
@@ -2109,21 +2109,21 @@ function reduceVariableScopes(ast) {
 			if (type == "block")
 			{
 				blockStack.pop();
-				printErr("popped: " + blockStack.length);
+				//printErr("popped: " + blockStack.length);
 				indent = indent.substr(0, -1);
 			}
 		}
 		);
-		printErr("Num blocks: " + blocks.length);
+		//printErr("Num blocks: " + blocks.length);
 		for (var blockNum = 0; blockNum < blocks.length; blockNum++)
 		{
 			var block = blocks[blockNum];
-			printErr("block has " + block["tempblockinfo"]["localsused"]) ;
-			printErr(" boo:" + blocks[blockNum]) ;
+			//printErr("block has " + block["tempblockinfo"]["localsused"]) ;
+			//printErr(" boo:" + blocks[blockNum]) ;
 		}
 		var localsThatCanBeInitialisedAnywhere = [];
 		localsPossiblyBeInitialisedAnywhere.forEach( function(local) { if (localsReAssigned.indexOf(local) == -1) { localsThatCanBeInitialisedAnywhere.push(local); }});
-		printErr("localsThatCanBeInitialisedAnywhere:  " + localsThatCanBeInitialisedAnywhere);
+		//printErr("localsThatCanBeInitialisedAnywhere:  " + localsThatCanBeInitialisedAnywhere);
 		var localsToRelocate = [];
 		var blockToRelocateTo = {};
 		var initialiserForRelocated = {};
@@ -2141,9 +2141,9 @@ function reduceVariableScopes(ast) {
 					var commonAncestorBlocks = blocks.slice();
 					blocksThatUseVariableThatCanBeInitialisedAnywhere.forEach(function(block) 
 					{
-						printErr("block has " + block["tempblockinfo"]["ancestorblocks"].length + " ancestors");
-						printErr("Finding common ancestors");
-						printErr(commonAncestorBlocks.length + " potentials");
+						//printErr("block has " + block["tempblockinfo"]["ancestorblocks"].length + " ancestors");
+						//printErr("Finding common ancestors");
+						//printErr(commonAncestorBlocks.length + " potentials");
 						var commonAncestorBlocksIndex = 0;
 						while (commonAncestorBlocksIndex < commonAncestorBlocks.length)
 						{
@@ -2157,12 +2157,12 @@ function reduceVariableScopes(ast) {
 							}
 						}
 					});
-					printErr("The relocatable local " + local + " is used in " + blocksThatUseVariableThatCanBeInitialisedAnywhere.length + " blocks and is not used in the top level block");
+					//printErr("The relocatable local " + local + " is used in " + blocksThatUseVariableThatCanBeInitialisedAnywhere.length + " blocks and is not used in the top level block");
 					// Ancestors are in depth order, so pick the last (i.e. closest to the set of blocks it is ancestor to)
 					var targetBlock = commonAncestorBlocks[commonAncestorBlocks.length - 1];
 					if (targetBlock != topLevelBlock)
 					{
-						printErr("The relocatable local " + local + " can be relocated");
+						//printErr("The relocatable local " + local + " can be relocated");
 						//printErr(JSON.stringify(targetBlock));
 						//targetBlock[1].splice(0, 0, ['var', [[local, ['name', 'RELOCATED']]]]);
 						//printErr(JSON.stringify(targetBlock));
@@ -2177,7 +2177,7 @@ function reduceVariableScopes(ast) {
 			var definitionsForBlock = {};
 			localsToRelocate.forEach(function(localToRelocate) 
 				{
-					printErr("Removing declaration/ initialisation of " + localToRelocate);
+					//printErr("Removing declaration/ initialisation of " + localToRelocate);
 					traverse(functionBodyAsBlock, function(node, type)
 						{
 							if (type == 'var')
@@ -2188,7 +2188,7 @@ function reduceVariableScopes(ast) {
 									var declaration = declarations[declarationNum];
 									if (declaration[0] == localToRelocate)
 									{
-										printErr("Removing declaration: " + declaration);
+										//printErr("Removing declaration: " + declaration);
 										if (declaration.length > 1)
 										{
 											initialiserForRelocated[localToRelocate] = declaration[1];
@@ -2203,13 +2203,13 @@ function reduceVariableScopes(ast) {
 							}
 							else if (type == 'assign')
 							{
-								printErr("Found assignment: " + node);
+								//printErr("Found assignment: " + node);
 								if (node[2][0] == 'name')
 								{
 									var localName = node[2][1];
 									if (localName == localToRelocate)
 									{
-										printErr("Removing assignment");
+										//printErr("Removing assignment");
 										initialiserForRelocated[localToRelocate] = node[3];
 										return emptyNode();
 									}
@@ -2234,11 +2234,11 @@ function reduceVariableScopes(ast) {
 				blocksThatAreRelocationTargets.forEach(function(block) 
 					{
 						var bloo = ['var', definitionsForBlock[block]];
-						printErr("bloo: " + JSON.stringify(bloo, null, 4));
-						printErr("blee: " + JSON.stringify(block, null, 4));
+						//printErr("bloo: " + JSON.stringify(bloo, null, 4));
+						//printErr("blee: " + JSON.stringify(block, null, 4));
 						block[1].splice(0, 0, bloo);
 						//block[1].splice(0, 0, ['var', [['balls', ['name', 'RELOCATED']]]]);
-						printErr("blaa: " + JSON.stringify(block, null, 4));
+						//printErr("blaa: " + JSON.stringify(block, null, 4));
 					});
 			
 			
@@ -2276,7 +2276,7 @@ var src = read(arguments_[0]);
 //printErr("src: " + src);
 var ast = srcToAst(src);
 //printErr(JSON.stringify(ast)); throw 1;
-printErr(JSON.stringify(srcToAst("var a = 1, b = 2"), null, 4));
+//printErr(JSON.stringify(srcToAst("var a = 1, b = 2"), null, 4));
 var metadata = src.split('\n').filter(function(line) { return line.indexOf(GENERATED_FUNCTIONS_MARKER) >= 0 })[0];
 //assert(metadata, 'Must have EMSCRIPTEN_GENERATED_FUNCTIONS metadata');
 if (metadata) setGeneratedFunctions(metadata);

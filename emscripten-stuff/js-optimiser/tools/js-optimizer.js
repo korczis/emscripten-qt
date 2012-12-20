@@ -1902,7 +1902,7 @@ function squeeze(ast) {
 
 // Passes table
 
-var compress = false, printMetadata = true;
+var compress = false, printMetadata = true, mangle = false;
 
 var passes = {
   dumpAst: dumpAst,
@@ -1921,6 +1921,7 @@ var passes = {
   eliminateMemSafe: eliminateMemSafe,
   compress: function() { compress = true; },
   noPrintMetadata: function() { printMetadata = false; },
+  mangle: function() { mangle = true; },
   squeeze: squeeze
 };
 
@@ -1938,7 +1939,11 @@ arguments_.slice(1).forEach(function(arg) {
   passes[arg](ast);
 });
 
-var js = astToSrc(uglify.uglify.ast_mangle(ast), compress), old;
+if (mangle)
+{
+	ast = uglify.uglify.ast_mangle(ast);
+}
+var js = astToSrc(ast, compress), old;
 
 // remove unneeded newlines+spaces, and print
 do {

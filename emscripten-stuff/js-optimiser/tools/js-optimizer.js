@@ -1961,6 +1961,169 @@ function squeeze(ast) {
 	});
 }
 
+function reduceVariableScopes(ast) {
+  traverseGeneratedFunctions(ast,
+	function(fun)
+	{
+		printErr("reducing variable scopes for:" + fun[1]);
+		printErr(JSON.stringify(fun, null, 4));
+		var functionBodyAsBlock = [ 'block', fun[3]]
+		var locals = [];
+		var localsReAssigned = [];
+		var blockStack = [];
+		var indent = "";
+		traverse(functionBodyAsBlock, function(node, type)
+			{
+				if (type == "block")
+				{
+					blockStack.push(node);
+				}
+				if (type == 'assign')
+				{
+					printErr("assign: " + JSON.stringify(node));
+					if (node[2][0] == 'name')
+					{
+						var localName = node[2][1];
+						if (locals.indexOf(localName) != -1)
+						{
+							// Already been declared; assume we are now changing its value TODO - this is too strict - 
+							// declaration does not necessarily mean definition!
+							printErr(indent + "The variable: " + localName + " was re-assigned");
+							localsReAssigned.push(localName);
+						}
+					}
+				}
+				else if (type == 'var')
+				{
+					if (blockStack.length > 1)
+					{
+						throw "not yet able to handle variable declarations anywhere but at the top-level";
+					}
+					var declarations = node[1];
+					for (var declarationNum = 0; declarationNum < declarations.length; declarationNum++)
+					{		
+						var declaration = declarations[declarationNum];
+						printErr("New local: " + declaration);
+						locals.push(declaration[0]);
+					}
+				}
+			},
+			function(node, type)
+			{
+				if (type == "block")
+				{
+					blockStack.pop();
+					printErr("popped: " + blockStack.length);
+					indent = indent.substr(0, -1);
+				}
+			});
+		//var localsAssignedToStackOffset = [];
+		if (blockStack.length != 0)
+		{
+			throw "what the hell";
+		}
+		var localsPossiblyBeInitialisedAnywhere = [];
+		var blocks  = [];
+		var stacktopReassigned = false;
+		traverse(functionBodyAsBlock, function(node, type)
+		{
+			function evaluatesTheSameAnywherInFunction(expression)
+			{
+				if (expression[0] == 'name' && expression[1] == 'STACKTOP')
+				{
+					printErr("woohoo: " + expression);
+					return true;
+				}
+				if (expression[0] == 'binary' && expression[1] == '+' && expression[2][0] == 'name' && localsPossiblyBeInitialisedAnywhere.indexOf(expression[2][1]) != -1 &&
+				    localsReAssigned.indexOf(expression[2][1]) == -1 &&
+				    expression[3][0] == 'num')
+				{
+					printErr("woohoo" + expression + "|" + expression[0] + "|" + expression[1] + "|" + expression[2][0] + "|" + expression[2][1] + "|" + localsPossiblyBeInitialisedAnywhere + "|" + localsReAssigned);
+					return true;
+				}
+				printErr("wahwah:" + JSON.stringify(expression) + "|" + localsReAssigned + "|" + localsPossiblyBeInitialisedAnywhere);
+				return false;
+			}
+			if (type == "block")
+			{
+				blockStack.push(node);
+				printErr("pushed: " + blockStack.length);
+				indent = indent + " ";
+				if (!node.hasOwnProperty("tempblockinfo"))
+				{
+					node["tempblockinfo"] = new Object;
+				}
+				blocks.push(node);
+				node["tempblockinfo"]["ancestorblocks"] = blockStack.slice();
+			}
+			else if (type == 'var')
+			{
+				var declarations = node[1];
+				for (var declarationNum = 0; declarationNum < declarations.length; declarationNum++)
+				{		
+					var declaration = declarations[declarationNum];
+					if (declaration.length > 1)
+					{
+						if (evaluatesTheSameAnywherInFunction(declaration[1]))
+						{
+							localsPossiblyBeInitialisedAnywhere.push(declaration[0]);
+						}
+					}
+				}
+			}
+			else if (type == 'name' && locals.indexOf(node[1]) != -1)
+			{
+				printErr(indent + "using : " + node[1]);
+				var currentBlock = blockStack[blockStack.length - 1];
+				if (!currentBlock["tempblockinfo"].hasOwnProperty("locals"))
+				{
+					currentBlock["tempblockinfo"]["locals"] = [];
+				}
+				currentBlock["tempblockinfo"]["locals"] = currentBlock["tempblockinfo"]["locals"].concat(node[1]);
+				printErr(indent + "total : " + currentBlock["tempblockinfo"]["locals"]);
+				if (blocks.indexOf(currentBlock) == -1)
+				{
+					throw "what the hell";
+				}
+			}
+			else if (type == 'assign')
+			{
+				printErr("assign: " + JSON.stringify(node));
+				if (node[2][0] == 'name')
+				{
+					var localName = node[2][1];
+					if (locals.indexOf(localName) != -1)
+					{
+						if (evaluatesTheSameAnywherInFunction(node[3]))
+						{
+							localsPossiblyBeInitialisedAnywhere.push(localName);
+						}
+					}
+				}
+			}
+		},
+		function(node, type)
+		{
+			if (type == "block")
+			{
+				blockStack.pop();
+				printErr("popped: " + blockStack.length);
+				indent = indent.substr(0, -1);
+			}
+		}
+		);
+		printErr("Num blocks: " + blocks.length);
+		for (var blockNum = 0; blockNum < blocks.length; blockNum++)
+		{
+			var block = blocks[blockNum];
+			printErr("block has " + block["tempblockinfo"]["locals"]) ;
+			printErr(" boo:" + blocks[blockNum]) ;
+		}
+		var localsThatCanBeInitialisedAnywhere = [];
+		localsPossiblyBeInitialisedAnywhere.forEach( function(local) { if (localsReAssigned.indexOf(local) == -1) { localsThatCanBeInitialisedAnywhere.push(local); }});
+		printErr("localsThatCanBeInitialisedAnywhere:  " + localsThatCanBeInitialisedAnywhere);
+	});
+}
 // Passes table
 
 var compress = false, printMetadata = true, mangle = false;
@@ -1983,7 +2146,8 @@ var passes = {
   compress: function() { compress = true; },
   noPrintMetadata: function() { printMetadata = false; },
   mangle: function() { mangle = true; },
-  squeeze: squeeze
+  squeeze: squeeze,
+  reduceVariableScopes : reduceVariableScopes
 };
 
 // Main

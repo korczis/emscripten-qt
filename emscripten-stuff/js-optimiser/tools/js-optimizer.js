@@ -1973,6 +1973,7 @@ function reduceVariableScopes(ast) {
 		var localsReAssigned = [];
 		var blockStack = [];
 		var indent = "";
+		var localStackTopAlias = null;
 		traverse(functionBodyAsBlock, function(node, type)
 			{
 				if (type == "block")
@@ -1992,6 +1993,10 @@ function reduceVariableScopes(ast) {
 							//printErr(indent + "The variable: " + localName + " was re-assigned");
 							localsReAssigned.push(localName);
 						}
+						if (node[3][0] == 'name' && node[3][1] == 'STACKTOP' && localStackTopAlias == null)
+						{
+							localStackTopAlias = node[2][1];
+						}
 					}
 				}
 				else if (type == 'var')
@@ -2006,6 +2011,14 @@ function reduceVariableScopes(ast) {
 						var declaration = declarations[declarationNum];
 						//printErr("New local: " + declaration);
 						locals.push(declaration[0]);
+						if (declaration.length > 1)
+						{
+							if (declaration[1][0] == 'name' && declaration[1][1] == 'STACKTOP' && localStackTopAlias == null)
+							{
+								printErr("Setting localStackTopAlias from declaration: " + declaration);
+								localStackTopAlias = declaration[0];
+							}
+						}
 					}
 				}
 			},
@@ -2019,11 +2032,16 @@ function reduceVariableScopes(ast) {
 				}
 			});
 		//var localsAssignedToStackOffset = [];
+		printErr("localStackTopAlias: " + localStackTopAlias);
 		if (blockStack.length != 0)
 		{
-			throw "what the hell";
+			throw "5what the hell1";
 		}
 		var localsPossiblyBeInitialisedAnywhere = [];
+		if (localStackTopAlias != null)
+		{
+			localsPossiblyBeInitialisedAnywhere.push(localStackTopAlias);
+		}
 		var blocks  = [];
 		var stacktopReassigned = false; // TODO - update this, and factor it into evaluatesTheSameAnywherInFunction
 		var blockId = 0;
@@ -2031,7 +2049,7 @@ function reduceVariableScopes(ast) {
 		{
 			function evaluatesTheSameAnywherInFunction(expression)
 			{
-				if (expression[0] == 'name' && expression[1] == 'STACKTOP')
+				if (expression[0] == 'name' && expression[1] == localStackTopAlias)
 				{
 					//printErr("woohoo: " + expression);
 					return true;
@@ -2040,7 +2058,7 @@ function reduceVariableScopes(ast) {
 				    localsReAssigned.indexOf(expression[2][1]) == -1 &&
 				    expression[3][0] == 'num')
 				{
-					//printErr("woohoo" + expression + "|" + expression[0] + "|" + expression[1] + "|" + expression[2][0] + "|" + expression[2][1] + "|" + localsPossiblyBeInitialisedAnywhere + "|" + localsReAssigned);
+					//printErr("woohoo" + expression);
 					return true;
 				}
 				//printErr("wahwah:" + JSON.stringify(expression) + "|" + localsReAssigned + "|" + localsPossiblyBeInitialisedAnywhere);
@@ -2088,7 +2106,7 @@ function reduceVariableScopes(ast) {
 				//printErr(indent + "total : " + currentBlock["tempblockinfo"]["localsused"]);
 				if (blocks.indexOf(currentBlock) == -1)
 				{
-					throw "what the hell";
+					throw "2what the hell";
 				}
 			}
 			else if (type == 'assign')
@@ -2179,9 +2197,10 @@ function reduceVariableScopes(ast) {
 			var blocksThatAreRelocationTargets = [];
 			localsToRelocate.forEach(function(localToRelocate) 
 				{
-					//printErr("Removing declaration/ initialisation of " + localToRelocate);
+					printErr("Removing declaration/ initialisation of " + localToRelocate);
 					traverse(functionBodyAsBlock, function(node, type)
 						{
+							
 							if (type == 'var')
 							{
 								var declarations = node[1];
@@ -2198,7 +2217,7 @@ function reduceVariableScopes(ast) {
 										declarations.splice(declarationNum, 1);
 										if (declarations.length == 0)
 										{
-											return emptyNode();
+											return emptyNode(); 
 										}
 									}
 								}
@@ -2213,14 +2232,14 @@ function reduceVariableScopes(ast) {
 									{
 										//printErr("Removing assignment");
 										initialiserForRelocated[localToRelocate] = node[3];
-										return emptyNode();
+										return emptyNode();  // TODO - reinstate this
 									}
 								}
 							}
 						});
 					if (initialiserForRelocated[localToRelocate] == undefined)
 					{
-						throw "what the hell";
+						throw "3what the hell" + localToRelocate;
 					}
 					var targetBlock = blockToRelocateTo[localToRelocate];
 					if (!targetBlock["tempblockinfo"].hasOwnProperty("vardefinitions"))
@@ -2228,6 +2247,7 @@ function reduceVariableScopes(ast) {
 						targetBlock["tempblockinfo"]["vardefinitions"] = [];
 					}
 					targetBlock["tempblockinfo"]["vardefinitions"].push([localToRelocate, initialiserForRelocated[localToRelocate]]);
+					//targetBlock["tempblockinfo"]["vardefinitions"].push(['if', ["binary", "!=", ['name', localToRelocate], initialiserForRelocated[localToRelocate]], ["block", [["throw", ["string", "uhoh"]]]]]);
 					if (blocksThatAreRelocationTargets.indexOf(targetBlock) == -1)
 					{
 						blocksThatAreRelocationTargets.push(targetBlock);	
@@ -2238,11 +2258,16 @@ function reduceVariableScopes(ast) {
 					{
 						if (block["tempblockinfo"]["vardefinitions"] == null)
 						{
-							throw "what the hell" + block["tempblockinfo"]["blockid"];
+							throw "4what the hell" + block["tempblockinfo"]["blockid"];
 						}
 						var bloo = ['var', block["tempblockinfo"]["vardefinitions"] ];
+						//var bloo = block["tempblockinfo"]["vardefinitions"] ;
 						//printErr("bloo: " + JSON.stringify(bloo, null, 4));
 						//printErr("blee: " + JSON.stringify(block, null, 4));
+						//for(var nose = 0; nose < bloo.length; nose++)
+						//{
+						//block[1].splice(0, 0, bloo[nose]);
+						//}
 						block[1].splice(0, 0, bloo);
 						//block[1].splice(0, 0, ['var', [['balls', ['name', 'RELOCATED']]]]);
 						//printErr("blaa: " + JSON.stringify(block, null, 4));
@@ -2283,7 +2308,7 @@ var src = read(arguments_[0]);
 //printErr("src: " + src);
 var ast = srcToAst(src);
 //printErr(JSON.stringify(ast)); throw 1;
-//printErr(JSON.stringify(srcToAst("var a = 1, b = 2"), null, 4));
+//printErr(JSON.stringify(ast, null, 4));
 var metadata = src.split('\n').filter(function(line) { return line.indexOf(GENERATED_FUNCTIONS_MARKER) >= 0 })[0];
 //assert(metadata, 'Must have EMSCRIPTEN_GENERATED_FUNCTIONS metadata');
 if (metadata) setGeneratedFunctions(metadata);

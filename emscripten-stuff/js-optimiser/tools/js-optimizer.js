@@ -1967,7 +1967,8 @@ function reduceVariableScopes(ast) {
 	{
 		printErr("reducing variable scopes for:" + fun[1]);
 		printErr(JSON.stringify(fun, null, 4));
-		var functionBodyAsBlock = [ 'block', fun[3]]
+		var functionBodyAsBlock = [ 'block', fun[3]];
+		var topLevelBlock = functionBodyAsBlock;
 		var locals = [];
 		var localsReAssigned = [];
 		var blockStack = [];
@@ -2046,15 +2047,16 @@ function reduceVariableScopes(ast) {
 			}
 			if (type == "block")
 			{
-				blockStack.push(node);
-				printErr("pushed: " + blockStack.length);
-				indent = indent + " ";
 				if (!node.hasOwnProperty("tempblockinfo"))
 				{
 					node["tempblockinfo"] = new Object;
 				}
-				blocks.push(node);
 				node["tempblockinfo"]["ancestorblocks"] = blockStack.slice();
+
+				blocks.push(node);
+				blockStack.push(node);
+				printErr("pushed: " + blockStack.length);
+				indent = indent + " ";
 			}
 			else if (type == 'var')
 			{
@@ -2075,12 +2077,12 @@ function reduceVariableScopes(ast) {
 			{
 				printErr(indent + "using : " + node[1]);
 				var currentBlock = blockStack[blockStack.length - 1];
-				if (!currentBlock["tempblockinfo"].hasOwnProperty("locals"))
+				if (!currentBlock["tempblockinfo"].hasOwnProperty("localsused"))
 				{
-					currentBlock["tempblockinfo"]["locals"] = [];
+					currentBlock["tempblockinfo"]["localsused"] = [];
 				}
-				currentBlock["tempblockinfo"]["locals"] = currentBlock["tempblockinfo"]["locals"].concat(node[1]);
-				printErr(indent + "total : " + currentBlock["tempblockinfo"]["locals"]);
+				currentBlock["tempblockinfo"]["localsused"] = currentBlock["tempblockinfo"]["localsused"].concat(node[1]);
+				printErr(indent + "total : " + currentBlock["tempblockinfo"]["localsused"]);
 				if (blocks.indexOf(currentBlock) == -1)
 				{
 					throw "what the hell";
@@ -2116,12 +2118,54 @@ function reduceVariableScopes(ast) {
 		for (var blockNum = 0; blockNum < blocks.length; blockNum++)
 		{
 			var block = blocks[blockNum];
-			printErr("block has " + block["tempblockinfo"]["locals"]) ;
+			printErr("block has " + block["tempblockinfo"]["localsused"]) ;
 			printErr(" boo:" + blocks[blockNum]) ;
 		}
 		var localsThatCanBeInitialisedAnywhere = [];
 		localsPossiblyBeInitialisedAnywhere.forEach( function(local) { if (localsReAssigned.indexOf(local) == -1) { localsThatCanBeInitialisedAnywhere.push(local); }});
 		printErr("localsThatCanBeInitialisedAnywhere:  " + localsThatCanBeInitialisedAnywhere);
+		localsThatCanBeInitialisedAnywhere.forEach(function(local) {
+				var blocksThatUseVariableThatCanBeInitialisedAnywhere = [];
+				blocks.forEach(function(block) {
+						if (block["tempblockinfo"].hasOwnProperty("localsused") && block["tempblockinfo"]["localsused"].indexOf(local) != -1)
+						{
+							blocksThatUseVariableThatCanBeInitialisedAnywhere.push(block);
+						}
+					});
+				if (blocksThatUseVariableThatCanBeInitialisedAnywhere.indexOf(topLevelBlock) == -1)
+				{
+					// Find the nearest common ancestor block.
+					var commonAncestorBlocks = blocks.slice();
+					blocksThatUseVariableThatCanBeInitialisedAnywhere.forEach(function(block) 
+					{
+						printErr("block has " + block["tempblockinfo"]["ancestorblocks"].length + " ancestors");
+						printErr("Finding common ancestors");
+						printErr(commonAncestorBlocks.length + " potentials");
+						var commonAncestorBlocksIndex = 0;
+						while (commonAncestorBlocksIndex < commonAncestorBlocks.length)
+						{
+							if (block["tempblockinfo"]["ancestorblocks"].indexOf(commonAncestorBlocks[commonAncestorBlocksIndex]) == -1)
+							{
+								commonAncestorBlocks.splice(commonAncestorBlocksIndex, 1);
+							}
+							else
+							{
+								commonAncestorBlocksIndex++;
+							}
+						}
+					});
+					printErr("The relocatable local " + local + " is used in " + blocksThatUseVariableThatCanBeInitialisedAnywhere.length + " blocks and is not used in the top level block");
+					// Ancestors are in depth order, so pick the last (i.e. closest to the set of blocks it is ancestor to)
+					var targetBlock = commonAncestorBlocks[commonAncestorBlocks.length - 1];
+					if (targetBlock != topLevelBlock)
+					{
+						printErr("The relocatable local " + local + " can be relocated");
+						//printErr(JSON.stringify(targetBlock));
+						//targetBlock[1].splice(0, 0, ['var', [[local, ['name', 'RELOCATED']]]]);
+						//printErr(JSON.stringify(targetBlock));
+					}
+				}
+			});
 	});
 }
 // Passes table

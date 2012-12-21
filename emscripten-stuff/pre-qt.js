@@ -192,18 +192,12 @@ function _EMSCRIPTENQT_cursorChanged(newCursorShape)
 		cssCursorStyle = "ns-resize"; 
 		break;
         case 6: /* SizeHorCursor */
-		// Qt doesn't discriminate between "resize left" and "resize right", so pick one at random
-		// Update: just don't change the cursor - it will be impossible to get this right, sadly :/
 		cssCursorStyle = "ew-resize";
 		break;
         case 7: /* SizeBDiagCursor */
-		// Qt doesn't discriminate between "resize bottom-left" and "resize top-right", so pick one at random
-		// Update: just don't change the cursor - it will be impossible to get this right, sadly :/
 		cssCursorStyle = "nesw-resize";
 		break;
         case 8: /* SizeFDiagCursor */
-		// Qt doesn't discriminate between "resize bottom-right" and "resize top-left", so pick one at random
-		// Update: just don't change the cursor - it will be impossible to get this right, sadly :/
 		cssCursorStyle = "nwse-resize";
 		break;
         case 9: /* SizeAllCursor */

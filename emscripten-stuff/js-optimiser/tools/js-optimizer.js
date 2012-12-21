@@ -2272,6 +2272,49 @@ function reduceVariableScopes(ast) {
 						//block[1].splice(0, 0, ['var', [['balls', ['name', 'RELOCATED']]]]);
 						//printErr("blaa: " + JSON.stringify(block, null, 4));
 					});
+		// Remove top-level empty blocks
+		var statementIndex = 0;
+		while (statementIndex < functionBodyAsBlock[1].length)
+		{
+			var currentStatement = getStatements(functionBodyAsBlock)[statementIndex];
+			if (currentStatement[0] == "block")
+			{
+				if (currentStatement[1].length == 0)
+				{
+					functionBodyAsBlock[1].splice(statementIndex, 1);
+					continue;
+				}
+			}
+			statementIndex++;
+		}
+		// Merge some redundant top-level var declarations.
+		var statementIndex = 0;
+		while (statementIndex < functionBodyAsBlock[1].length)
+		{
+			var currentStatement = getStatements(functionBodyAsBlock)[statementIndex];
+			if (currentStatement[0] == "var")
+			{
+				if (statementIndex < functionBodyAsBlock[1].length - 1)
+				{
+					var nextStatement = getStatements(functionBodyAsBlock)[statementIndex + 1];
+					if (nextStatement[0] == "var")
+					{
+						printErr("var: " + JSON.stringify(nextStatement));
+						for (var varNum = 0; varNum < nextStatement[1].length; varNum++)
+						{
+							currentStatement[1].push(nextStatement[1][varNum]);
+						}
+						functionBodyAsBlock[1].splice(statementIndex + 1, 1);
+						continue;
+					}
+					else 
+					{
+						printErr("current: " + JSON.stringify(currentStatement) + " next: " + JSON.stringify(nextStatement));
+					}
+				}
+			}
+			statementIndex++;
+		}
 			
 			
 	});

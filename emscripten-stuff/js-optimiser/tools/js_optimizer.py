@@ -2,7 +2,7 @@
 import os, sys, subprocess, multiprocessing, re
 import shared
 
-obfuscate_globals = False
+obfuscate_globals = True;
 
 temp_files = shared.TempFiles()
 
@@ -164,6 +164,7 @@ def run(filename, passes, js_engine, jcache):
           for obfuscatable_name in obfuscated_names_by_size:
 	          global_allocs = global_allocs.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
 	          post = post.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
+		  suffix = suffix.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
           global_allocs = "var " + obfuscated_name["HEAP32"] + " = HEAP32;\n" + global_allocs
           pre = pre[:global_allocs_start] + global_allocs + pre[global_allocs_end:]
 	

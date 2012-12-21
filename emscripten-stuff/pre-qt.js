@@ -100,6 +100,7 @@ function EMSCRIPTENQT_keyEvent(e, isPress)
 	{
 		qtKeyCode = 0x41 + (jsKeyCode - 'a'.charCodeAt());
 		Module.print("keyCode lower: "  + jsKeyCode + " shifted: " + e.shiftKey);
+		e.preventDefault();
 	}
 	else if (jsKeyCode >= 'A'.charCodeAt() && jsKeyCode <= 'Z'.charCodeAt())
 	{
@@ -114,9 +115,11 @@ function EMSCRIPTENQT_keyEvent(e, isPress)
 		{
 			qtKeyCode = 0x41 + (jsKeyCode - 'A'.charCodeAt());
 		}
+		e.preventDefault();
 	}
 	else
 	{
+		var recognised = true;
 		switch(jsKeyCode)
 		{
 		case 37: // Left
@@ -137,7 +140,16 @@ function EMSCRIPTENQT_keyEvent(e, isPress)
 		case 13: // Enter
 			qtKeyCode = 0x01000004;
 			break;
+		case 32: // Enter
+			qtKeyCode = 0x20;
+			break;
+		default:
+			recognised = false;
 		};
+		if (recognised)
+		{
+			e.preventDefault();
+		}
 	}
 	Module.print("keyCode unshifted: "  + jsKeyCode);
 	if (e.shiftKey)

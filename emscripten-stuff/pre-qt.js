@@ -40,24 +40,25 @@ function _EMSCRIPTEN_flush_pixels(data, regionX, regionY, regionW, regionH)
         var canvasContext = canvas.getContext("2d");
         var imageData = canvasContext.createImageData(regionW, regionH);
         var imageDataPos = 0;
-	var dataIncAfterRow = 4 * (canvasWidth - regionW);
-	for (var y = 0; y < regionH; y++)
-	{
-		for (var x = 0; x < regionW; x++)
-		{
-			var argb = HEAP32[((data)>>2)];
-			imageData.data[imageDataPos] = (argb & 0x00FF0000) >> 16;
-			imageDataPos++;
-			imageData.data[imageDataPos] = (argb & 0x0000FF00) >> 8;
-			imageDataPos++;
-			imageData.data[imageDataPos] = (argb & 0X000000FF) >> 0;
-			imageDataPos++;
-			imageData.data[imageDataPos] = 255;
-			imageDataPos++;
-			data = data + 4;
-		}
-		data = data + dataIncAfterRow;
-	}
+        var dataIncAfterRow = (canvasWidth - regionW);
+        var sourceData = (data >> 2) + canvasWidth * regionY + regionX;
+        for (var y = 0; y < regionH; y++)
+        {
+                for (var x = 0; x < regionW; x++)
+                {
+                        var argb = HEAP32[sourceData];
+                        imageData.data[imageDataPos] = (argb & 0x00FF0000) >> 16;
+                        imageDataPos++;
+                        imageData.data[imageDataPos] = (argb & 0x0000FF00) >> 8;
+                        imageDataPos++;
+                        imageData.data[imageDataPos] = (argb & 0X000000FF) >> 0;
+                        imageDataPos++;
+                        imageData.data[imageDataPos] = 255;
+                        imageDataPos++;
+                        sourceData++;
+                }
+                sourceData += dataIncAfterRow;
+        }
         canvasContext.putImageData(imageData, regionX, regionY);
 }
 function EMSCRIPTENQT_mouseMoved(e)

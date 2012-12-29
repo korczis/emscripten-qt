@@ -508,7 +508,7 @@ void QEventDispatcherEmscripten::batchProcessEvents()
         }
         // Activating timers might trigger yet more events to deal with.
         timerList.activateTimers();
-        if (hasPendingEvents() && processingBeginTime.msecsTo(QDateTime::currentDateTime()) > 500)
+        if (hasPendingEvents() && processingBeginTime.msecsTo(QDateTime::currentDateTime()) > 50)
         {
             // If processing events a) takes a long time, and b) repeatedly sets timers, then
             // we could potentially end up in an infinite loop - add this safety valve.

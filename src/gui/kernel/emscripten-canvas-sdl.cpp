@@ -95,7 +95,7 @@ extern "C"
 			if(SDL_LockSurface(sdlCanvas) < 0) return -1;
 		}
 
-		uchar *pos = data;
+		uchar *pos = data + 4 * (regionY * canvasWidthPixels + regionX);
 		for(y = regionY; y < regionY + regionH; y++ )
 		{
 			ytimesw = y*sdlCanvas->pitch/BPP;

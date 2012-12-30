@@ -7590,7 +7590,7 @@ DrawHelper qDrawHelperCallback[QImage::NImageFormats] =
 
 
 
-#if defined(Q_CC_MSVC) && !defined(_MIPS_)
+#if (defined(Q_CC_MSVC) | defined(EMSCRIPTEN)) && !defined(_MIPS_)
 template <class DST, class SRC>
 inline void qt_memfill_template(DST *dest, SRC color, int count)
 {

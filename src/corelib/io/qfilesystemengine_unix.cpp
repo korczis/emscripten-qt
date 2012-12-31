@@ -293,7 +293,7 @@ QString QFileSystemEngine::resolveGroupName(uint groupId)
 #endif
 
     struct group *gr = 0;
-#if !defined(Q_OS_INTEGRITY)
+#if !defined(Q_OS_INTEGRITY) && !defined(Q_OS_EMSCRIPTEN)
 #if !defined(QT_NO_THREAD) && defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_OPENBSD)
     size_max = sysconf(_SC_GETGR_R_SIZE_MAX);
     if (size_max == -1)

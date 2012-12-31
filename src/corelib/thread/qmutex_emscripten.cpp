@@ -60,7 +60,7 @@ QMutexPrivate::~QMutexPrivate()
 
 bool QMutexPrivate::wait(int timeout)
 {
-	return false;
+	return true;
 }
 
 void QMutexPrivate::wakeUp()

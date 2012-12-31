@@ -43,17 +43,17 @@
 
 int main(int argc, char **argv)
 {
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
-    BlurPicker blurPicker;
-    blurPicker.setWindowTitle(QT_TRANSLATE_NOOP(QGraphicsView, "Application Picker"));
+    BlurPicker *blurPicker = new BlurPicker;
+    blurPicker->setWindowTitle(QT_TRANSLATE_NOOP(QGraphicsView, "Application Picker"));
 
 #if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    blurPicker.showMaximized();
+    blurPicker->showMaximized();
 #else
-    blurPicker.setFixedSize(400, 300);
-    blurPicker.show();
+    blurPicker->setFixedSize(400, 300);
+    blurPicker->show();
 #endif
 
-    return app.exec();
+    return app->exec();
 }

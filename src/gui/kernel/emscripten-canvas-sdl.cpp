@@ -32,7 +32,6 @@ extern "C"
 
 	Uint32 timerCallback(Uint32 interval, void *param)
 	{
-		qDebug() << "timerCallback";
 		SDL_Event event;
 		SDL_UserEvent userevent;
 
@@ -68,10 +67,6 @@ extern "C"
 		if (callbackTimer == NULL)
 		{
 			qDebug() << "Error adding SDL timer: " << SDL_GetError();
-		}
-		else
-		{
-			qDebug() << "added sdl timer: " << callbackTimer;
 		}
 	}
 

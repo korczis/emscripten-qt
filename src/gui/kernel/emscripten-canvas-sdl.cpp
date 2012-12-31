@@ -194,7 +194,6 @@ int EmscriptenSDL::exec()
 		else if (event.type == SDL_USEREVENT)
 		{
 			// Qt timer.
-			qDebug() << "Calling Qt event loop";
 			EMSCRIPTENQT_timerCallback();
 		}
 		else if (event.type == SDL_MOUSEMOTION)

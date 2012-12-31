@@ -89,7 +89,11 @@ QFileInfoGatherer::QFileInfoGatherer(QObject *parent)
     connect(watcher, SIGNAL(directoryChanged(QString)), this, SLOT(list(QString)));
     connect(watcher, SIGNAL(fileChanged(QString)), this, SLOT(updateFile(QString)));
 #endif
+#ifndef EMSCRIPTEN
     start(LowPriority);
+#else
+    run();
+#endif
 }
 
 /*!
@@ -148,6 +152,9 @@ void QFileInfoGatherer::fetchExtendedInformation(const QString &path, const QStr
     this->path.push(path);
     this->files.push(files);
     condition.wakeAll();
+#ifdef EMSCRIPTEN
+    run();
+#endif
 }
 
 /*!
@@ -199,6 +206,7 @@ void QFileInfoGatherer::list(const QString &directoryPath)
     fetchExtendedInformation(directoryPath, QStringList());
 }
 
+#ifndef EMSCRIPTEN
 /*
     Until aborted wait to fetch a directory or files
 */
@@ -226,6 +234,27 @@ void QFileInfoGatherer::run()
             getFileInfos(path, list);
     }
 }
+#else
+void QFileInfoGatherer::run()
+{
+    // TODO - refine this.
+        bool updateFiles = false;
+        if (abort) {
+            return;
+        }
+        QString path;
+        QStringList list;
+        if (!this->path.isEmpty()) {
+            path = this->path.first();
+            list = this->files.first();
+            this->path.pop_front();
+            this->files.pop_front();
+            updateFiles = true;
+        }
+        if (updateFiles)
+            getFileInfos(path, list);
+}
+#endif
 
 QExtendedInformation QFileInfoGatherer::getInfo(const QFileInfo &fileInfo) const
 {

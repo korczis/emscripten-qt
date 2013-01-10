@@ -185,6 +185,8 @@ namespace
     int watchdogLoop(void*)
     {
         static Uint32 lastTimeWaitingForEvent = 0;
+        bool currentStarvationWasReported = false;
+        Uint32 currentEventLoopStarvationBegin = 0;
         SDL_mutexP(watchDogStatusMutex);
         while (!hasQuit())
         {
@@ -195,16 +197,32 @@ namespace
             }
             else
             {
-                Uint32 eventLoopStarvationBegin = SDL_GetTicks();
+                if (!currentStarvationWasReported)
+                {
+                    currentEventLoopStarvationBegin = SDL_GetTicks();
+                }
                 SDL_CondWaitTimeout(watchDogStatusCondition, watchDogStatusMutex, watchdogTimeoutMS);
                 if (!waitingForEvent)
                 {
                     // We weren't woken up to be informed that we are now waiting for an event:
-                    // therefore, we are still starving the event loop.
-                    if (SDL_GetTicks() - eventLoopStarvationBegin >= watchdogTimeoutMS)
+                    // therefore, we are (likely) still starving the event loop, although we could have been
+                    // woken to report a quit event.  Best check just in case.
+                    const Uint32 currentStarvationTimeMS = SDL_GetTicks() - currentEventLoopStarvationBegin;
+                    if (currentStarvationTimeMS >= watchdogTimeoutMS)
                     {
-                        qDebug() << "Starving event loop";
+                        qDebug() << "** Warning ** Event loop has been starved for " << currentStarvationTimeMS << "ms";
+                        currentStarvationWasReported = true;
                     }
+                }
+                else
+                {
+                    // Starvation is over!
+                    if (currentStarvationWasReported)
+                    {
+                        const Uint32 currentStarvationTimeMS = SDL_GetTicks() - currentEventLoopStarvationBegin;
+                        qDebug() << "Starvation has ceased; it lasted for " << currentStarvationTimeMS << "ms";
+                    }
+                    currentStarvationWasReported = false;
                 }
             }
         }

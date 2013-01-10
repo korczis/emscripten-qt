@@ -164,6 +164,21 @@ Qt::KeyboardModifiers sdlModifiersToQtModifiers(SDLMod sdlMod)
 	return qtModifiers;
 }
 
+Qt::MouseButton sdlButtonToQtButton(Uint8 sdlButton)
+{
+    switch (sdlButton)
+    {
+        case SDL_BUTTON_LEFT:
+            return Qt::LeftButton;
+        case SDL_BUTTON_RIGHT:
+            return Qt::RightButton;
+        case SDL_BUTTON_MIDDLE:
+            return Qt::MiddleButton;
+    }
+    qWarning() << "Did not recognise SDL mouse button: " << sdlButton;
+    return Qt::NoButton;
+}
+
 namespace
 {
     bool hasQuit()
@@ -300,11 +315,11 @@ int EmscriptenSDL::exec()
 		}
 		else if (event.type == SDL_MOUSEBUTTONUP)
 		{
-			EMSCRIPTENQT_mouseCanvasButtonChanged(1, 0);
+			EMSCRIPTENQT_mouseCanvasButtonChanged(sdlButtonToQtButton(event.button.button), 0);
 		}
 		else if (event.type == SDL_MOUSEBUTTONDOWN)
 		{
-			EMSCRIPTENQT_mouseCanvasButtonChanged(1, 1);
+            EMSCRIPTENQT_mouseCanvasButtonChanged(sdlButtonToQtButton(event.button.button), 1);
 		}
 		else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
 		{

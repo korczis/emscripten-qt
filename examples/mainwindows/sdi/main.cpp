@@ -44,12 +44,17 @@
 
 #ifdef EMSCRIPTEN_NATIVE
 #include <QtGui/emscripten-canvas-sdl.h>
+void sausage()
+{
+	Q_ASSERT(false);
+}
 #endif
 
 int main(int argc, char *argv[])
 {
 #ifdef EMSCRIPTEN_NATIVE
     EmscriptenSDL::initScreen(600, 480);
+    EmscriptenSDL::setAttemptedLocalEventLoopCallback(sausage);
 #endif
     Q_INIT_RESOURCE(sdi);
     QApplication *app = new QApplication(argc, argv);

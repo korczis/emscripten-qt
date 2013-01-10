@@ -23,6 +23,8 @@ namespace
     bool quitRequested = false; // Don't use this directly - it needs to be guarded by mutexes.
     bool hasQuit();
     void quit();
+
+    void (*attemptedLocalEventCallback)() = NULL;
 }
 
 extern "C" 
@@ -130,6 +132,10 @@ extern "C"
 
 	void EMSCRIPTENQT_attemptedLocalEventLoop()
     {
+        if (attemptedLocalEventCallback)
+        {
+            attemptedLocalEventCallback();
+        }
     }
 }
 
@@ -339,6 +345,11 @@ int EmscriptenSDL::exec()
 	SDL_WaitThread(watchdogThread, NULL);
 	qDebug() << "Exiting SDL::exec";
 	return 0;
+}
+
+void EmscriptenSDL::setAttemptedLocalEventLoopCallback(void(*callback)() )
+{
+    attemptedLocalEventCallback = callback;
 }
 
 

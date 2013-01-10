@@ -14,6 +14,7 @@ class Q_GUI_EXPORT EmscriptenSDL
 public:
 	static bool initScreen(int canvasWidthPixels, int canvasHeightPixels);
 	static int exec();
+    static void setAttemptedLocalEventLoopCallback(void (*callback)() );
 };
 
 QT_END_NAMESPACE

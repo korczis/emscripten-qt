@@ -13,7 +13,6 @@ namespace
 	SDL_TimerID callbackTimer = NULL;
 	bool sdlInited = false;
 
-    const int watchdogTimeoutMS = 2000;
 
     void (*attemptedLocalEventCallback)() = NULL;
 
@@ -25,13 +24,14 @@ namespace
         void notifyStartedWaitingForEvent();
         void notifyFinishedWaitingForEvent();
         void stop();
+        const int watchdogTimeoutMS = 2000;
     private:
         void watchdogLoop();
         bool stopRequested();
-        SDL_cond *watchDogStatusCondition;
-        SDL_mutex *watchDogStatusMutex;
-        SDL_Thread *watchdogThread;
-        bool waitingForEvent;
+        SDL_cond *m_statusCondition;
+        SDL_mutex *m_statusMutex;
+        SDL_Thread *m_thread;
+        bool m_waitingForEvent;
         bool m_stopRequested;
         static int startWatchdogLoop(void* watchDogPtr);
     };
@@ -201,32 +201,34 @@ Qt::MouseButton sdlButtonToQtButton(Uint8 sdlButton)
 namespace
 {
     WatchdogThread::WatchdogThread()
-        : watchDogStatusMutex(SDL_CreateMutex()),
-          watchDogStatusCondition(SDL_CreateCond()),
+        : m_statusMutex(SDL_CreateMutex()),
+          m_statusCondition(SDL_CreateCond()),
+          m_thread(NULL),
           m_stopRequested(false),
-          waitingForEvent(false)
+          m_waitingForEvent(false)
     {
     }
 
     void WatchdogThread::start()
     {
-        watchdogThread = SDL_CreateThread(startWatchdogLoop, static_cast<void*>(this));
+        m_thread = SDL_CreateThread(startWatchdogLoop, static_cast<void*>(this));
     }
 
     bool WatchdogThread::stopRequested()
     {
-        SDL_mutexP(watchDogStatusMutex);
+        SDL_mutexP(m_statusMutex);
         const bool result = m_stopRequested;
-        SDL_mutexV(watchDogStatusMutex);
+        SDL_mutexV(m_statusMutex);
         return result;
     }
 
     void WatchdogThread::stop()
     {
-        SDL_mutexP(watchDogStatusMutex);
+        SDL_mutexP(m_statusMutex);
         m_stopRequested = true;
-        SDL_mutexV(watchDogStatusMutex);
-        SDL_CondSignal(watchDogStatusCondition);
+        SDL_mutexV(m_statusMutex);
+        SDL_CondSignal(m_statusCondition);
+        SDL_WaitThread(m_thread, NULL);
     }
 
     void WatchdogThread::watchdogLoop()
@@ -234,13 +236,13 @@ namespace
         static Uint32 lastTimeWaitingForEvent = 0;
         bool currentStarvationWasReported = false;
         Uint32 currentEventLoopStarvationBegin = 0;
-        SDL_mutexP(watchDogStatusMutex);
+        SDL_mutexP(m_statusMutex);
         while (!stopRequested())
         {
-            if (waitingForEvent)
+            if (m_waitingForEvent)
             {
                 // Yawn ... just sleep until something interesting happens.
-                SDL_CondWait(watchDogStatusCondition, watchDogStatusMutex);
+                SDL_CondWait(m_statusCondition, m_statusMutex);
             }
             else
             {
@@ -248,8 +250,8 @@ namespace
                 {
                     currentEventLoopStarvationBegin = SDL_GetTicks();
                 }
-                SDL_CondWaitTimeout(watchDogStatusCondition, watchDogStatusMutex, watchdogTimeoutMS);
-                if (!waitingForEvent)
+                SDL_CondWaitTimeout(m_statusCondition, m_statusMutex, watchdogTimeoutMS);
+                if (!m_waitingForEvent)
                 {
                     // We weren't woken up to be informed that we are now waiting for an event:
                     // therefore, we are (likely) still starving the event loop, although we could have been
@@ -273,28 +275,29 @@ namespace
                 }
             }
         }
-        SDL_mutexV(watchDogStatusMutex);
+        SDL_mutexV(m_statusMutex);
     }
 
     void WatchdogThread::notifyStartedWaitingForEvent()
     {
-        SDL_mutexP(watchDogStatusMutex);
-        waitingForEvent = true;
-        SDL_mutexV(watchDogStatusMutex);
-        SDL_CondSignal(watchDogStatusCondition);
+        SDL_mutexP(m_statusMutex);
+        m_waitingForEvent = true;
+        SDL_mutexV(m_statusMutex);
+        SDL_CondSignal(m_statusCondition);
     }
 
     void WatchdogThread::notifyFinishedWaitingForEvent()
     {
-        SDL_mutexP(watchDogStatusMutex);
-        waitingForEvent = false;
-        SDL_mutexV(watchDogStatusMutex);
-        SDL_CondSignal(watchDogStatusCondition);
+        SDL_mutexP(m_statusMutex);
+        m_waitingForEvent = false;
+        SDL_mutexV(m_statusMutex);
+        SDL_CondSignal(m_statusCondition);
     }
 
     int WatchdogThread::startWatchdogLoop(void* watchDogPtr)
     {
         static_cast<WatchdogThread*>(watchDogPtr)->watchdogLoop();
+        qDebug() << "Watchdog thread exited";
         return 0;
     }
 }

@@ -61,6 +61,9 @@ function _EMSCRIPTEN_flush_pixels(data, regionX, regionY, regionW, regionH)
         }
         canvasContext.putImageData(imageData, regionX, regionY);
 }
+function _EMSCRIPTENQT_attemptedLocalEventLoop()
+{
+}
 function EMSCRIPTENQT_mouseMoved(e)
 {
         var canvas = document.getElementById('canvas');

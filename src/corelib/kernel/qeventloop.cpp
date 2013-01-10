@@ -51,6 +51,13 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifdef EMSCRIPTEN
+extern "C"
+{
+    void EMSCRIPTENQT_attemptedLocalEventLoop();
+}
+#endif
+
 class QEventLoopPrivate : public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QEventLoop)
@@ -186,6 +193,9 @@ int QEventLoop::exec(ProcessEventsFlags flags)
     else
     {
         qWarning() << "Main event loop already running; ignoring call to exec.";
+#ifdef EMSCRIPTEN
+        EMSCRIPTENQT_attemptedLocalEventLoop();
+#endif
         return -1;
     }
 #endif

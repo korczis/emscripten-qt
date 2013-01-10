@@ -128,6 +128,9 @@ extern "C"
 	{
 	}
 
+	void EMSCRIPTENQT_attemptedLocalEventLoop()
+    {
+    }
 }
 
 Qt::Key sdlToQtKey(SDLKey sdlKey)

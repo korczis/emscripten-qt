@@ -265,18 +265,22 @@ void MainWindow::createStatusBar()
 
 void MainWindow::readSettings()
 {
+#ifndef QT_NO_SETTINGS
     QSettings settings;
     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
     QSize size = settings.value("size", QSize(400, 400)).toSize();
     move(pos);
     resize(size);
+#endif
 }
 
 void MainWindow::writeSettings()
 {
+#ifndef QT_NO_SETTINGS
     QSettings settings;
     settings.setValue("pos", pos());
     settings.setValue("size", size());
+#endif
 }
 
 bool MainWindow::maybeSave()

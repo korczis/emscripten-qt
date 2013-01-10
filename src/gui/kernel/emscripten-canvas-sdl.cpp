@@ -21,12 +21,10 @@ extern "C"
 
 	void setpixel(SDL_Surface *screen, int x, int y, Uint8 r, Uint8 g, Uint8 b)
 	{
-		Uint32 *pixmem32;
-		Uint32 colour;  
 
-		colour = SDL_MapRGB( screen->format, r, g, b );
+		Uint32 colour = SDL_MapRGB( screen->format, r, g, b );
 
-		pixmem32 = (Uint32*) screen->pixels  + y + x;
+		Uint32 *pixmem32 = (Uint32*) screen->pixels  + y + x;
 		*pixmem32 = colour;
 	}
 

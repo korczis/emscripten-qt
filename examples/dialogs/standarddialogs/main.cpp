@@ -1,7 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
@@ -17,10 +18,10 @@
 **     notice, this list of conditions and the following disclaimer in
 **     the documentation and/or other materials provided with the
 **     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
 ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 ** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -33,7 +34,6 @@
 ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -42,25 +42,33 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
+#include <emscripten-canvas-sdl.h>
+
 
 #include "dialog.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-
-    QString translatorFileName = QLatin1String("qt_");
-    translatorFileName += QLocale::system().name();
-    QTranslator *translator = new QTranslator(&app);
-    if (translator->load(translatorFileName, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
-        app.installTranslator(translator);
-
-    Dialog dialog;
-#ifdef Q_OS_SYMBIAN
-    dialog.showMaximized();
-#else
-    dialog.show();
+#ifdef EMSCRIPTEN_NATIVE
+    EmscriptenSDL::initScreen(800, 640);
 #endif
+    QApplication *app = new QApplication(argc, argv);
 
-    return app.exec();
+    //QString translatorFileName = QLatin1String("qt_");
+    //translatorFileName += QLocale::system().name();
+    //QTranslator *translator = new QTranslator(&app);
+    //if (translator->load(translatorFileName, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+    //    app->installTranslator(translator);
+
+    Dialog *dialog = new Dialog;
+#ifdef Q_OS_SYMBIAN
+    dialog->showMaximized();
+#else
+    dialog->show();
+#endif
+    app->exec();
+
+#ifdef EMSCRIPTEN_NATIVE
+    EmscriptenSDL::exec();
+#endif
 }

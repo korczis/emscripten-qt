@@ -14,12 +14,13 @@ namespace
 	bool sdlInited = false;
 
     const int watchdogTimeoutMS = 2000;
-    bool waitingForEvent = false;
+    bool waitingForEvent = false; // Don't use this directly - it needs to be guarded by mutexes
     void startedWaitingForEvent();
     void finishedWaitingForEvent();
+    SDL_cond *watchDogStatusCondition = NULL;
+    SDL_mutex *watchDogStatusMutex = NULL;
 
     bool quitRequested = false; // Don't use this directly - it needs to be guarded by mutexes.
-    SDL_mutex *quitMutex = NULL;
     bool hasQuit();
     void quit();
 }
@@ -167,27 +168,64 @@ namespace
 {
     bool hasQuit()
     {
-        SDL_mutexP(quitMutex);
+        SDL_mutexP(watchDogStatusMutex);
         const bool result = quitRequested;
-        SDL_mutexV(quitMutex);
+        SDL_mutexV(watchDogStatusMutex);
         return result;
     }
 
     void quit()
     {
-        SDL_mutexP(quitMutex);
+        SDL_mutexP(watchDogStatusMutex);
         quitRequested = true;
-        SDL_mutexV(quitMutex);
+        SDL_mutexV(watchDogStatusMutex);
+        SDL_CondSignal(watchDogStatusCondition);
     }
 
     int watchdogLoop(void*)
     {
         static Uint32 lastTimeWaitingForEvent = 0;
+        SDL_mutexP(watchDogStatusMutex);
         while (!hasQuit())
         {
-            SDL_Delay(watchdogTimeoutMS);
+            if (waitingForEvent)
+            {
+                // Yawn ... just sleep until something interesting happens.
+                SDL_CondWait(watchDogStatusCondition, watchDogStatusMutex);
+            }
+            else
+            {
+                Uint32 eventLoopStarvationBegin = SDL_GetTicks();
+                SDL_CondWaitTimeout(watchDogStatusCondition, watchDogStatusMutex, watchdogTimeoutMS);
+                if (!waitingForEvent)
+                {
+                    // We weren't woken up to be informed that we are now waiting for an event:
+                    // therefore, we are still starving the event loop.
+                    if (SDL_GetTicks() - eventLoopStarvationBegin >= watchdogTimeoutMS)
+                    {
+                        qDebug() << "Starving event loop";
+                    }
+                }
+            }
         }
+        SDL_mutexV(watchDogStatusMutex);
         return 0;
+    }
+
+    void startedWaitingForEvent()
+    {
+        SDL_mutexP(watchDogStatusMutex);
+        waitingForEvent = true;
+        SDL_mutexV(watchDogStatusMutex);
+        SDL_CondSignal(watchDogStatusCondition);
+    }
+
+    void finishedWaitingForEvent()
+    {
+        SDL_mutexP(watchDogStatusMutex);
+        waitingForEvent = false;
+        SDL_mutexV(watchDogStatusMutex);
+        SDL_CondSignal(watchDogStatusCondition);
     }
 }
 
@@ -212,7 +250,8 @@ bool EmscriptenSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
 
 int EmscriptenSDL::exec()
 {
-    quitMutex = SDL_CreateMutex();
+    watchDogStatusMutex = SDL_CreateMutex();
+    watchDogStatusCondition = SDL_CreateCond();
     SDL_Thread *watchdogThread = SDL_CreateThread(watchdogLoop, NULL);
 
 	qDebug() << "SDL - woo!";
@@ -224,9 +263,9 @@ int EmscriptenSDL::exec()
 	SDL_EnableUNICODE( 1 );
 	while (!hasQuit())
 	{
-        waitingForEvent = true;
+        startedWaitingForEvent();
 		SDL_WaitEvent(&event);
-        waitingForEvent = false;
+        finishedWaitingForEvent();
 		if( event.type == SDL_QUIT )
 		{
 			qDebug() << "Quitting";

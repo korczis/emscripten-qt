@@ -355,7 +355,7 @@ int QTimerInfoList::activateTimers()
             // determine next timeout time
             currentTimerInfo->timeout += currentTimerInfo->interval;
             if (currentTimerInfo->timeout < currentTime)
-                currentTimerInfo->timeout = currentTime + currentTimerInfo->interval;
+                currentTimerInfo->timeout = currentTime ;//+ currentTimerInfo->interval;
 
             // reinsert timer
             timerInsert(currentTimerInfo);

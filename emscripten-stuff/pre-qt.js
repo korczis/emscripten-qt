@@ -67,29 +67,37 @@ function EMSCRIPTENQT_mouseMoved(e)
         //Module.print("Mouse moved: " + (e.pageX - canvas.offsetLeft) + "," + (e.pageY - canvas.offsetTop));
 	cwrap('EMSCRIPTENQT_mouseCanvasPosChanged', 'number', ['number', 'number'])(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
 }
-function EMSCRIPTENQT_mouseDown(e)
+function EMSCRIPTENQT_mouseButtonEvent(e, isButtonDown)
 {
         var canvas = document.getElementById('canvas');
-	try
-	{
-		cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number'])(1, 1);
-	}
-	catch (e)
-	{
-		Module.print("Exception during mouseDown event: " + e);
-	}
+        var qtMouseButton = -1; // See  Qt::MouseButton
+        switch (event.which) {
+                case 1:
+                        qtMouseButton = 1;
+                        break;
+                case 2:
+                        qtMouseButton = 4;
+                        break;
+                case 3:
+                        qtMouseButton = 2;
+                        break;
+        }
+        try
+        {
+                cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number'])(qtMouseButton, (isButtonDown ? 1 : 0));
+        }
+        catch (e)
+        {
+                Module.print("Exception during mouseButton event: " + e);
+        }
+}
+function EMSCRIPTENQT_mouseDown(e)
+{
+        EMSCRIPTENQT_mouseButtonEvent(e, true);
 }
 function EMSCRIPTENQT_mouseUp(e)
 {
-        var canvas = document.getElementById('canvas');
-	try
-	{
-		cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number'])(1, 0);
-	}
-	catch (e)
-	{
-		Module.print("Exception during mouseUp event: " + e);
-	}
+        EMSCRIPTENQT_mouseButtonEvent(e, false);
 }
 function EMSCRIPTENQT_keyEvent(e, isPress)
 {

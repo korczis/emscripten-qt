@@ -2,6 +2,8 @@
 #include "emscripten-canvas-sdl.h"
 #include <QtCore/QDebug>
 #include <SDL/SDL.h>
+#include <SDL/SDL_thread.h>
+#include <SDL/SDL_mutex.h>
 
 namespace
 {
@@ -10,6 +12,16 @@ namespace
 	SDL_Surface *sdlCanvas = NULL;
 	SDL_TimerID callbackTimer = NULL;
 	bool sdlInited = false;
+
+    const int watchdogTimeoutMS = 2000;
+    bool waitingForEvent = false;
+    void startedWaitingForEvent();
+    void finishedWaitingForEvent();
+
+    bool quitRequested = false; // Don't use this directly - it needs to be guarded by mutexes.
+    SDL_mutex *quitMutex = NULL;
+    bool hasQuit();
+    void quit();
 }
 
 extern "C" 
@@ -151,6 +163,34 @@ Qt::KeyboardModifiers sdlModifiersToQtModifiers(SDLMod sdlMod)
 	return qtModifiers;
 }
 
+namespace
+{
+    bool hasQuit()
+    {
+        SDL_mutexP(quitMutex);
+        const bool result = quitRequested;
+        SDL_mutexV(quitMutex);
+        return result;
+    }
+
+    void quit()
+    {
+        SDL_mutexP(quitMutex);
+        quitRequested = true;
+        SDL_mutexV(quitMutex);
+    }
+
+    int watchdogLoop(void*)
+    {
+        static Uint32 lastTimeWaitingForEvent = 0;
+        while (!hasQuit())
+        {
+            SDL_Delay(watchdogTimeoutMS);
+        }
+        return 0;
+    }
+}
+
 bool EmscriptenSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
 {
 	::canvasWidthPixels = canvasWidthPixels;
@@ -172,6 +212,8 @@ bool EmscriptenSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
 
 int EmscriptenSDL::exec()
 {
+    quitMutex = SDL_CreateMutex();
+    SDL_Thread *watchdogThread = SDL_CreateThread(watchdogLoop, NULL);
 
 	qDebug() << "SDL - woo!";
 	// Any requested timers from before we called SDL_Init would have been ignored, so let's
@@ -179,15 +221,16 @@ int EmscriptenSDL::exec()
 	EMSCRIPTENQT_resetTimerCallback(0);
 
 	SDL_Event event;
-	bool quit = false;
 	SDL_EnableUNICODE( 1 );
-	while (!quit)
+	while (!hasQuit())
 	{
+        waitingForEvent = true;
 		SDL_WaitEvent(&event);
+        waitingForEvent = false;
 		if( event.type == SDL_QUIT )
 		{
 			qDebug() << "Quitting";
-			quit = true;
+            quit();
 		}    
 		else if (event.type == SDL_USEREVENT)
 		{
@@ -217,6 +260,8 @@ int EmscriptenSDL::exec()
 		}
 
 	}
+	qDebug() << "Waiting for watchdogThread to terminate...";
+	SDL_WaitThread(watchdogThread, NULL);
 	qDebug() << "Exiting SDL::exec";
 	return 0;
 }

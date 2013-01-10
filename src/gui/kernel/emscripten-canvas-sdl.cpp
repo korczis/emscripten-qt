@@ -24,7 +24,7 @@ namespace
         void notifyStartedWaitingForEvent();
         void notifyFinishedWaitingForEvent();
         void stop();
-        const int watchdogTimeoutMS = 2000;
+        static const int watchdogTimeoutMS = 2000;
     private:
         void watchdogLoop();
         bool stopRequested();
@@ -34,7 +34,7 @@ namespace
         bool m_waitingForEvent;
         bool m_stopRequested;
         static int startWatchdogLoop(void* watchDogPtr);
-    };
+    } watchdogThread;
 }
 
 extern "C" 
@@ -318,14 +318,14 @@ bool EmscriptenSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
 		return false;
 	}
 	sdlInited = true;
+    // We also init the Watchdog, as we should expose any bits of code that take too long to
+    // run as soon as possible.
+    watchdogThread.start();
 	return true;
 }
 
 int EmscriptenSDL::exec()
 {
-    WatchdogThread watchdogThread;
-    watchdogThread.start();
-
 	qDebug() << "SDL - woo!";
 	// Any requested timers from before we called SDL_Init would have been ignored, so let's
 	// set up a synthetic one, now.

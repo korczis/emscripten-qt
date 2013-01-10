@@ -3306,16 +3306,23 @@ void blend_color_generic(int count, const QSpan *spans, void *userData)
     QSpanData *data = reinterpret_cast<QSpanData *>(userData);
     uint buffer[buffer_size];
     Operator op = getOperator(data, spans, count);
+    CompositionFunctionSolid funcSolid = op.funcSolid;
+    DestStoreProc dest_store = op.dest_store;
+    DestFetchProc dest_fetch = op.dest_fetch;
+    const uint solidColor = data->solid.color;
+    QRasterBuffer *rasterBuffer = data->rasterBuffer;
 
     while (count--) {
         int x = spans->x;
+        int y = spans->y;
         int length = spans->len;
+        const uint coverage = spans->coverage;
         while (length) {
             int l = qMin(buffer_size, length);
-            uint *dest = op.dest_fetch ? op.dest_fetch(buffer, data->rasterBuffer, x, spans->y, l) : buffer;
-            op.funcSolid(dest, l, data->solid.color, spans->coverage);
-            if (op.dest_store)
-                op.dest_store(data->rasterBuffer, x, spans->y, dest, l);
+            uint *dest = dest_fetch ? dest_fetch(buffer, rasterBuffer, x, y, l) : buffer;
+            funcSolid(dest, l, solidColor, coverage);
+            if (dest_store)
+                dest_store(rasterBuffer, x, y, dest, l);
             length -= l;
             x += l;
         }

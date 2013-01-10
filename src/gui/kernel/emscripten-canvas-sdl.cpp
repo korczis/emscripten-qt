@@ -14,17 +14,27 @@ namespace
 	bool sdlInited = false;
 
     const int watchdogTimeoutMS = 2000;
-    bool waitingForEvent = false; // Don't use this directly - it needs to be guarded by mutexes
-    void startedWaitingForEvent();
-    void finishedWaitingForEvent();
-    SDL_cond *watchDogStatusCondition = NULL;
-    SDL_mutex *watchDogStatusMutex = NULL;
-
-    bool quitRequested = false; // Don't use this directly - it needs to be guarded by mutexes.
-    bool hasQuit();
-    void quit();
 
     void (*attemptedLocalEventCallback)() = NULL;
+
+    class WatchdogThread
+    {
+    public:
+        WatchdogThread();
+        void start();
+        void notifyStartedWaitingForEvent();
+        void notifyFinishedWaitingForEvent();
+        void stop();
+    private:
+        void watchdogLoop();
+        bool stopRequested();
+        SDL_cond *watchDogStatusCondition;
+        SDL_mutex *watchDogStatusMutex;
+        SDL_Thread *watchdogThread;
+        bool waitingForEvent;
+        bool m_stopRequested;
+        static int startWatchdogLoop(void* watchDogPtr);
+    };
 }
 
 extern "C" 
@@ -190,29 +200,42 @@ Qt::MouseButton sdlButtonToQtButton(Uint8 sdlButton)
 
 namespace
 {
-    bool hasQuit()
+    WatchdogThread::WatchdogThread()
+        : watchDogStatusMutex(SDL_CreateMutex()),
+          watchDogStatusCondition(SDL_CreateCond()),
+          m_stopRequested(false),
+          waitingForEvent(false)
+    {
+    }
+
+    void WatchdogThread::start()
+    {
+        watchdogThread = SDL_CreateThread(startWatchdogLoop, static_cast<void*>(this));
+    }
+
+    bool WatchdogThread::stopRequested()
     {
         SDL_mutexP(watchDogStatusMutex);
-        const bool result = quitRequested;
+        const bool result = m_stopRequested;
         SDL_mutexV(watchDogStatusMutex);
         return result;
     }
 
-    void quit()
+    void WatchdogThread::stop()
     {
         SDL_mutexP(watchDogStatusMutex);
-        quitRequested = true;
+        m_stopRequested = true;
         SDL_mutexV(watchDogStatusMutex);
         SDL_CondSignal(watchDogStatusCondition);
     }
 
-    int watchdogLoop(void*)
+    void WatchdogThread::watchdogLoop()
     {
         static Uint32 lastTimeWaitingForEvent = 0;
         bool currentStarvationWasReported = false;
         Uint32 currentEventLoopStarvationBegin = 0;
         SDL_mutexP(watchDogStatusMutex);
-        while (!hasQuit())
+        while (!stopRequested())
         {
             if (waitingForEvent)
             {
@@ -251,10 +274,9 @@ namespace
             }
         }
         SDL_mutexV(watchDogStatusMutex);
-        return 0;
     }
 
-    void startedWaitingForEvent()
+    void WatchdogThread::notifyStartedWaitingForEvent()
     {
         SDL_mutexP(watchDogStatusMutex);
         waitingForEvent = true;
@@ -262,12 +284,18 @@ namespace
         SDL_CondSignal(watchDogStatusCondition);
     }
 
-    void finishedWaitingForEvent()
+    void WatchdogThread::notifyFinishedWaitingForEvent()
     {
         SDL_mutexP(watchDogStatusMutex);
         waitingForEvent = false;
         SDL_mutexV(watchDogStatusMutex);
         SDL_CondSignal(watchDogStatusCondition);
+    }
+
+    int WatchdogThread::startWatchdogLoop(void* watchDogPtr)
+    {
+        static_cast<WatchdogThread*>(watchDogPtr)->watchdogLoop();
+        return 0;
     }
 }
 
@@ -292,9 +320,8 @@ bool EmscriptenSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
 
 int EmscriptenSDL::exec()
 {
-    watchDogStatusMutex = SDL_CreateMutex();
-    watchDogStatusCondition = SDL_CreateCond();
-    SDL_Thread *watchdogThread = SDL_CreateThread(watchdogLoop, NULL);
+    WatchdogThread watchdogThread;
+    watchdogThread.start();
 
 	qDebug() << "SDL - woo!";
 	// Any requested timers from before we called SDL_Init would have been ignored, so let's
@@ -303,15 +330,16 @@ int EmscriptenSDL::exec()
 
 	SDL_Event event;
 	SDL_EnableUNICODE( 1 );
-	while (!hasQuit())
+    bool quit = false;
+	while (!quit)
 	{
-        startedWaitingForEvent();
+        watchdogThread.notifyStartedWaitingForEvent();
 		SDL_WaitEvent(&event);
-        finishedWaitingForEvent();
+        watchdogThread.notifyFinishedWaitingForEvent();
 		if( event.type == SDL_QUIT )
 		{
 			qDebug() << "Quitting";
-            quit();
+            quit = true;
 		}    
 		else if (event.type == SDL_USEREVENT)
 		{
@@ -342,7 +370,7 @@ int EmscriptenSDL::exec()
 
 	}
 	qDebug() << "Waiting for watchdogThread to terminate...";
-	SDL_WaitThread(watchdogThread, NULL);
+    watchdogThread.stop();
 	qDebug() << "Exiting SDL::exec";
 	return 0;
 }

@@ -137,6 +137,8 @@ void MainWindow::maybeSaveReply(QMessageBox::StandardButton reply)
         saveFile("png");
     } else if (reply == QMessageBox::Cancel) {
         maybeSaveWasFalse();
+    } else if (reply == QMessageBox::Discard) {
+	maybeSaveWasTrue();
     }
 }
 

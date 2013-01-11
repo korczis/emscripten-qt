@@ -19,14 +19,14 @@ namespace AsyncDialogHelper
     {
         // Rather annoyingly, QMessageBox doesn't emit a signal telling us which StandardButton was chosen
         // (only the QAbstractButton).  This class translates from QAbstractButton to StandardButton and
-        // forwards the result.
+        // forwards the result. It is also able to translate the QAbstractButton to value that would be
+        // returned from QMessageBox::exec().
         class AbstractButtonToStandardButton : public QObject
         {
             Q_OBJECT
         public:
-            AbstractButtonToStandardButton(QObject* parent, QObject* standardButtonReceiver, const char* standardButtonReceiverSlot) : QObject(parent)
+            AbstractButtonToStandardButton(QObject* parent) : QObject(parent)
             {
-                connect(this, SIGNAL(standardButtonClicked(QMessageBox::StandardButton)), standardButtonReceiver, standardButtonReceiverSlot);
             };
         public slots:
             void forwardStandardButton(QAbstractButton* abstractButton)
@@ -36,8 +36,19 @@ namespace AsyncDialogHelper
                 QMessageBox::StandardButton standardButton = sendingMessageBox->standardButton(abstractButton);
                 emit standardButtonClicked(standardButton);
             }
+            void forwardExecResult(QAbstractButton* button)
+            {
+                QMessageBox* sendingMessageBox = qobject_cast<QMessageBox*>(sender());
+                Q_ASSERT(sendingMessageBox);
+                int result = sendingMessageBox->standardButton(button);
+                if (result == QMessageBox::NoButton) {
+                    result = sendingMessageBox->buttons().indexOf(button); // if button == 0, correctly sets ret = -1
+                }
+                emit execResult(result);
+            }
         signals:
             void standardButtonClicked(QMessageBox::StandardButton standardButton);
+            void execResult(int execResult);
         };
 
         void showMessageBox(QMessageBox::Icon icon, QObject* receiver, const char* slot, QWidget *parent, const QString &title,
@@ -47,9 +58,11 @@ namespace AsyncDialogHelper
             QMessageBox *messageBox = new QMessageBox(icon, title, text, buttons, parent);
             messageBox->setModal(true);
 
-            Private::AbstractButtonToStandardButton *abstractButtonToStandardButton = new Private::AbstractButtonToStandardButton(messageBox, receiver, slot);
+            Private::AbstractButtonToStandardButton *abstractButtonToStandardButton = new Private::AbstractButtonToStandardButton(messageBox);
 
             QObject::connect(messageBox, SIGNAL(buttonClicked(QAbstractButton*)), abstractButtonToStandardButton, SLOT(forwardStandardButton(QAbstractButton*)));
+            QObject::connect(abstractButtonToStandardButton, SIGNAL(standardButtonClicked(QMessageBox::StandardButton)),
+                             receiver, slot);
             QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
             messageBox->show();
         }
@@ -221,6 +234,15 @@ namespace AsyncDialogHelper
                          QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
     {
         Private::showMessageBox(QMessageBox::Warning, receiver, slot, parent, title, text, buttons, defaultButton);
+    }
+    void exec(QObject* receiver, const char* slot, QMessageBox* messageBox)
+    {
+            Private::AbstractButtonToStandardButton *abstractButtonToStandardButton = new Private::AbstractButtonToStandardButton(messageBox);
+
+            QObject::connect(messageBox, SIGNAL(buttonClicked(QAbstractButton*)), abstractButtonToStandardButton, SLOT(forwardExecResult(QAbstractButton*)));
+            QObject::connect(abstractButtonToStandardButton, SIGNAL(execResult(int)), receiver, slot);
+            QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
+            messageBox->show();
     }
 }
 

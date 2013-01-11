@@ -96,7 +96,7 @@ private:
 
     QByteArray fileFormat;
 
-    enum IfMaybeSaveIsTrue { DoNothing, OpenFile } ifMaybeSaveIsTrue;
+    enum IfMaybeSaveIsTrue { DoNothing, OpenFile, CloseWindow } ifMaybeSaveIsTrue;
 };
 //! [0]
 

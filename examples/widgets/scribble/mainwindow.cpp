@@ -64,7 +64,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if (ifMaybeSaveIsTrue == CloseWindow)
     {
 	// We've already queried maybeSave, and the result was true; really close
-        qDebug() << "Really closing";
         event->accept();
     }
     else
@@ -147,7 +146,6 @@ void MainWindow::maybeSaveReply(QMessageBox::StandardButton reply)
     } else if (reply == QMessageBox::Discard) {
 	maybeSaveWasTrue();
     }
-    qDebug() << "After maybeSaveReply: " << ifMaybeSaveIsTrue;
 }
 
 void MainWindow::openFileNameReply(const QString& fileName)
@@ -158,7 +156,6 @@ void MainWindow::openFileNameReply(const QString& fileName)
 
 void MainWindow::saveFileNameReply(const QString& fileName)
 {
-    qDebug() << "saveFileNameReply: " << fileName;
     if (fileName.isEmpty()) {
         maybeSaveWasFalse();
     } else {
@@ -171,7 +168,6 @@ void MainWindow::saveFileNameReply(const QString& fileName)
 		maybeSaveWasFalse();
 	}
     }
-    qDebug() << "After saveFileNameReply: " << ifMaybeSaveIsTrue;
 }
 
 //! [13]
@@ -262,7 +258,10 @@ bool MainWindow::maybeSave()
     }
     else
     {
-	maybeSaveWasTrue();
+        // Need to call maybeSaveWasTrue() asynchronously, in case we're in a callback from closeEvent (which we just ignored)
+        // and *really* want to close the window (which we won't be able to do until the next event loop, as
+        // we just ignored a close event!)
+	QTimer::singleShot(0, this, SLOT(maybeSaveWasTrue()));
     }
     return true; // TODO - remove this - maybeSave won't return anything when we're through!
 }
@@ -295,7 +294,8 @@ void MainWindow::maybeSaveWasTrue()
                                    tr("Open File"), QDir::currentPath());
 	    break;
         case CloseWindow:
-	    close();
+            qDebug() << "Calling close";
+	    QMainWindow::close();
             break;
     }
     ifMaybeSaveIsTrue = DoNothing;

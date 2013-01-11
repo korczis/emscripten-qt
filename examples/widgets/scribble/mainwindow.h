@@ -69,13 +69,13 @@ private slots:
     void openFileNameReply(const QString& fileName);
     void saveFileNameReply(const QString& fileName);
 
+    void maybeSaveWasTrue();
+    void maybeSaveWasFalse();
 private:
     void createActions();
     void createMenus();
     bool maybeSave();
     bool saveFile(const QByteArray &fileFormat);
-    void maybeSaveWasTrue();
-    void maybeSaveWasFalse();
 
     ScribbleArea *scribbleArea;
 

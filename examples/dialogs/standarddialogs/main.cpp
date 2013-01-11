@@ -44,6 +44,11 @@
 #include <QLibraryInfo>
 #include <emscripten-canvas-sdl.h>
 
+void triggerAssert()
+{
+	Q_ASSERT(false);
+}
+
 
 #include "dialog.h"
 
@@ -51,6 +56,7 @@ int main(int argc, char *argv[])
 {
 #ifdef EMSCRIPTEN_NATIVE
     EmscriptenSDL::initScreen(800, 640);
+    EmscriptenSDL::setAttemptedLocalEventLoopCallback(triggerAssert);
 #endif
     QApplication *app = new QApplication(argc, argv);
 

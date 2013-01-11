@@ -112,15 +112,18 @@ void MainWindow::penColorChanged(const QColor& newColor)
 void MainWindow::penWidth()
 //! [9] //! [10]
 {
-    bool ok;
-    int newWidth = QInputDialog::getInteger(this, tr("Scribble"),
+    AsyncDialogHelper::getInt(this, SLOT(penWidthChanged(int)),
+                                            this, tr("Scribble"),
                                             tr("Select pen width:"),
                                             scribbleArea->penWidth(),
-                                            1, 50, 1, &ok);
-    if (ok)
-        scribbleArea->setPenWidth(newWidth);
+                                            1, 50, 1);
 }
 //! [10]
+
+void MainWindow::penWidthChanged(int newWidth)
+{
+     scribbleArea->setPenWidth(newWidth);
+}
 
 //! [11]
 void MainWindow::about()

@@ -2,6 +2,7 @@
 #define ASYNCDIALOGHELPER
 
 #include <QInputDialog>
+#include <QColorDialog>
 
 QT_BEGIN_HEADER
 
@@ -66,6 +67,18 @@ namespace AsyncDialogHelper
         QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), receiver, signal);
         QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
+    }
+    void getColor(QObject* receiver, const char* signal, const QColor &initial, QWidget *parent, const QString &title,
+                              QColorDialog::ColorDialogOptions options)
+    {
+        QColorDialog *colorDialog = new QColorDialog(parent);
+        if (!title.isEmpty())
+            colorDialog->setWindowTitle(title);
+        colorDialog->setOptions(options);
+        colorDialog->setCurrentColor(initial);
+        QObject::connect(colorDialog, SIGNAL(colorSelected(const QColor&)), receiver, signal);
+        QObject::connect(colorDialog, SIGNAL(colorSelected(const QColor&)), colorDialog, SLOT(deleteLater()));
+        colorDialog->show();
     }
 }
 

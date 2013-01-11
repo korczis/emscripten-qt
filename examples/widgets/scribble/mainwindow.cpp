@@ -129,7 +129,7 @@ void MainWindow::penWidthChanged(int newWidth)
 void MainWindow::about()
 //! [11] //! [12]
 {
-    QMessageBox::about(this, tr("About Scribble"),
+    AsyncDialogHelper::about(this, tr("About Scribble"),
             tr("<p>The <b>Scribble</b> example shows how to use QMainWindow as the "
                "base widget for an application, and how to reimplement some of "
                "QWidget's event handlers to receive the events generated for "

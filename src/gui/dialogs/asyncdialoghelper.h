@@ -55,6 +55,18 @@ namespace AsyncDialogHelper
         QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
     }
+    void getText (QObject* receiver, const char* signal, QWidget * parent, const QString & title, const QString & label, QLineEdit::EchoMode mode = QLineEdit::Normal, const QString & text = QString(), bool * ok = 0, Qt::WindowFlags flags = 0, Qt::InputMethodHints inputMethodHints = Qt::ImhNone )
+    {
+        QInputDialog *inputDialog = new QInputDialog(parent, flags);
+        inputDialog->setWindowTitle(title);
+        inputDialog->setLabelText(label);
+        inputDialog->setTextValue(text);
+        inputDialog->setTextEchoMode(mode);
+        inputDialog->setInputMethodHints(inputMethodHints);
+        QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), receiver, signal);
+        QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), inputDialog, SLOT(deleteLater()));
+        inputDialog->show();
+    }
 }
 
 

@@ -270,12 +270,14 @@ void Dialog::colorSelected(const QColor& color)
 
 void Dialog::setFont()
 {
-    bool ok;
-    QFont font = QFontDialog::getFont(&ok, QFont(fontLabel->text()), this);
-    if (ok) {
-        fontLabel->setText(font.key());
-        fontLabel->setFont(font);
-    }
+    AsyncDialogHelper::getFont(this, SLOT(fontSelected(const QFont&)),
+			       QFont(fontLabel->text()), this);
+}
+
+void Dialog::fontSelected(const QFont& font)
+{
+    fontLabel->setText(font.key());
+    fontLabel->setFont(font);
 }
 
 void Dialog::setExistingDirectory()

@@ -68,6 +68,7 @@ private slots:
     void setColor();
     void colorSelected(const QColor& color);
     void setFont();
+    void fontSelected(const QFont& font);
     void setExistingDirectory();
     void setOpenFileName();
     void setOpenFileNames();

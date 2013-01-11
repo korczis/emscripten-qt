@@ -74,7 +74,7 @@ function EMSCRIPTENQT_mouseButtonEvent(e, isButtonDown)
 {
         var canvas = document.getElementById('canvas');
         var qtMouseButton = -1; // See  Qt::MouseButton
-        switch (event.which) {
+        switch (e.which) {
                 case 1:
                         qtMouseButton = 1;
                         break;

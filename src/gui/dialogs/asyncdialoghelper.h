@@ -52,6 +52,43 @@ namespace AsyncDialogHelper
             void execResult(int execResult);
         };
 
+        // TODO - better name for this.
+        class CancelToInvalidValue : public QObject
+        {
+            Q_OBJECT
+        public:
+            CancelToInvalidValue(QObject* parent) : QObject(parent) {};
+        public slots:
+            void finished(int result)
+            {
+               bool resultWasAccept = true;
+               QMessageBox *senderAsMessageBox = qobject_cast<QMessageBox*>(sender());
+               if (senderAsMessageBox)
+               {
+                   // result is a StandardButton
+                   QAbstractButton *button = senderAsMessageBox->button(static_cast<QMessageBox::StandardButton>(result));
+                   if (senderAsMessageBox->buttonRole(button) == QMessageBox::RejectRole ||
+                       senderAsMessageBox->buttonRole(button) == QMessageBox::InvalidRole)
+                   {
+                       resultWasAccept = false;
+                   }
+               }
+               else
+               {
+                   resultWasAccept = (result == QDialog::Accepted);
+               }
+
+               if (!resultWasAccept)
+               {
+                   emit emptyString(QString());
+                   emit emptyStringList(QStringList());
+               }
+            }
+        signals:
+            void emptyString(const QString& emptyString);
+            void emptyStringList(const QStringList& emptyString);
+        };
+
         inline void showMessageBox(QMessageBox::Icon icon, QObject* receiver, const char* slot, QWidget *parent, const QString &title,
                          const QString& text, QMessageBox::StandardButtons buttons = QMessageBox::Ok,
                          QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
@@ -215,7 +252,11 @@ namespace AsyncDialogHelper
         fileDialog->setModal(true);
         if (!selectedFilter.isEmpty())
             fileDialog->selectNameFilter(selectedFilter);
+
+        Private::CancelToInvalidValue *cancelToInvalidValueMapper = new Private::CancelToInvalidValue(fileDialog);
         QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), receiver, slot);
+        QObject::connect(fileDialog, SIGNAL(finished(int)), cancelToInvalidValueMapper, SLOT(finished(int)));
+        QObject::connect(cancelToInvalidValueMapper, SIGNAL(emptyString(const QString&)), receiver, slot);
         QObject::connect(fileDialog, SIGNAL(finished(int)), fileDialog, SLOT(deleteLater()));
         fileDialog->show();
     }

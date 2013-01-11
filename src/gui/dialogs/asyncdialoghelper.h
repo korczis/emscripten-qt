@@ -13,7 +13,6 @@ namespace AsyncDialogHelper
 {
     void getInt(QObject* receiver, const char* signal, QWidget * parent, const QString & title, const QString & label, int value = 0, int min = -2147483647, int max = 2147483647, int step = 1, Qt::WindowFlags flags = 0)
     {
-        qDebug() << "Gobbles!";
         QInputDialog *inputDialog = new QInputDialog(parent, flags);
         inputDialog->setWindowTitle(title);
         inputDialog->setLabelText(label);
@@ -26,7 +25,22 @@ namespace AsyncDialogHelper
         QObject::connect(inputDialog, SIGNAL(intValueSelected(int)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
     }
+    void getDouble (QObject* receiver, const char* signal, QWidget * parent, const QString & title, const QString & label, double value = 0, double min = -2147483647, double max = 2147483647, int decimals = 1, Qt::WindowFlags flags = 0 )
+    {
+        QInputDialog *inputDialog = new QInputDialog(parent, flags);
+        inputDialog->setWindowTitle(title);
+        inputDialog->setLabelText(label);
+        inputDialog->setDoubleValue(value);
+        inputDialog->setDoubleMinimum(min);
+        inputDialog->setDoubleMaximum(max);
+        inputDialog->setDoubleDecimals(decimals);
+        inputDialog->setModal(true);
+        QObject::connect(inputDialog, SIGNAL(doubleValueSelected(double)), receiver, signal);
+        QObject::connect(inputDialog, SIGNAL(doubleValueSelected(double)), inputDialog, SLOT(deleteLater()));
+        inputDialog->show();
+    }
 }
+
 
 QT_END_NAMESPACE
 

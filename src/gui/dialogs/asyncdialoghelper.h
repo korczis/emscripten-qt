@@ -6,6 +6,7 @@
 #include <QFontDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QIcon>
 
 QT_BEGIN_HEADER
 
@@ -292,6 +293,65 @@ namespace AsyncDialogHelper
             QObject::connect(abstractButtonToStandardButton, SIGNAL(execResult(int)), receiver, slot);
             QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
             messageBox->show();
+    }
+    inline void about (QWidget * parent, const QString & title, const QString & text )
+    {
+        QMessageBox *messageBox = new QMessageBox(title, text, QMessageBox::Information, 0, 0, 0, parent);
+        QIcon icon = messageBox->windowIcon();
+        QSize size = icon.actualSize(QSize(64, 64));
+        messageBox->setIconPixmap(icon.pixmap(size));
+        messageBox->setModal(true);
+        QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
+        messageBox->show();
+    }
+    inline void aboutQt(QWidget *parent, const QString &title = QString())
+    {
+        QString translatedTextAboutQtCaption;
+        translatedTextAboutQtCaption = QMessageBox::tr(
+            "<h3>About Qt</h3>"
+            "<p>This program uses Qt version %1.</p>"
+            ).arg(QLatin1String(QT_VERSION_STR));
+        QString translatedTextAboutQtText;
+        translatedTextAboutQtText = QMessageBox::tr(
+            "<p>Qt is a C++ toolkit for cross-platform application "
+            "development.</p>"
+            "<p>Qt provides single-source portability across MS&nbsp;Windows, "
+            "Mac&nbsp;OS&nbsp;X, Linux, and all major commercial Unix variants. "
+            "Qt is also available for embedded devices as Qt for Embedded Linux "
+            "and Qt for Windows CE.</p>"
+            "<p>Qt is available under three different licensing options designed "
+            "to accommodate the needs of our various users.</p>"
+            "<p>Qt licensed under our commercial license agreement is appropriate "
+            "for development of proprietary/commercial software where you do not "
+            "want to share any source code with third parties or otherwise cannot "
+            "comply with the terms of the GNU LGPL version 2.1 or GNU GPL version "
+            "3.0.</p>"
+            "<p>Qt licensed under the GNU LGPL version 2.1 is appropriate for the "
+            "development of Qt applications (proprietary or open source) provided "
+            "you can comply with the terms and conditions of the GNU LGPL version "
+            "2.1.</p>"
+            "<p>Qt licensed under the GNU General Public License version 3.0 is "
+            "appropriate for the development of Qt applications where you wish to "
+            "use such applications in combination with software subject to the "
+            "terms of the GNU GPL version 3.0 or where you are otherwise willing "
+            "to comply with the terms of the GNU GPL version 3.0.</p>"
+            "<p>Please see <a href=\"http://qt.digia.com/product/licensing\">qt.digia.com/product/licensing</a> "
+            "for an overview of Qt licensing.</p>"
+            "<p>Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).</p>"
+            "<p>Qt is a Digia product. See <a href=\"http://qt.digia.com/\">qt.digia.com</a> "
+            "for more information.</p>"
+            );
+        QMessageBox *messageBox = new QMessageBox(parent);
+        messageBox->setWindowTitle(title.isEmpty() ? QMessageBox::tr("About Qt") : title);
+        messageBox->setText(translatedTextAboutQtCaption);
+        messageBox->setInformativeText(translatedTextAboutQtText);
+
+        QPixmap pm(QLatin1String(":/trolltech/qmessagebox/images/qtlogo-64.png"));
+        if (!pm.isNull())
+            messageBox->setIconPixmap(pm);
+        messageBox->setModal(true);
+        QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
+        messageBox->show();
     }
 }
 

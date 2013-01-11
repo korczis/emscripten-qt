@@ -69,6 +69,9 @@
 #include "private/qstylesheetstyle_p.h"
 #include "private/qstyle_p.h"
 #include "qmessagebox.h"
+#ifdef QT_NO_LOCALEVENTLOOP
+#include "asyncdialoghelper.h"
+#endif
 #include <QtGui/qgraphicsproxywidget.h>
 
 #ifdef QT_GRAPHICSSYSTEM_RUNTIME
@@ -2362,15 +2365,19 @@ void QApplication::closeAllWindows()
 */
 void QApplication::aboutQt()
 {
-#ifndef QT_NO_MESSAGEBOX
-    QMessageBox::aboutQt(
-#ifdef Q_WS_MAC
-            0
+#ifdef QT_NO_LOCALEVENTLOOP
+    AsyncDialogHelper::aboutQt(activeWindow());
 #else
+#  ifndef QT_NO_MESSAGEBOX
+    QMessageBox::aboutQt(
+#  ifdef Q_WS_MAC
+            0
+#  else
             activeWindow()
-#endif // Q_WS_MAC
+#  endif // Q_WS_MAC
             );
-#endif // QT_NO_MESSAGEBOX
+#  endif // QT_NO_MESSAGEBOX
+#endif // QT_NO_LOCALEVENTLOOP
 }
 
 

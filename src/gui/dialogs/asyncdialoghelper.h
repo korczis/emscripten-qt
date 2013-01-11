@@ -25,7 +25,7 @@ namespace AsyncDialogHelper
         inputDialog->setIntStep(step);
         inputDialog->setModal(true);
         QObject::connect(inputDialog, SIGNAL(intValueSelected(int)), receiver, signal);
-        QObject::connect(inputDialog, SIGNAL(intValueSelected(int)), inputDialog, SLOT(deleteLater()));
+        QObject::connect(inputDialog, SIGNAL(finished(int)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
     }
     void getDouble (QObject* receiver, const char* signal, QWidget * parent, const QString & title, const QString & label, double value = 0, double min = -2147483647, double max = 2147483647, int decimals = 1, Qt::WindowFlags flags = 0 )
@@ -39,7 +39,7 @@ namespace AsyncDialogHelper
         inputDialog->setDoubleDecimals(decimals);
         inputDialog->setModal(true);
         QObject::connect(inputDialog, SIGNAL(doubleValueSelected(double)), receiver, signal);
-        QObject::connect(inputDialog, SIGNAL(doubleValueSelected(double)), inputDialog, SLOT(deleteLater()));
+        QObject::connect(inputDialog, SIGNAL(finished(int)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
     }
     void getItem (QObject* receiver, const char* signal, QWidget * parent, const QString & title, const QString & label, const QStringList & items, int current = 0, bool editable = true, Qt::WindowFlags flags = 0, Qt::InputMethodHints inputMethodHints = Qt::ImhNone )
@@ -55,7 +55,7 @@ namespace AsyncDialogHelper
         inputDialog->setInputMethodHints(inputMethodHints);
         inputDialog->setModal(true);
         QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), receiver, signal);
-        QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), inputDialog, SLOT(deleteLater()));
+        QObject::connect(inputDialog, SIGNAL(finished(int)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
     }
     void getText (QObject* receiver, const char* signal, QWidget * parent, const QString & title, const QString & label, QLineEdit::EchoMode mode = QLineEdit::Normal, const QString & text = QString(), bool * ok = 0, Qt::WindowFlags flags = 0, Qt::InputMethodHints inputMethodHints = Qt::ImhNone )
@@ -67,7 +67,7 @@ namespace AsyncDialogHelper
         inputDialog->setTextEchoMode(mode);
         inputDialog->setInputMethodHints(inputMethodHints);
         QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), receiver, signal);
-        QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), inputDialog, SLOT(deleteLater()));
+        QObject::connect(inputDialog, SIGNAL(finished(int)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
     }
     void getColor(QObject* receiver, const char* signal, const QColor &initial, QWidget *parent, const QString &title,
@@ -79,7 +79,7 @@ namespace AsyncDialogHelper
         colorDialog->setOptions(options);
         colorDialog->setCurrentColor(initial);
         QObject::connect(colorDialog, SIGNAL(colorSelected(const QColor&)), receiver, signal);
-        QObject::connect(colorDialog, SIGNAL(colorSelected(const QColor&)), colorDialog, SLOT(deleteLater()));
+        QObject::connect(colorDialog, SIGNAL(finished(int)), colorDialog, SLOT(deleteLater()));
         colorDialog->show();
     }
     void getFont(QObject* receiver, const char* signal, const QFont &initial, QWidget *parent,
@@ -91,7 +91,7 @@ namespace AsyncDialogHelper
         if (!title.isEmpty())
             fontDialog->setWindowTitle(title);
         QObject::connect(fontDialog, SIGNAL(fontSelected(const QFont&)), receiver, signal);
-        QObject::connect(fontDialog, SIGNAL(fontSelected(const QFont&)), fontDialog, SLOT(deleteLater()));
+        QObject::connect(fontDialog, SIGNAL(finished(int)), fontDialog, SLOT(deleteLater()));
         fontDialog->show();
     }
     void getExistingDirectory(QObject* receiver, const char* signal, QWidget *parent,
@@ -103,7 +103,7 @@ namespace AsyncDialogHelper
         fileDialog->setOptions(options);
         fileDialog->setFileMode(options & QFileDialog::ShowDirsOnly ? QFileDialog::DirectoryOnly : QFileDialog::Directory);
         QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), receiver, signal);
-        QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), fileDialog, SLOT(deleteLater()));
+        QObject::connect(fileDialog, SIGNAL(finished(int)), fileDialog, SLOT(deleteLater()));
         fileDialog->show();
     }
 }

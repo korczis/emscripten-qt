@@ -3,6 +3,7 @@
 
 #include <QInputDialog>
 #include <QColorDialog>
+#include <QFontDialog>
 
 QT_BEGIN_HEADER
 
@@ -79,6 +80,18 @@ namespace AsyncDialogHelper
         QObject::connect(colorDialog, SIGNAL(colorSelected(const QColor&)), receiver, signal);
         QObject::connect(colorDialog, SIGNAL(colorSelected(const QColor&)), colorDialog, SLOT(deleteLater()));
         colorDialog->show();
+    }
+    void getFont(QObject* receiver, const char* signal, const QFont &initial, QWidget *parent,
+                                  const QString &title = QString(), QFontDialog::FontDialogOptions options = 0)
+    {
+        QFontDialog *fontDialog = new QFontDialog(parent);
+        fontDialog->setOptions(options);
+        fontDialog->setCurrentFont(initial);
+        if (!title.isEmpty())
+            fontDialog->setWindowTitle(title);
+        QObject::connect(fontDialog, SIGNAL(fontSelected(const QFont&)), receiver, signal);
+        QObject::connect(fontDialog, SIGNAL(fontSelected(const QFont&)), fontDialog, SLOT(deleteLater()));
+        fontDialog->show();
     }
 }
 

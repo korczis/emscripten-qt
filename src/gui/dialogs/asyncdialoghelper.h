@@ -162,8 +162,7 @@ namespace AsyncDialogHelper
         QObject::connect(inputDialog, SIGNAL(finished(int)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
     }
-    inline void getColor(QObject* receiver, const char* slot, const QColor &initial, QWidget *parent, const QString &title,
-                              QColorDialog::ColorDialogOptions options)
+    inline void getColor(QObject* receiver, const char* slot, const QColor &initial, QWidget *parent = 0, const QString &title = QString(), QColorDialog::ColorDialogOptions options = 0)
     {
         QColorDialog *colorDialog = new QColorDialog(parent);
         if (!title.isEmpty())

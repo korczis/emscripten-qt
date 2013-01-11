@@ -58,6 +58,7 @@ public:
 
 private slots:
     void setInteger();
+    void integerSelected(int value);
     void setDouble();
     void setItem();
     void setText();

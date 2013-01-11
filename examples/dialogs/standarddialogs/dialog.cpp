@@ -203,13 +203,14 @@ Dialog::Dialog(QWidget *parent)
 
 void Dialog::setInteger()
 {
-//! [0]
-    bool ok;
-    int i = QInputDialog::getInt(this, tr("QInputDialog::getInteger()"),
-                                 tr("Percentage:"), 25, 0, 100, 1, &ok);
-    if (ok)
-        integerLabel->setText(tr("%1%").arg(i));
-//! [0]
+    AsyncDialogHelper::getInt(this, SLOT(integerSelected(int)),
+                              this, tr("QInputDialog::getInteger()"),
+                              tr("Percentage:"), 25, 0, 100, 1);
+}
+
+void Dialog::integerSelected(int value)
+{
+	integerLabel->setText(tr("%1%").arg(value));
 }
 
 void Dialog::setDouble()

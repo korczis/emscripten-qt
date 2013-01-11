@@ -21,6 +21,7 @@ namespace AsyncDialogHelper
         // (only the QAbstractButton).  This class translates from QAbstractButton to StandardButton and
         // forwards the result. It is also able to translate the QAbstractButton to value that would be
         // returned from QMessageBox::exec().
+        // TODO - name of the class is inaccurate, now - find a better name!
         class AbstractButtonToStandardButton : public QObject
         {
             Q_OBJECT

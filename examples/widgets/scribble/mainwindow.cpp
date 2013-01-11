@@ -98,11 +98,15 @@ void MainWindow::save()
 void MainWindow::penColor()
 //! [7] //! [8]
 {
-    QColor newColor = QColorDialog::getColor(scribbleArea->penColor());
+    AsyncDialogHelper::getColor(this, SLOT(penColorChanged(const QColor&)), scribbleArea->penColor());
+}
+//! [8]
+
+void MainWindow::penColorChanged(const QColor& newColor)
+{
     if (newColor.isValid())
         scribbleArea->setPenColor(newColor);
 }
-//! [8]
 
 //! [9]
 void MainWindow::penWidth()

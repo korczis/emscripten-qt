@@ -71,6 +71,8 @@ private slots:
 
     void maybeSaveWasTrue();
     void maybeSaveWasFalse();
+
+    void penColorChanged(const QColor& newPenColor);
 private:
     void createActions();
     void createMenus();

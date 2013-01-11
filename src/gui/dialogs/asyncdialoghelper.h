@@ -39,6 +39,20 @@ namespace AsyncDialogHelper
         signals:
             void standardButtonClicked(QMessageBox::StandardButton standardButton);
         };
+
+        void showMessageBox(QMessageBox::Icon icon, QObject* receiver, const char* slot, QWidget *parent, const QString &title,
+                         const QString& text, QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                         QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+        {
+            QMessageBox *messageBox = new QMessageBox(icon, title, text, buttons, parent);
+            messageBox->setModal(true);
+
+            Private::AbstractButtonToStandardButton *abstractButtonToStandardButton = new Private::AbstractButtonToStandardButton(messageBox, receiver, slot);
+
+            QObject::connect(messageBox, SIGNAL(buttonClicked(QAbstractButton*)), abstractButtonToStandardButton, SLOT(forwardStandardButton(QAbstractButton*)));
+            QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
+            messageBox->show();
+        }
     }
     void getInt(QObject* receiver, const char* slot, QWidget * parent, const QString & title, const QString & label, int value = 0, int min = -2147483647, int max = 2147483647, int step = 1, Qt::WindowFlags flags = 0)
     {
@@ -188,14 +202,7 @@ namespace AsyncDialogHelper
                          const QString& text, QMessageBox::StandardButtons buttons = QMessageBox::Ok,
                          QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
     {
-        QMessageBox *messageBox = new QMessageBox(QMessageBox::Critical, title, text, buttons, parent);
-        messageBox->setModal(true);
-
-        Private::AbstractButtonToStandardButton *abstractButtonToStandardButton = new Private::AbstractButtonToStandardButton(messageBox, receiver, slot);
-
-        QObject::connect(messageBox, SIGNAL(buttonClicked(QAbstractButton*)), abstractButtonToStandardButton, SLOT(forwardStandardButton(QAbstractButton*)));
-        QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
-        messageBox->show();
+        Private::showMessageBox(QMessageBox::Critical, receiver, slot, parent, title, text, buttons, defaultButton);
     }
 }
 

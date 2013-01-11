@@ -85,6 +85,7 @@ private slots:
     void questionMessage();
     void questionMessageReplyReceived(QMessageBox::StandardButton reply);
     void warningMessage();
+    void warningMessageReplyReceived(int reply);
     void errorMessage();
 
 private:

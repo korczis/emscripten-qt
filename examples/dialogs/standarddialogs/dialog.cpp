@@ -403,17 +403,20 @@ void Dialog::questionMessageReplyReceived(QMessageBox::StandardButton reply)
 
 void Dialog::warningMessage()
 {
-    QMessageBox msgBox(QMessageBox::Warning, tr("QMessageBox::warning()"),
-                       MESSAGE, 0, this);
-    msgBox.addButton(tr("Save &Again"), QMessageBox::AcceptRole);
-    msgBox.addButton(tr("&Continue"), QMessageBox::RejectRole);
-    if (msgBox.exec() == QMessageBox::AcceptRole)
+    QMessageBox *msgBox = new QMessageBox(QMessageBox::Warning, tr("QMessageBox::warning()"),
+		    MESSAGE, 0, this);
+    msgBox->addButton(tr("Save &Again"), QMessageBox::AcceptRole);
+    msgBox->addButton(tr("&Continue"), QMessageBox::RejectRole);
+    AsyncDialogHelper::exec(this, SLOT(warningMessageReplyReceived(int)), msgBox);
+}
+
+void Dialog::warningMessageReplyReceived(int reply)
+{
+    if (reply == QMessageBox::AcceptRole)
         warningLabel->setText(tr("Save Again"));
     else
         warningLabel->setText(tr("Continue"));
-
 }
-
 void Dialog::errorMessage()
 {
     errorMessageDialog->showMessage(

@@ -5,6 +5,7 @@
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QFileDialog>
+#include <QMessageBox>
 
 QT_BEGIN_HEADER
 
@@ -14,6 +15,28 @@ QT_MODULE(Gui)
 
 namespace AsyncDialogHelper
 {
+    namespace Private
+    {
+        class AbstractButtonToStandardButton : public QObject
+        {
+            Q_OBJECT
+        public:
+            AbstractButtonToStandardButton(QObject* parent, QObject* standardButtonReceiver, const char* standardButtonReceiverSlot) : QObject(parent)
+            {
+                connect(this, SIGNAL(standardButtonClicked(QMessageBox::StandardButton)), standardButtonReceiver, standardButtonReceiverSlot);
+            };
+        public slots:
+            void forwardStandardButton(QAbstractButton* abstractButton)
+            {
+                QMessageBox* sendingMessageBox = qobject_cast<QMessageBox*>(sender());
+                Q_ASSERT(sendingMessageBox);
+                QMessageBox::StandardButton standardButton = sendingMessageBox->standardButton(abstractButton);
+                emit standardButtonClicked(standardButton);
+            }
+        signals:
+            void standardButtonClicked(QMessageBox::StandardButton standardButton);
+        };
+    }
     void getInt(QObject* receiver, const char* signal, QWidget * parent, const QString & title, const QString & label, int value = 0, int min = -2147483647, int max = 2147483647, int step = 1, Qt::WindowFlags flags = 0)
     {
         QInputDialog *inputDialog = new QInputDialog(parent, flags);
@@ -157,6 +180,20 @@ namespace AsyncDialogHelper
         QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), receiver, signal);
         QObject::connect(fileDialog, SIGNAL(finished(int)), fileDialog, SLOT(deleteLater()));
         fileDialog->show();
+    }
+    // TODO - rename signal to slot throughout.
+    void critical(QObject* receiver, const char* signal, QWidget *parent, const QString &title,
+                         const QString& text, QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                         QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+    {
+        QMessageBox *messageBox = new QMessageBox(QMessageBox::Critical, title, text, buttons, parent);
+        messageBox->setModal(true);
+
+        Private::AbstractButtonToStandardButton *abstractButtonToStandardButton = new Private::AbstractButtonToStandardButton(messageBox, receiver, signal);
+
+        QObject::connect(messageBox, SIGNAL(buttonClicked(QAbstractButton*)), abstractButtonToStandardButton, SLOT(forwardStandardButton(QAbstractButton*)));
+        QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
+        messageBox->show();
     }
 }
 

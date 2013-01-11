@@ -25,7 +25,8 @@ HEADERS += \
         dialogs/qfilesystemmodel_p.h \
         dialogs/qfileinfogatherer_p.h \
 	dialogs/qwizard.h \
-        dialogs/qprintpreviewdialog.h
+        dialogs/qprintpreviewdialog.h \
+    dialogs/asyncdialoghelper.h
 
 !embedded:!qpa:mac {
     OBJECTIVE_SOURCES += dialogs/qfiledialog_mac.mm \

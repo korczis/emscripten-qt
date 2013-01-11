@@ -70,6 +70,7 @@ private slots:
     void setFont();
     void fontSelected(const QFont& font);
     void setExistingDirectory();
+    void existingDirectorySelected(const QString& directoryName);
     void setOpenFileName();
     void setOpenFileNames();
     void setSaveFileName();

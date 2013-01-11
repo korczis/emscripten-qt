@@ -283,12 +283,15 @@ void Dialog::fontSelected(const QFont& font)
 void Dialog::setExistingDirectory()
 {
     QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly;
-    if (!native->isChecked())
-        options |= QFileDialog::DontUseNativeDialog;
-    QString directory = QFileDialog::getExistingDirectory(this,
+    AsyncDialogHelper::getExistingDirectory(this, SLOT(existingDirectorySelected(const QString&)), 
+                                this,
                                 tr("QFileDialog::getExistingDirectory()"),
                                 directoryLabel->text(),
                                 options);
+}
+
+void Dialog::existingDirectorySelected(const QString& directory)
+{
     if (!directory.isEmpty())
         directoryLabel->setText(directory);
 }

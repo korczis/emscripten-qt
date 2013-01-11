@@ -39,6 +39,22 @@ namespace AsyncDialogHelper
         QObject::connect(inputDialog, SIGNAL(doubleValueSelected(double)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
     }
+    void getItem (QObject* receiver, const char* signal, QWidget * parent, const QString & title, const QString & label, const QStringList & items, int current = 0, bool editable = true, Qt::WindowFlags flags = 0, Qt::InputMethodHints inputMethodHints = Qt::ImhNone )
+    {
+        QString text(items.value(current));
+
+        QInputDialog *inputDialog = new QInputDialog(parent, flags);
+        inputDialog->setWindowTitle(title);
+        inputDialog->setLabelText(label);
+        inputDialog->setComboBoxItems(items);
+        inputDialog->setTextValue(text);
+        inputDialog->setComboBoxEditable(editable);
+        inputDialog->setInputMethodHints(inputMethodHints);
+        inputDialog->setModal(true);
+        QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), receiver, signal);
+        QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), inputDialog, SLOT(deleteLater()));
+        inputDialog->show();
+    }
 }
 
 

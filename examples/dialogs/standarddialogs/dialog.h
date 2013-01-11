@@ -42,6 +42,7 @@
 #define DIALOG_H
 
 #include <QWidget>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 class QCheckBox;
@@ -78,6 +79,7 @@ private slots:
     void setSaveFileName();
     void saveFileNameSelected(const QString& fileName);
     void criticalMessage();
+    void criticalMessageReplyReceived(QMessageBox::StandardButton reply);
     void informationMessage();
     void questionMessage();
     void warningMessage();

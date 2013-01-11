@@ -353,10 +353,14 @@ void Dialog::saveFileNameSelected(const QString& fileName)
 
 void Dialog::criticalMessage()
 {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::critical(this, tr("QMessageBox::critical()"),
+    AsyncDialogHelper::critical(this, SLOT(criticalMessageReplyReceived(QMessageBox::StandardButton)),
+                                    this, tr("QMessageBox::critical()"),
                                     MESSAGE,
                                     QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore);
+}
+
+void Dialog::criticalMessageReplyReceived(QMessageBox::StandardButton reply)
+{
     if (reply == QMessageBox::Abort)
         criticalLabel->setText(tr("Abort"));
     else if (reply == QMessageBox::Retry)

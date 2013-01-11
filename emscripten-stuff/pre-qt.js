@@ -22,20 +22,20 @@ function _EMSCRIPTENQT_resetTimerCallback(milliseconds)
 	EMSCRIPTENQT_callbackTimer = setTimeout(_EMSCRIPTENQT_timerCallback_springboard, milliseconds);
 	//Module.print("callback requested in " + milliseconds + "ms");
 }
-function _EMSCRIPTEN_canvas_width_pixels()
+function _EMSCRIPTENQT_canvas_width_pixels()
 {
 	var canvas = document.getElementById('canvas');
 	return canvas.width;
 }
-function _EMSCRIPTEN_canvas_height_pixels()
+function _EMSCRIPTENQT_canvas_height_pixels()
 {
 	var canvas = document.getElementById('canvas');
 	return canvas.height;
 }
-function _EMSCRIPTEN_flush_pixels(data, regionX, regionY, regionW, regionH)
+function _EMSCRIPTENQT_flush_pixels(data, regionX, regionY, regionW, regionH)
 {
-        var canvasWidth = _EMSCRIPTEN_canvas_width_pixels();
-        var canvasHeight = _EMSCRIPTEN_canvas_height_pixels();
+        var canvasWidth = _EMSCRIPTENQT_canvas_width_pixels();
+        var canvasHeight = _EMSCRIPTENQT_canvas_height_pixels();
         var canvas = document.getElementById('canvas');
         var canvasContext = canvas.getContext("2d");
         var imageData = canvasContext.createImageData(regionW, regionH);

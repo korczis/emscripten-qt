@@ -95,15 +95,15 @@ extern "C"
 
 	void EMSCRIPTENQT_timerCallback();
 
-	int EMSCRIPTEN_canvas_width_pixels()
+	int EMSCRIPTENQT_canvas_width_pixels()
 	{
 		return canvasWidthPixels;
 	}
-	int EMSCRIPTEN_canvas_height_pixels()
+	int EMSCRIPTENQT_canvas_height_pixels()
 	{
 		return canvasHeightPixels;
 	}
-	int EMSCRIPTEN_flush_pixels(uchar* data, int regionX, int regionY, int regionW, int regionH)
+	int EMSCRIPTENQT_flush_pixels(uchar* data, int regionX, int regionY, int regionW, int regionH)
 	{
 		int x, y, ytimesw;
 		const int BPP = 4;

@@ -3,9 +3,9 @@
 
 extern "C"
 {
-    int EMSCRIPTEN_canvas_width_pixels();
-    int EMSCRIPTEN_canvas_height_pixels();
-    int EMSCRIPTEN_flush_pixels(uchar* data, int x, int y, int w, int h);
+    int EMSCRIPTENQT_canvas_width_pixels();
+    int EMSCRIPTENQT_canvas_height_pixels();
+    int EMSCRIPTENQT_flush_pixels(uchar* data, int x, int y, int w, int h);
 }
 
 QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
@@ -26,8 +26,8 @@ bool QEmscriptenCanvasScreen::initDevice()
 bool QEmscriptenCanvasScreen::connect(const QString &displaySpec)
 {
     qDebug() << "QEmscriptenCanvasScreen::connect: displaySpec: " << displaySpec;
-    w = dw = EMSCRIPTEN_canvas_width_pixels();
-    h = dh = EMSCRIPTEN_canvas_height_pixels();
+    w = dw = EMSCRIPTENQT_canvas_width_pixels();
+    h = dh = EMSCRIPTENQT_canvas_height_pixels();
     // assume 72 dpi as default, to calculate the physical dimensions if not specified
     const int defaultDpi = 72;
     // Handle display physical size
@@ -76,7 +76,7 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
     // first, call the parent implementation. The parent implementation will update
     // the region on our in-memory surface
     QScreen::exposeRegion(r, changing);
-    EMSCRIPTEN_flush_pixels(data, r.boundingRect().left(), r.boundingRect().top(), r.boundingRect().width(), r.boundingRect().height());
+    EMSCRIPTENQT_flush_pixels(data, r.boundingRect().left(), r.boundingRect().top(), r.boundingRect().width(), r.boundingRect().height());
 }
 
 

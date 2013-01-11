@@ -4,6 +4,7 @@
 #include <QInputDialog>
 #include <QColorDialog>
 #include <QFontDialog>
+#include <QFileDialog>
 
 QT_BEGIN_HEADER
 
@@ -92,6 +93,18 @@ namespace AsyncDialogHelper
         QObject::connect(fontDialog, SIGNAL(fontSelected(const QFont&)), receiver, signal);
         QObject::connect(fontDialog, SIGNAL(fontSelected(const QFont&)), fontDialog, SLOT(deleteLater()));
         fontDialog->show();
+    }
+    void getExistingDirectory(QObject* receiver, const char* signal, QWidget *parent,
+                                          const QString &caption,
+                                          const QString &dir,
+                                          QFileDialog::Options options)
+    {
+        QFileDialog *fileDialog = new QFileDialog(parent, caption, QDir::currentPath());
+        fileDialog->setOptions(options);
+        fileDialog->setFileMode(options & QFileDialog::ShowDirsOnly ? QFileDialog::DirectoryOnly : QFileDialog::Directory);
+        QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), receiver, signal);
+        QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), fileDialog, SLOT(deleteLater()));
+        fileDialog->show();
     }
 }
 

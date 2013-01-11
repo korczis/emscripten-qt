@@ -140,6 +140,24 @@ namespace AsyncDialogHelper
         QObject::connect(fileDialog, SIGNAL(finished(int)), fileDialog, SLOT(deleteLater()));
         fileDialog->show();
     }
+    void getSaveFileName(QObject* receiver, const char* signal, QWidget *parent,
+                                const QString &caption,
+                                const QString &dir,
+                                const QString &filter,
+                                const QString& selectedFilter,
+                                QFileDialog::Options options)
+    {
+        QFileDialog *fileDialog = new QFileDialog(parent, caption, dir);
+        fileDialog->setAcceptMode(QFileDialog::AcceptSave);
+        fileDialog->setOptions(options);
+        fileDialog->setFileMode(QFileDialog::AnyFile);
+        fileDialog->setFilter(filter);
+        if (!selectedFilter.isEmpty())
+            fileDialog->selectNameFilter(selectedFilter);
+        QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), receiver, signal);
+        QObject::connect(fileDialog, SIGNAL(finished(int)), fileDialog, SLOT(deleteLater()));
+        fileDialog->show();
+    }
 }
 
 

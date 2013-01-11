@@ -81,7 +81,9 @@ private slots:
     void criticalMessage();
     void criticalMessageReplyReceived(QMessageBox::StandardButton reply);
     void informationMessage();
+    void informationMessageReplyReceived(QMessageBox::StandardButton reply);
     void questionMessage();
+    void questionMessageReplyReceived(QMessageBox::StandardButton reply);
     void warningMessage();
     void errorMessage();
 

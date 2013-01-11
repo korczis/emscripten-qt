@@ -371,8 +371,12 @@ void Dialog::criticalMessageReplyReceived(QMessageBox::StandardButton reply)
 
 void Dialog::informationMessage()
 {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::information(this, tr("QMessageBox::information()"), MESSAGE);
+    AsyncDialogHelper::information(this, SLOT(informationMessageReplyReceived(QMessageBox::StandardButton)), 
+		    this, tr("QMessageBox::information()"), MESSAGE);
+}
+
+void Dialog::informationMessageReplyReceived(QMessageBox::StandardButton reply)
+{
     if (reply == QMessageBox::Ok)
         informationLabel->setText(tr("OK"));
     else
@@ -381,10 +385,14 @@ void Dialog::informationMessage()
 
 void Dialog::questionMessage()
 {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, tr("QMessageBox::question()"),
+    AsyncDialogHelper::question(this, SLOT(questionMessageReplyReceived(QMessageBox::StandardButton)), 
+				    this, tr("QMessageBox::question()"),
                                     MESSAGE,
                                     QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+}
+
+void Dialog::questionMessageReplyReceived(QMessageBox::StandardButton reply)
+{
     if (reply == QMessageBox::Yes)
         questionLabel->setText(tr("Yes"));
     else if (reply == QMessageBox::No)

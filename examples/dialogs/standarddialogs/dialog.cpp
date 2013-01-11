@@ -215,13 +215,13 @@ void Dialog::integerSelected(int value)
 
 void Dialog::setDouble()
 {
-//! [1]
-    bool ok;
-    double d = QInputDialog::getDouble(this, tr("QInputDialog::getDouble()"),
-                                       tr("Amount:"), 37.56, -10000, 10000, 2, &ok);
-    if (ok)
-        doubleLabel->setText(QString("$%1").arg(d));
-//! [1]
+    AsyncDialogHelper::getDouble(this, SLOT(doubleSelected(double)), this, tr("QInputDialog::getDouble()"),
+                                       tr("Amount:"), 37.56, -10000, 10000, 2);
+}
+
+void Dialog::doubleSelected(double value)
+{
+    doubleLabel->setText(QString("$%1").arg(value));
 }
 
 void Dialog::setItem()

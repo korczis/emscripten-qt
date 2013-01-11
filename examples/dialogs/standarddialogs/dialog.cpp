@@ -241,14 +241,15 @@ void Dialog::itemSelected(const QString& item)
 
 void Dialog::setText()
 {
-//! [3]
-    bool ok;
-    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+    AsyncDialogHelper::getText(this, SLOT(textSelected(const QString&)), 
+                                         this, tr("QInputDialog::getText()"),
                                          tr("User name:"), QLineEdit::Normal,
-                                         QDir::home().dirName(), &ok);
-    if (ok && !text.isEmpty())
-        textLabel->setText(text);
-//! [3]
+                                         QDir::home().dirName());
+}
+
+void Dialog::textSelected(const QString& text)
+{
+    textLabel->setText(text);
 }
 
 void Dialog::setColor()

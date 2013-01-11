@@ -60,8 +60,11 @@ private slots:
     void setInteger();
     void integerSelected(int value);
     void setDouble();
+    void doubleSelected(double value);
     void setItem();
+    void itemSelected(const QString& item);
     void setText();
+    void textSelected(const QString& text);
     void setColor();
     void setFont();
     void setExistingDirectory();

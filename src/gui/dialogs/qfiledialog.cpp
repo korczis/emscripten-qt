@@ -52,6 +52,9 @@
 #include <qgridlayout.h>
 #include <qmenu.h>
 #include <qmessagebox.h>
+#ifdef QT_NO_LOCALEVENTLOOP
+#include <asyncdialoghelper.h>
+#endif
 #include <qinputdialog.h>
 #include <stdlib.h>
 #include <qsettings.h>
@@ -2203,6 +2206,7 @@ void QFileDialog::accept()
             QDialog::accept();
 #ifndef QT_NO_MESSAGEBOX
         } else {
+#ifndef QT_NO_LOCALEVENTLOOP
             if (QMessageBox::warning(this, windowTitle(),
                                      tr("%1 already exists.\nDo you want to replace it?")
                                      .arg(info.fileName()),
@@ -2211,6 +2215,14 @@ void QFileDialog::accept()
                 d->emitFilesSelected(QStringList(fn));
                 QDialog::accept();
             }
+#else
+            d->fileToOverwrite = fn;
+            AsyncDialogHelper::warning(this, SLOT(_q_overwriteReply(QMessageBox::StandardButton)),
+                                     this, windowTitle(),
+                                     tr("%1 already exists.\nDo you want to replace it?")
+                                     .arg(info.fileName()),
+                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+#endif
 #endif
         }
         return;
@@ -3152,6 +3164,16 @@ void QFileDialogPrivate::_q_fileRenamed(const QString &path, const QString oldNa
             lineEdit()->setText(newName);
     }
 }
+
+#ifdef QT_NO_LOCALEVENTLOOP
+void QFileDialogPrivate::_q_overwriteReply(QMessageBox::StandardButton reply)
+{
+    if (reply == QMessageBox::Yes) {
+                emitFilesSelected(QStringList(fileToOverwrite));
+                q_func()->QDialog::accept();
+    }
+}
+#endif
 
 /*!
     \internal

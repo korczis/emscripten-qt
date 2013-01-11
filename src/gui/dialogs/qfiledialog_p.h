@@ -224,6 +224,7 @@ public:
     void _q_autoCompleteFileName(const QString &);
     void _q_rowsInserted(const QModelIndex & parent);
     void _q_fileRenamed(const QString &path, const QString oldName, const QString newName);
+    void _q_overwriteReply(QMessageBox::StandardButton reply);
 
     // layout
 #ifndef QT_NO_PROXYMODEL
@@ -327,6 +328,8 @@ public:
     QByteArray signalToDisconnectOnClose;
 
     QFileDialog::Options opts;
+
+    QString fileToOverwrite;
 
     ~QFileDialogPrivate();
 

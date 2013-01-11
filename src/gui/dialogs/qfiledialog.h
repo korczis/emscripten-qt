@@ -45,6 +45,7 @@
 #include <QtCore/qdir.h>
 #include <QtCore/qstring.h>
 #include <QtGui/qdialog.h>
+#include <QtGui/qmessagebox.h>
 
 QT_BEGIN_HEADER
 
@@ -312,6 +313,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_rowsInserted(const QModelIndex & parent))
     Q_PRIVATE_SLOT(d_func(), void _q_fileRenamed(const QString &path,
                 const QString oldName, const QString newName))
+    Q_PRIVATE_SLOT(d_func(), void _q_overwriteReply(QMessageBox::StandardButton reply))
 #if defined(Q_WS_MAC)
     Q_PRIVATE_SLOT(d_func(), void _q_macRunNativeAppModalPanel())
 #endif

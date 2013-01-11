@@ -164,12 +164,12 @@ namespace AsyncDialogHelper
         QObject::connect(fileDialog, SIGNAL(finished(int)), fileDialog, SLOT(deleteLater()));
         fileDialog->show();
     }
-    inline void getOpenFileName(QObject* receiver, const char* slot, QWidget *parent,
-                                const QString &caption,
-                                const QString &dir,
-                                const QString &filter,
-                                const QString& selectedFilter,
-                                QFileDialog::Options options)
+    inline void getOpenFileName(QObject* receiver, const char* slot, QWidget *parent = 0,
+                                const QString &caption = QString(),
+                                const QString &dir = QString(),
+                                const QString &filter = QString(),
+                                const QString& selectedFilter = QString(),
+                                QFileDialog::Options options = 0)
     {
         QFileDialog *fileDialog = new QFileDialog(parent, caption, dir);
         fileDialog->setOptions(options);
@@ -182,12 +182,12 @@ namespace AsyncDialogHelper
         QObject::connect(fileDialog, SIGNAL(finished(int)), fileDialog, SLOT(deleteLater()));
         fileDialog->show();
     }
-    inline void getOpenFileNames(QObject* receiver, const char* slot, QWidget *parent,
-                                const QString &caption,
-                                const QString &dir,
-                                const QString &filter,
-                                const QString& selectedFilter,
-                                QFileDialog::Options options)
+    inline void getOpenFileNames(QObject* receiver, const char* slot, QWidget *parent = 0,
+                                const QString &caption = QString(),
+                                const QString &dir = QString(),
+                                const QString &filter = QString(),
+                                const QString& selectedFilter = QString(),
+                                QFileDialog::Options options = 0)
     {
         QFileDialog *fileDialog = new QFileDialog(parent, caption, dir);
         fileDialog->setOptions(options);

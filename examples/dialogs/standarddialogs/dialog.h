@@ -74,6 +74,7 @@ private slots:
     void setOpenFileName();
     void openFileNameSelected(const QString& filename);
     void setOpenFileNames();
+    void openFileNamesSelected(const QStringList& filenames);
     void setSaveFileName();
     void criticalMessage();
     void informationMessage();

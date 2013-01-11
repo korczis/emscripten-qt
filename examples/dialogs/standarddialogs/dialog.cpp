@@ -317,15 +317,16 @@ void Dialog::openFileNameSelected(const QString& fileName)
 void Dialog::setOpenFileNames()
 {
     QFileDialog::Options options;
-    if (!native->isChecked())
-        options |= QFileDialog::DontUseNativeDialog;
-    QString selectedFilter;
-    QStringList files = QFileDialog::getOpenFileNames(
+    AsyncDialogHelper::getOpenFileNames(this, SLOT(openFileNamesSelected(const QStringList&)),
                                 this, tr("QFileDialog::getOpenFileNames()"),
                                 openFilesPath,
                                 tr("All Files (*);;Text Files (*.txt)"),
-                                &selectedFilter,
+                                QString(),
                                 options);
+}
+
+void Dialog::openFileNamesSelected(const QStringList& files)
+{
     if (files.count()) {
         openFilesPath = files[0];
         openFileNamesLabel->setText(QString("[%1]").arg(files.join(", ")));

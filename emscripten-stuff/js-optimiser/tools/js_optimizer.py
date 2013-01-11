@@ -116,7 +116,7 @@ def run(filename, passes, js_engine, jcache):
 	  #print "all_globals: "  , all_globals , "\n-------\n"
 	  reserved_names = set(all_globals + ["Module", "var", "do",   "break",
 		"case", "catch", "const", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile"]) 
-	  no_obfuscate = ["_malloc", "_free", "_main", "_EMSCRIPTENQT_mouseCanvasPosChanged", "_EMSCRIPTENQT_mouseCanvasButtonChanged", "_EMSCRIPTENQT_canvasKeyChanged", "_EMSCRIPTENQT_timerCallback" ] + all_globals
+	  no_obfuscate = ["_malloc", "_free", "_main"] + all_globals + filter(lambda x : x.find("EMSCRIPTENQT") != -1,  list(generated))
 	  obfuscatable_names = list(generated)
 	  for not_obfuscatable in no_obfuscate:
 		if not_obfuscatable in obfuscatable_names:

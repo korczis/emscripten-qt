@@ -120,6 +120,7 @@ namespace AsyncDialogHelper
         inputDialog->setTextValue(text);
         inputDialog->setTextEchoMode(mode);
         inputDialog->setInputMethodHints(inputMethodHints);
+        inputDialog->setModal(true);
         QObject::connect(inputDialog, SIGNAL(textValueSelected(const QString&)), receiver, slot);
         QObject::connect(inputDialog, SIGNAL(finished(int)), inputDialog, SLOT(deleteLater()));
         inputDialog->show();
@@ -132,6 +133,7 @@ namespace AsyncDialogHelper
             colorDialog->setWindowTitle(title);
         colorDialog->setOptions(options);
         colorDialog->setCurrentColor(initial);
+        colorDialog->setModal(true);
         QObject::connect(colorDialog, SIGNAL(colorSelected(const QColor&)), receiver, slot);
         QObject::connect(colorDialog, SIGNAL(finished(int)), colorDialog, SLOT(deleteLater()));
         colorDialog->show();
@@ -142,6 +144,7 @@ namespace AsyncDialogHelper
         QFontDialog *fontDialog = new QFontDialog(parent);
         fontDialog->setOptions(options);
         fontDialog->setCurrentFont(initial);
+        fontDialog->setModal(true);
         if (!title.isEmpty())
             fontDialog->setWindowTitle(title);
         QObject::connect(fontDialog, SIGNAL(fontSelected(const QFont&)), receiver, slot);
@@ -156,6 +159,7 @@ namespace AsyncDialogHelper
         QFileDialog *fileDialog = new QFileDialog(parent, caption, QDir::currentPath());
         fileDialog->setOptions(options);
         fileDialog->setFileMode(options & QFileDialog::ShowDirsOnly ? QFileDialog::DirectoryOnly : QFileDialog::Directory);
+        fileDialog->setModal(true);
         QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), receiver, slot);
         QObject::connect(fileDialog, SIGNAL(finished(int)), fileDialog, SLOT(deleteLater()));
         fileDialog->show();
@@ -171,6 +175,7 @@ namespace AsyncDialogHelper
         fileDialog->setOptions(options);
         fileDialog->setFileMode(QFileDialog::ExistingFile);
         fileDialog->setFilter(filter);
+        fileDialog->setModal(true);
         if (!selectedFilter.isEmpty())
             fileDialog->selectNameFilter(selectedFilter);
         QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), receiver, slot);
@@ -188,6 +193,7 @@ namespace AsyncDialogHelper
         fileDialog->setOptions(options);
         fileDialog->setFileMode(QFileDialog::ExistingFiles);
         fileDialog->setFilter(filter);
+        fileDialog->setModal(true);
         if (!selectedFilter.isEmpty())
             fileDialog->selectNameFilter(selectedFilter);
         QObject::connect(fileDialog, SIGNAL(filesSelected(const QStringList&)), receiver, slot);
@@ -206,6 +212,7 @@ namespace AsyncDialogHelper
         fileDialog->setOptions(options);
         fileDialog->setFileMode(QFileDialog::AnyFile);
         fileDialog->setFilter(filter);
+        fileDialog->setModal(true);
         if (!selectedFilter.isEmpty())
             fileDialog->selectNameFilter(selectedFilter);
         QObject::connect(fileDialog, SIGNAL(fileSelected(const QString&)), receiver, slot);
@@ -240,6 +247,7 @@ namespace AsyncDialogHelper
     {
             Private::AbstractButtonToStandardButton *abstractButtonToStandardButton = new Private::AbstractButtonToStandardButton(messageBox);
 
+            messageBox->setModal(true);
             QObject::connect(messageBox, SIGNAL(buttonClicked(QAbstractButton*)), abstractButtonToStandardButton, SLOT(forwardExecResult(QAbstractButton*)));
             QObject::connect(abstractButtonToStandardButton, SIGNAL(execResult(int)), receiver, slot);
             QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));

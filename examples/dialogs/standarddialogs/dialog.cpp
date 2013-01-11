@@ -299,15 +299,17 @@ void Dialog::existingDirectorySelected(const QString& directory)
 void Dialog::setOpenFileName()
 {
     QFileDialog::Options options;
-    if (!native->isChecked())
-        options |= QFileDialog::DontUseNativeDialog;
-    QString selectedFilter;
-    QString fileName = QFileDialog::getOpenFileName(this,
+    AsyncDialogHelper::getOpenFileName(this, SLOT(openFileNameSelected(const QString&)), 
+                                this,
                                 tr("QFileDialog::getOpenFileName()"),
                                 openFileNameLabel->text(),
                                 tr("All Files (*);;Text Files (*.txt)"),
-                                &selectedFilter,
+                                QString(),
                                 options);
+}
+
+void Dialog::openFileNameSelected(const QString& fileName)
+{
     if (!fileName.isEmpty())
         openFileNameLabel->setText(fileName);
 }

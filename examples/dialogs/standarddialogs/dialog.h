@@ -72,6 +72,7 @@ private slots:
     void setExistingDirectory();
     void existingDirectorySelected(const QString& directoryName);
     void setOpenFileName();
+    void openFileNameSelected(const QString& filename);
     void setOpenFileNames();
     void setSaveFileName();
     void criticalMessage();

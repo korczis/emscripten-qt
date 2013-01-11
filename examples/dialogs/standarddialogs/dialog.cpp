@@ -226,16 +226,17 @@ void Dialog::doubleSelected(double value)
 
 void Dialog::setItem()
 {
-//! [2]
     QStringList items;
     items << tr("Spring") << tr("Summer") << tr("Fall") << tr("Winter");
 
-    bool ok;
-    QString item = QInputDialog::getItem(this, tr("QInputDialog::getItem()"),
-                                         tr("Season:"), items, 0, false, &ok);
-    if (ok && !item.isEmpty())
-        itemLabel->setText(item);
-//! [2]
+    AsyncDialogHelper::getItem(this, SLOT(itemSelected(const QString&)),
+                                         this, tr("QInputDialog::getItem()"),
+                                         tr("Season:"), items, 0, false);
+}
+
+void Dialog::itemSelected(const QString& item)
+{
+    itemLabel->setText(item);
 }
 
 void Dialog::setText()

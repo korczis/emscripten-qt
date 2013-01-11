@@ -73,12 +73,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::open()
 //! [3] //! [4]
 {
-    if (maybeSave()) {
-        QString fileName = QFileDialog::getOpenFileName(this,
-                                   tr("Open File"), QDir::currentPath());
-        if (!fileName.isEmpty())
-            scribbleArea->openImage(fileName);
-    }
+    ifMaybeSaveIsTrue = OpenFile;
+    maybeSave();
 }
 //! [4]
 
@@ -134,6 +130,37 @@ void MainWindow::about()
                "to repaint widgets.</p>"));
 }
 //! [12]
+
+void MainWindow::maybeSaveReply(QMessageBox::StandardButton reply)
+{
+    if (reply == QMessageBox::Save) {
+        saveFile("png");
+    } else if (reply == QMessageBox::Cancel) {
+        maybeSaveWasFalse();
+    }
+}
+
+void MainWindow::openFileNameReply(const QString& fileName)
+{
+    if (!fileName.isEmpty())
+        scribbleArea->openImage(fileName);
+}
+
+void MainWindow::saveFileNameReply(const QString& fileName)
+{
+    if (fileName.isEmpty()) {
+        maybeSaveWasFalse();
+    } else {
+        if (scribbleArea->saveImage(fileName, fileFormat))
+	{
+		maybeSaveWasTrue();
+	}
+	else
+        {
+		maybeSaveWasFalse();
+	}
+    }
+}
 
 //! [13]
 void MainWindow::createActions()
@@ -214,19 +241,18 @@ bool MainWindow::maybeSave()
 //! [17] //! [18]
 {
     if (scribbleArea->isModified()) {
-       QMessageBox::StandardButton ret;
-       ret = QMessageBox::warning(this, tr("Scribble"),
+       AsyncDialogHelper::warning(this, SLOT(maybeSaveReply(QMessageBox::StandardButton)),
+                          this, tr("Scribble"),
                           tr("The image has been modified.\n"
                              "Do you want to save your changes?"),
                           QMessageBox::Save | QMessageBox::Discard
 			  | QMessageBox::Cancel);
-        if (ret == QMessageBox::Save) {
-            return saveFile("png");
-        } else if (ret == QMessageBox::Cancel) {
-            return false;
-        }
     }
-    return true;
+    else
+    {
+	maybeSaveWasTrue();
+    }
+    return true; // TODO - remove this - maybeSave won't return anything when we're through!
 }
 //! [18]
 
@@ -235,16 +261,32 @@ bool MainWindow::saveFile(const QByteArray &fileFormat)
 //! [19] //! [20]
 {
     QString initialPath = QDir::currentPath() + "/untitled." + fileFormat;
+    this->fileFormat = fileFormat;
 
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save As"),
+    AsyncDialogHelper::getSaveFileName(this, SLOT(saveFileNameReply(const QString&)),
+			       this, tr("Save As"),
                                initialPath,
                                tr("%1 Files (*.%2);;All Files (*)")
                                .arg(QString(fileFormat.toUpper()))
                                .arg(QString(fileFormat)));
-    if (fileName.isEmpty()) {
-        return false;
-    } else {
-        return scribbleArea->saveImage(fileName, fileFormat);
-    }
+    return true; // TODO - remove this - saveFile won't return anything when we're through!
 }
 //! [20]
+
+void MainWindow::maybeSaveWasTrue()
+{
+    switch (ifMaybeSaveIsTrue)
+    {	
+	case OpenFile:
+	    AsyncDialogHelper::getOpenFileName(this, SLOT(openFileNameReply(const QString&)), 
+                                   this,
+                                   tr("Open File"), QDir::currentPath());
+	    break;
+    }
+    ifMaybeSaveIsTrue = DoNothing;
+}
+
+void MainWindow::maybeSaveWasFalse()
+{
+    ifMaybeSaveIsTrue = DoNothing;
+}

@@ -43,6 +43,7 @@
 
 #include <QList>
 #include <QMainWindow>
+#include <QMessageBox>
 
 class ScribbleArea;
 
@@ -64,11 +65,17 @@ private slots:
     void penWidth();
     void about();
 
+    void maybeSaveReply(QMessageBox::StandardButton reply);
+    void openFileNameReply(const QString& fileName);
+    void saveFileNameReply(const QString& fileName);
+
 private:
     void createActions();
     void createMenus();
     bool maybeSave();
     bool saveFile(const QByteArray &fileFormat);
+    void maybeSaveWasTrue();
+    void maybeSaveWasFalse();
 
     ScribbleArea *scribbleArea;
 
@@ -86,6 +93,10 @@ private:
     QAction *clearScreenAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
+
+    QByteArray fileFormat;
+
+    enum IfMaybeSaveIsTrue { DoNothing, OpenFile } ifMaybeSaveIsTrue;
 };
 //! [0]
 

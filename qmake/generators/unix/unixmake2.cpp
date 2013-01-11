@@ -236,7 +236,7 @@ UnixMakefileGenerator::writeMakeParts(QTextStream &t)
     t << "DESTDIR       = " << var("DESTDIR") << endl;
     if(project->isActiveConfig("compile_libtool"))
         t << "TARGETL       = " << var("TARGET_la") << endl;
-    const QString targetExtension = (!project->values("DEFINES").contains("EMSCRIPTEN") || (project->values("QMAKE_APP_FLAG").isEmpty()) ? "" : ".bc");
+    const QString targetExtension = ((project->values("DEFINES").contains("EMSCRIPTEN") && !project->values("DEFINES").contains("EMSCRIPTEN_NATIVE") && !project->values("QMAKE_APP_FLAG").isEmpty()) ? ".bc" : "");
     t << "TARGET       = " << escapeFilePath(var("TARGET")) << targetExtension << endl;
     if(project->isActiveConfig("plugin")) {
         t << "TARGETD       = " << escapeFilePath(var("TARGET")) << endl;

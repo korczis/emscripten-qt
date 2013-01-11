@@ -204,6 +204,24 @@ namespace AsyncDialogHelper
     {
         Private::showMessageBox(QMessageBox::Critical, receiver, slot, parent, title, text, buttons, defaultButton);
     }
+    void information(QObject* receiver, const char* slot, QWidget *parent, const QString &title,
+                         const QString& text, QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                         QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+    {
+        Private::showMessageBox(QMessageBox::Information, receiver, slot, parent, title, text, buttons, defaultButton);
+    }
+    void question(QObject* receiver, const char* slot, QWidget *parent, const QString &title,
+                         const QString& text, QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                         QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+    {
+        Private::showMessageBox(QMessageBox::Question, receiver, slot, parent, title, text, buttons, defaultButton);
+    }
+    void warning(QObject* receiver, const char* slot, QWidget *parent, const QString &title,
+                         const QString& text, QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                         QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+    {
+        Private::showMessageBox(QMessageBox::Warning, receiver, slot, parent, title, text, buttons, defaultButton);
+    }
 }
 
 

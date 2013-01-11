@@ -254,12 +254,13 @@ void Dialog::textSelected(const QString& text)
 
 void Dialog::setColor()
 {
-    QColor color;
-    if (native->isChecked())
-        color = QColorDialog::getColor(Qt::green, this);
-    else
-        color = QColorDialog::getColor(Qt::green, this, "Select Color", QColorDialog::DontUseNativeDialog);
+    AsyncDialogHelper::getColor(this, SLOT(colorSelected(const QColor&)), 
+                                   Qt::green, this, "Select Color", QColorDialog::DontUseNativeDialog);
 
+}
+
+void Dialog::colorSelected(const QColor& color)
+{
     if (color.isValid()) {
         colorLabel->setText(color.name());
         colorLabel->setPalette(QPalette(color));

@@ -336,15 +336,17 @@ void Dialog::openFileNamesSelected(const QStringList& files)
 void Dialog::setSaveFileName()
 {
     QFileDialog::Options options;
-    if (!native->isChecked())
-        options |= QFileDialog::DontUseNativeDialog;
-    QString selectedFilter;
-    QString fileName = QFileDialog::getSaveFileName(this,
+    AsyncDialogHelper::getSaveFileName(this, SLOT(saveFileNameSelected(const QString&)), 
+                                this,
                                 tr("QFileDialog::getSaveFileName()"),
                                 saveFileNameLabel->text(),
                                 tr("All Files (*);;Text Files (*.txt)"),
-                                &selectedFilter,
+                                QString(),
                                 options);
+}
+
+void Dialog::saveFileNameSelected(const QString& fileName)
+{
     if (!fileName.isEmpty())
         saveFileNameLabel->setText(fileName);
 }

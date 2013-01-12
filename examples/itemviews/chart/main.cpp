@@ -41,17 +41,33 @@
 #include <QApplication>
 
 #include "mainwindow.h"
+#ifdef EMSCRIPTEN_NATIVE
+#include <emscripten-canvas-sdl.h>
+
+void triggerAssert()
+{
+        Q_ASSERT(false);
+}
+#endif
 
 int main(int argc, char *argv[])
 {
+#ifdef EMSCRIPTEN_NATIVE
+    EmscriptenSDL::initScreen(800, 640);
+    EmscriptenSDL::setAttemptedLocalEventLoopCallback(triggerAssert);
+#endif
+
     Q_INIT_RESOURCE(chart);
 
-    QApplication app(argc, argv);
-    MainWindow window;
+    QApplication *app = new QApplication(argc, argv);
+    MainWindow *window = new MainWindow;
 #if defined(Q_OS_SYMBIAN)
-    window.showMaximized();
+    window->showMaximized();
 #else
-    window.show();
+    window->show();
 #endif
-    return app.exec();
+    app->exec();
+#ifdef EMSCRIPTEN_NATIVE
+    EmscriptenSDL::exec();
+#endif
 }

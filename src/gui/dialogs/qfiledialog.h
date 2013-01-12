@@ -313,7 +313,9 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_rowsInserted(const QModelIndex & parent))
     Q_PRIVATE_SLOT(d_func(), void _q_fileRenamed(const QString &path,
                 const QString oldName, const QString newName))
+#ifdef QT_NO_LOCALEVENTLOOP
     Q_PRIVATE_SLOT(d_func(), void _q_overwriteReply(QMessageBox::StandardButton reply))
+#endif
 #if defined(Q_WS_MAC)
     Q_PRIVATE_SLOT(d_func(), void _q_macRunNativeAppModalPanel())
 #endif

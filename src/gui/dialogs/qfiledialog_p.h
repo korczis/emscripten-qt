@@ -224,8 +224,9 @@ public:
     void _q_autoCompleteFileName(const QString &);
     void _q_rowsInserted(const QModelIndex & parent);
     void _q_fileRenamed(const QString &path, const QString oldName, const QString newName);
+#ifdef QT_NO_LOCALEVENTLOOP
     void _q_overwriteReply(QMessageBox::StandardButton reply);
-
+#endif
     // layout
 #ifndef QT_NO_PROXYMODEL
     QAbstractProxyModel *proxyModel;

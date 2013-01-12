@@ -100,9 +100,12 @@ namespace AsyncDialogHelper
 
             Private::AbstractButtonToStandardButton *abstractButtonToStandardButton = new Private::AbstractButtonToStandardButton(messageBox);
 
-            QObject::connect(messageBox, SIGNAL(buttonClicked(QAbstractButton*)), abstractButtonToStandardButton, SLOT(forwardStandardButton(QAbstractButton*)));
-            QObject::connect(abstractButtonToStandardButton, SIGNAL(standardButtonClicked(QMessageBox::StandardButton)),
-                             receiver, slot);
+            if (receiver)
+            {
+                QObject::connect(messageBox, SIGNAL(buttonClicked(QAbstractButton*)), abstractButtonToStandardButton, SLOT(forwardStandardButton(QAbstractButton*)));
+                QObject::connect(abstractButtonToStandardButton, SIGNAL(standardButtonClicked(QMessageBox::StandardButton)),
+                                receiver, slot);
+            }
             QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
             messageBox->show();
         }

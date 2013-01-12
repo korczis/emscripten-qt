@@ -286,6 +286,9 @@ public:
     bool filterStartDrag(Qt::DropActions);
 #endif
 
+#ifdef QT_NO_LOCALEVENTLOOP
+    void asyncDragFinished(Qt::DropAction action);
+#endif
 private:
     void initBspTree(const QSize &contents);
     QPoint initDynamicLayout(const QListViewLayoutInfo &info);
@@ -299,7 +302,6 @@ private:
     QPoint draggedItemsDelta() const;
     void drawItems(QPainter *painter, const QVector<QModelIndex> &indexes) const;
     void moveItem(int index, const QPoint &dest);
-
 };
 
 class QListViewPrivate: public QAbstractItemViewPrivate

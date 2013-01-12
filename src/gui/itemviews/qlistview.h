@@ -185,7 +185,10 @@ protected:
 
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void currentChanged(const QModelIndex &current, const QModelIndex &previous);
-
+#ifdef QT_NO_LOCALEVENTLOOP
+private slots:
+    void asyncDragFinished(Qt::DropAction action);
+#endif
 private:
     friend class QAccessibleItemView;
     int visualIndex(const QModelIndex &index) const;

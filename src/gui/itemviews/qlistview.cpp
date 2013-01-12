@@ -2702,12 +2702,26 @@ bool QIconModeViewBase::filterStartDrag(Qt::DropActions supportedActions)
         }
         QDrag *drag = new QDrag(qq);
         drag->setMimeData(dd->model->mimeData(indexes));
+#ifndef QT_NO_LOCALEVENTLOOP
         Qt::DropAction action = drag->exec(supportedActions, Qt::CopyAction);
         draggedItems.clear();
         if (action == Qt::MoveAction)
             dd->clearOrRemove();
+#else
+        QObject::connect(drag, SIGNAL(asyncDragFinished(Qt::DropAction)), qq, SLOT(asyncDragFinished(Qt::DropAction)));
+        drag->startAsyncDrag(supportedActions, Qt::CopyAction);
+#endif
     }
     return true;
+}
+
+#ifdef QT_NO_LOCALEVENTLOOP
+void QListView::asyncDragFinished(Qt::DropAction action)
+{
+    Q_D(QListView);
+    QIconModeViewBase *iconModeView = dynamic_cast<QIconModeViewBase*>(d->commonListView);
+    Q_ASSERT(iconModeView);
+    iconModeView->asyncDragFinished(action);
 }
 
 bool QIconModeViewBase::filterDropEvent(QDropEvent *e)
@@ -3120,6 +3134,15 @@ void QIconModeViewBase::moveItem(int index, const QPoint &dest)
     moved.setBit(index, true);
 }
 
+#ifdef QT_NO_LOCALEVENTLOOP
+void QIconModeViewBase::asyncDragFinished(Qt::DropAction action)
+{
+    draggedItems.clear();
+    if (action == Qt::MoveAction)
+        dd->clearOrRemove();
+}
+#endif
+
 QPoint QIconModeViewBase::snapToGrid(const QPoint &pos) const
 {
     int x = pos.x() - (pos.x() % gridSize().width());
@@ -3192,6 +3215,8 @@ void QListView::currentChanged(const QModelIndex &current, const QModelIndex &pr
 #endif
     QAbstractItemView::currentChanged(current, previous);
 }
+
+#endif
 
 /*!
   \reimp

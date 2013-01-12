@@ -73,7 +73,8 @@ protected:
     void dropEvent(QDropEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
-
+private slots:
+    void asyncDragFinished(Qt::DropAction action);
 private:
     int findPiece(const QRect &pieceRect) const;
     const QRect targetSquare(const QPoint &position) const;
@@ -84,6 +85,13 @@ private:
     QRect highlightedRect;
     int inPlace;
     int m_ImageSize;
+
+    // Stored stuff for the current asynchronous drag.
+    QPoint dragStartPos;
+    QRect square;
+    int found;
+    QPoint location;
+    QPixmap pixmap;
 };
 
 #endif

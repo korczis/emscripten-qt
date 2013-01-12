@@ -139,14 +139,14 @@ int PuzzleWidget::findPiece(const QRect &pieceRect) const
 
 void PuzzleWidget::mousePressEvent(QMouseEvent *event)
 {
-    QRect square = targetSquare(event->pos());
-    int found = findPiece(square);
+    square = targetSquare(event->pos());
+    found = findPiece(square);
 
     if (found == -1)
         return;
 
-    QPoint location = pieceLocations[found];
-    QPixmap pixmap = piecePixmaps[found];
+    location = pieceLocations[found];
+    pixmap = piecePixmaps[found];
     pieceLocations.removeAt(found);
     piecePixmaps.removeAt(found);
     pieceRects.removeAt(found);
@@ -169,15 +169,10 @@ void PuzzleWidget::mousePressEvent(QMouseEvent *event)
     drag->setHotSpot(event->pos() - square.topLeft());
     drag->setPixmap(pixmap);
 
-    if (drag->start(Qt::MoveAction) == 0) {
-        pieceLocations.insert(found, location);
-        piecePixmaps.insert(found, pixmap);
-        pieceRects.insert(found, square);
-        update(targetSquare(event->pos()));
+    dragStartPos = event->pos();
+    AsyncDialogHelper::startDrag(this, SLOT(asyncDragFinished(Qt::DropAction)),
+                             drag, Qt::MoveAction);
 
-        if (location == QPoint(square.x()/pieceSize(), square.y()/pieceSize()))
-            inPlace++;
-    }
 }
 
 void PuzzleWidget::paintEvent(QPaintEvent *event)
@@ -201,6 +196,19 @@ void PuzzleWidget::paintEvent(QPaintEvent *event)
 const QRect PuzzleWidget::targetSquare(const QPoint &position) const
 {
     return QRect(position.x()/pieceSize() * pieceSize(), position.y()/pieceSize() * pieceSize(), pieceSize(), pieceSize());
+}
+
+void PuzzleWidget::asyncDragFinished(Qt::DropAction action)
+{
+    if (action == Qt::IgnoreAction) {
+        pieceLocations.insert(found, location);
+        piecePixmaps.insert(found, pixmap);
+        pieceRects.insert(found, square);
+        update(targetSquare(dragStartPos));
+
+        if (location == QPoint(square.x()/pieceSize(), square.y()/pieceSize()))
+            inPlace++;
+    }
 }
 
 int PuzzleWidget::pieceSize() const

@@ -75,12 +75,10 @@ void MainWindow::openImage(const QString &path)
 
 void MainWindow::setCompleted()
 {
-    QMessageBox::information(this, tr("Puzzle Completed"),
+    AsyncDialogHelper::information(this, SLOT(setupPuzzle()), this, tr("Puzzle Completed"),
         tr("Congratulations! You have completed the puzzle!\n"
            "Click OK to start again."),
         QMessageBox::Ok);
-
-    setupPuzzle();
 }
 
 void MainWindow::openFileNameReply(const QString& fileName)

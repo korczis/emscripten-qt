@@ -351,6 +351,13 @@ Qt::DropAction QDrag::start(Qt::DropActions request)
     return d->executed_action;
 }
 
+#ifdef QT_NO_LOCALEVENTLOOP
+void QDrag::notifyAsyncDragFinished(Qt::DropAction action)
+{
+    emit asyncDragFinished(action);
+}
+#endif
+
 /*!
     Sets the drag \a cursor for the \a action. This allows you
     to override the default native cursors. To revert to using the

@@ -276,6 +276,9 @@ private:
 
 #ifdef QT_NO_LOCALEVENTLOOP
     void asyncDragFinished();
+    // We need the drag object to hang around slightly longer than the
+    // non-async version as it needs to emit its asyncDragFinished signal
+    QDrag* dragObjectRetained;
 #endif
 
     static QDragManager *instance;

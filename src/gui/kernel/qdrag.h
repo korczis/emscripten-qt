@@ -91,10 +91,13 @@ Q_SIGNALS:
     void actionChanged(Qt::DropAction action);
     void targetChanged(QWidget *newTarget);
 #ifdef QT_NO_LOCALEVENTLOOP
-    void dragCompleted(Qt::DropAction action);
+    void asyncDragFinished(Qt::DropAction action);
 #endif
 
 private:
+#ifdef QT_NO_LOCALEVENTLOOP
+    void notifyAsyncDragFinished(Qt::DropAction action);
+#endif
 #ifdef Q_WS_MAC
     friend class QWidgetPrivate;
 #endif

@@ -387,6 +387,7 @@ void QDragManager::startAsyncDrag(QDrag *o)
     }
 
     object = drag_object = o;
+    dragObjectRetained = o;
     qt_qws_dnd_deco = new QShapedPixmapWidget();
     oldstate = Qt::NoModifier; // #### Should use state that caused the drag
 //    drag_mode = mode;
@@ -451,6 +452,7 @@ void QDragManager::asyncDragFinished()
      delete qt_qws_dnd_deco;
      qt_qws_dnd_deco = 0;
      qt_qws_dnd_dragging = false;
+     dragObjectRetained->notifyAsyncDragFinished(global_accepted_action);
 }
 #endif
 

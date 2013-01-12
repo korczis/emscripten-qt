@@ -3455,6 +3455,14 @@ void QAbstractItemViewPrivate::_q_layoutChanged()
 #endif
 }
 
+#ifdef QT_NO_LOCALEVENTLOOP
+void QAbstractItemViewPrivate::_q_asyncDragFinished(Qt::DropAction action)
+{
+    if (action == Qt::MoveAction)
+        clearOrRemove();
+}
+#endif
+
 /*!
     This slot is called when the selection is changed. The previous
     selection (which may be empty), is specified by \a deselected, and the
@@ -3537,8 +3545,13 @@ void QAbstractItemView::startDrag(Qt::DropActions supportedActions)
             defaultDropAction = d->defaultDropAction;
         else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
             defaultDropAction = Qt::CopyAction;
+#ifndef QT_NO_LOCALEVENTLOOP
         if (drag->exec(supportedActions, defaultDropAction) == Qt::MoveAction)
             d->clearOrRemove();
+#else
+        drag->startAsyncDrag(supportedActions, defaultDropAction);
+        connect(drag, SIGNAL(asyncDragFinished(Qt::DropAction)), this, SLOT(_q_asyncDragFinished(Qt::DropAction)));
+#endif
     }
 }
 #endif // QT_NO_DRAGANDDROP

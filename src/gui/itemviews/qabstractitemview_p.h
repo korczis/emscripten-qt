@@ -115,6 +115,9 @@ public:
     virtual void _q_modelDestroyed();
     virtual void _q_layoutChanged();
     void _q_headerDataChanged() { doDelayedItemsLayout(); }
+#ifdef QT_NO_LOCALEVENTLOOP
+    void _q_asyncDragFinished(Qt::DropAction action);
+#endif
 
     void fetchMore();
 

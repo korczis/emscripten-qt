@@ -360,6 +360,9 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_modelDestroyed())
     Q_PRIVATE_SLOT(d_func(), void _q_layoutChanged())
     Q_PRIVATE_SLOT(d_func(), void _q_headerDataChanged())
+#ifdef QT_NO_LOCALEVENTLOOP
+    Q_PRIVATE_SLOT(d_func(), void _q_asyncDragFinished(Qt::DropAction action))
+#endif
 
     friend class QTreeViewPrivate; // needed to compile with MSVC
     friend class QAccessibleItemRow;

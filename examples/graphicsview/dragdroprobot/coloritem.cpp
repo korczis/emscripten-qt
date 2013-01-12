@@ -129,8 +129,8 @@ void ColorItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 //! [7]
 
 //! [8]
-    drag->exec();
-    setCursor(Qt::OpenHandCursor);
+    drag->startAsyncDrag();
+    //setCursor(Qt::OpenHandCursor); TODO - does this actually have any effect at all?
 }
 //! [8]
 

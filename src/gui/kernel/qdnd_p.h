@@ -222,6 +222,9 @@ class QDragManager: public QObject {
 
 public:
     Qt::DropAction drag(QDrag *);
+#ifdef QT_NO_LOCALEVENTLOOP
+    void startAsyncDrag(QDrag *);
+#endif
 
     void cancel(bool deleteSource = true);
     void move(const QPoint &);

@@ -312,6 +312,7 @@ void QDrag::startAsyncDrag(Qt::DropActions supportedActions, Qt::DropAction defa
             d->defaultDropAction = defaultDropAction;
         }
     }
+    manager->startAsyncDrag(this);
 }
 
 void QDrag::startAsyncDrag(Qt::DropActions supportedActions)

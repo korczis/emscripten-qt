@@ -362,6 +362,45 @@ Qt::DropAction QDragManager::drag(QDrag *o)
     return global_accepted_action;
 }
 
+#ifdef QT_NO_LOCALEVENTLOOP
+void QDragManager::startAsyncDrag(QDrag *o)
+{
+//     if (object == o || !o || !o->source()) // TODO
+//          return Qt::IgnoreAction;
+
+    if (object) {
+        cancel();
+        qApp->removeEventFilter(this);
+        beingCancelled = false;
+    }
+
+    object = drag_object = o;
+    qt_qws_dnd_deco = new QShapedPixmapWidget();
+    oldstate = Qt::NoModifier; // #### Should use state that caused the drag
+//    drag_mode = mode;
+
+    willDrop = false;
+    updatePixmap();
+    updateCursor();
+    restoreCursor = true;
+    object->d_func()->target = 0;
+    qApp->installEventFilter(this);
+
+    global_accepted_action = Qt::CopyAction;
+#ifndef QT_NO_CURSOR
+    qApp->setOverrideCursor(Qt::ArrowCursor);
+    restoreCursor = true;
+    updateCursor();
+#endif
+
+    qt_qws_dnd_dragging = true;
+
+//     delete qt_qws_dnd_deco; // TODO
+//     qt_qws_dnd_deco = 0;
+//     qt_qws_dnd_dragging = false;
+}
+#endif
+
 
 void QDragManager::cancel(bool deleteSource)
 {

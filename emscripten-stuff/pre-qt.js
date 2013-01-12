@@ -1,3 +1,16 @@
+try
+{
+        if (Float64Array == null)
+        {
+                throw "";
+        }
+}
+catch (e)
+{
+        window.alert( "Javascript typed arrays apparently are not supported by your browser: unfortunately, emscripten-qt apps cannot run it it.");
+        throw e;
+}
+
 var EMSCRIPTENQT_callbackTimer = null;
 function _EMSCRIPTENQT_timerCallback_springboard()
 {

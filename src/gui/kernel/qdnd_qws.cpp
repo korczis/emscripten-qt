@@ -180,7 +180,11 @@ bool QDragManager::eventFilter(QObject *o, QEvent *e)
             qApp->removeEventFilter(this);
             Q_ASSERT(object == 0);
             beingCancelled = false;
+#ifndef QT_NO_LOCALEVENTLOOP
             eventLoop->exit();
+#else
+            asyncDragFinished();
+#endif
             return true; // block the key release
         }
         return false;
@@ -205,7 +209,11 @@ bool QDragManager::eventFilter(QObject *o, QEvent *e)
                 cancel();
                 qApp->removeEventFilter(this);
                 beingCancelled = false;
+#ifndef QT_NO_LOCALEVENTLOOP
                 eventLoop->exit();
+#else
+                asyncDragFinished();
+#endif
             } else {
                 updateCursor();
             }
@@ -306,7 +314,11 @@ bool QDragManager::eventFilter(QObject *o, QEvent *e)
                     object->deleteLater();
                 drag_object = object = 0;
             }
+#ifndef QT_NO_LOCALEVENTLOOP
             eventLoop->exit();
+#else
+            asyncDragFinished();
+#endif
             return true; // Eat all mouse events
         }
 
@@ -395,9 +407,6 @@ void QDragManager::startAsyncDrag(QDrag *o)
 
     qt_qws_dnd_dragging = true;
 
-//     delete qt_qws_dnd_deco; // TODO
-//     qt_qws_dnd_deco = 0;
-//     qt_qws_dnd_dragging = false;
 }
 #endif
 
@@ -436,6 +445,15 @@ void QDragManager::drop()
 {
 }
 
+#ifdef QT_NO_LOCALEVENTLOOP
+void QDragManager::asyncDragFinished()
+{
+     delete qt_qws_dnd_deco;
+     qt_qws_dnd_deco = 0;
+     qt_qws_dnd_dragging = false;
+}
+#endif
+
 QVariant QDropData::retrieveData_sys(const QString &mimetype, QVariant::Type type) const
 {
     if (!drag_object)
@@ -457,6 +475,7 @@ QStringList QDropData::formats_sys() const
         return drag_object->mimeData()->formats();
     return QStringList();
 }
+
 
 
 #endif // QT_NO_DRAGANDDROP

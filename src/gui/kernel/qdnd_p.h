@@ -274,6 +274,10 @@ private:
 #endif
     QWidget *currentDropTarget;
 
+#ifdef QT_NO_LOCALEVENTLOOP
+    void asyncDragFinished();
+#endif
+
     static QDragManager *instance;
     Q_DISABLE_COPY(QDragManager)
 };

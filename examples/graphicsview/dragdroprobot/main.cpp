@@ -45,6 +45,16 @@
 
 #include <math.h>
 
+#ifdef EMSCRIPTEN_NATIVE
+#include <emscripten-canvas-sdl.h>
+
+void triggerAssert()
+{
+        Q_ASSERT(false);
+}
+#endif
+
+
 class GraphicsView : public QGraphicsView
 {
 public:
@@ -64,38 +74,46 @@ protected:
 //! [0]
 int main(int argc, char **argv)
 {
-    QApplication app(argc, argv);
+#ifdef EMSCRIPTEN_NATIVE
+    EmscriptenSDL::initScreen(800, 640);
+    EmscriptenSDL::setAttemptedLocalEventLoopCallback(triggerAssert);
+#endif
+    QApplication *app = new QApplication(argc, argv);
 
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 //! [0]
 //! [1]
-    QGraphicsScene scene(-200, -200, 400, 400);
+    QGraphicsScene *scene = new QGraphicsScene(-200, -200, 400, 400);
 
     for (int i = 0; i < 10; ++i) {
         ColorItem *item = new ColorItem;
         item->setPos(::sin((i * 6.28) / 10.0) * 150,
                      ::cos((i * 6.28) / 10.0) * 150);
 
-        scene.addItem(item);
+        scene->addItem(item);
     }
 
     Robot *robot = new Robot;
     robot->scale(1.2, 1.2);
     robot->setPos(0, -20);
-    scene.addItem(robot);
+    scene->addItem(robot);
 //! [1]
 //! [2]
-    GraphicsView view(&scene);
-    view.setRenderHint(QPainter::Antialiasing);
-    view.setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-    view.setBackgroundBrush(QColor(230, 200, 167));
-    view.setWindowTitle("Drag and Drop Robot");
+    GraphicsView *view = new GraphicsView(scene);
+    view->setRenderHint(QPainter::Antialiasing);
+    view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    view->setBackgroundBrush(QColor(230, 200, 167));
+    view->setWindowTitle("Drag and Drop Robot");
 #if defined(Q_OS_SYMBIAN)
-    view.showMaximized();
+    view->showMaximized();
 #else
-     view.show();
+     view->show();
 #endif
 
-    return app.exec();
+    app->exec();
+
+#ifdef EMSCRIPTEN_NATIVE
+    EmscriptenSDL::exec();
+#endif
 }
 //! [2]

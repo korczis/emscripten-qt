@@ -62,19 +62,14 @@ void MainWindow::openImage(const QString &path)
     QString fileName = path;
 
     if (fileName.isNull())
-        fileName = QFileDialog::getOpenFileName(this,
+    {
+        AsyncDialogHelper::getOpenFileName(this, SLOT(openFileNameReply(const QString&)),
+                                           this,
             tr("Open Image"), "", tr("Image Files (*.png *.jpg *.bmp)"));
-
-    if (!fileName.isEmpty()) {
-        QPixmap newImage;
-        if (!newImage.load(fileName)) {
-            QMessageBox::warning(this, tr("Open Image"),
-                                 tr("The image file could not be loaded."),
-                                 QMessageBox::Cancel);
-            return;
-        }
-        puzzleImage = newImage;
-        setupPuzzle();
+    }
+    else
+    {
+	openFileNameReply(fileName);
     }
 }
 
@@ -86,6 +81,21 @@ void MainWindow::setCompleted()
         QMessageBox::Ok);
 
     setupPuzzle();
+}
+
+void MainWindow::openFileNameReply(const QString& fileName)
+{
+    if (!fileName.isEmpty()) {
+        QPixmap newImage;
+        if (!newImage.load(fileName)) {
+            AsyncDialogHelper::warning(NULL, NULL, this, tr("Open Image"),
+                                 tr("The image file could not be loaded."),
+                                 QMessageBox::Cancel);
+            return;
+        }
+        puzzleImage = newImage;
+        setupPuzzle();
+    }
 }
 
 void MainWindow::setupPuzzle()

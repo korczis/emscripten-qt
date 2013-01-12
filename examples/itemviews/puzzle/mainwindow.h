@@ -63,6 +63,7 @@ public slots:
 
 private slots:
     void setCompleted();
+    void openFileNameReply(const QString& fileName);
 
 private:
     void setupMenus();

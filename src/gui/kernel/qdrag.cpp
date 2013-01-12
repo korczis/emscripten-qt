@@ -287,6 +287,39 @@ Qt::DropAction QDrag::exec(Qt::DropActions supportedActions, Qt::DropAction defa
     return d->executed_action;
 }
 
+#ifdef QT_NO_LOCALEVENTLOOP
+void QDrag::startAsyncDrag(Qt::DropActions supportedActions, Qt::DropAction defaultDropAction)
+{
+    Q_D(QDrag);
+    if (!d->data) {
+        qWarning("QDrag: No mimedata set before starting the drag");
+        return;
+    }
+    QDragManager *manager = QDragManager::self();
+    d->defaultDropAction = Qt::IgnoreAction;
+    d->possible_actions = supportedActions;
+
+    if (manager) {
+        if (defaultDropAction == Qt::IgnoreAction) {
+            if (supportedActions & Qt::MoveAction) {
+                d->defaultDropAction = Qt::MoveAction;
+            } else if (supportedActions & Qt::CopyAction) {
+                d->defaultDropAction = Qt::CopyAction;
+            } else if (supportedActions & Qt::LinkAction) {
+                d->defaultDropAction = Qt::LinkAction;
+            }
+        } else {
+            d->defaultDropAction = defaultDropAction;
+        }
+    }
+}
+
+void QDrag::startAsyncDrag(Qt::DropActions supportedActions)
+{
+    startAsyncDrag(supportedActions, Qt::IgnoreAction);
+}
+#endif
+
 /*!
     \obsolete
 

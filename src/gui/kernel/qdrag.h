@@ -81,12 +81,18 @@ public:
     Qt::DropAction start(Qt::DropActions supportedActions = Qt::CopyAction);
     Qt::DropAction exec(Qt::DropActions supportedActions = Qt::MoveAction);
     Qt::DropAction exec(Qt::DropActions supportedActions, Qt::DropAction defaultAction);
-
+#ifdef QT_NO_LOCALEVENTLOOP
+    void startAsyncDrag(Qt::DropActions supportedActions, Qt::DropAction defaultDropAction);
+    void startAsyncDrag(Qt::DropActions supportedActions = Qt::MoveAction);
+#endif
     void setDragCursor(const QPixmap &cursor, Qt::DropAction action);
 
 Q_SIGNALS:
     void actionChanged(Qt::DropAction action);
     void targetChanged(QWidget *newTarget);
+#ifdef QT_NO_LOCALEVENTLOOP
+    void dragCompleted(Qt::DropAction action);
+#endif
 
 private:
 #ifdef Q_WS_MAC

@@ -136,8 +136,9 @@ extern "C"
 		SDL_Flip(sdlCanvas); 
 		return 0;
 	}
-	void EMSCRIPTENQT_cursorChanged(int)
+	void EMSCRIPTENQT_cursorChanged(int cursor)
 	{
+        qDebug() << "Cursor changed to " << cursor;
 	}
 
 	void EMSCRIPTENQT_attemptedLocalEventLoop()

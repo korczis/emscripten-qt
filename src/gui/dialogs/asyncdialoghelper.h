@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QIcon>
+#include <QDrag>
 
 QT_BEGIN_HEADER
 
@@ -352,6 +353,18 @@ namespace AsyncDialogHelper
         messageBox->setModal(true);
         QObject::connect(messageBox, SIGNAL(finished(int)), messageBox, SLOT(deleteLater()));
         messageBox->show();
+    }
+    inline void startDrag(QObject* receiver, const char* slot, QDrag* drag, Qt::DropActions supportedActions = Qt::MoveAction)
+    {
+#ifdef QT_NO_LOCALEVENTLOOP
+        if (receiver)
+        {
+            QObject::connect(drag, SIGNAL(asyncDragFinished(Qt::DropAction)), receiver, slot);
+        }
+        drag->startAsyncDrag(supportedActions);
+#else
+        // TODO - non-async version
+#endif
     }
 }
 

@@ -1,5 +1,5 @@
 #ifdef EMSCRIPTEN_NATIVE
-#include "emscripten-canvas-sdl.h"
+#include "emscripten-qt-sdl.h"
 #include <QtCore/QDebug>
 #include <SDL/SDL.h>
 #include <SDL/SDL_thread.h>

@@ -172,6 +172,9 @@ Qt::Key sdlToQtKey(SDLKey sdlKey)
     case SDLK_RSHIFT:
     case SDLK_LSHIFT:
         return Qt::Key_Shift;
+    case SDLK_RCTRL:
+    case SDLK_LCTRL:
+        return Qt::Key_Control;
 	default:
 		return static_cast<Qt::Key>(0);
 	}
@@ -184,6 +187,10 @@ Qt::KeyboardModifiers sdlModifiersToQtModifiers(SDLMod sdlMod)
 	{
 		qtModifiers = qtModifiers | Qt::ShiftModifier;
 	}
+    if ((sdlMod & KMOD_RCTRL) != 0 || (sdlMod & KMOD_LCTRL) != 0)
+    {
+        qtModifiers = qtModifiers | Qt::ControlModifier;
+    }
 	return qtModifiers;
 }
 
@@ -375,6 +382,10 @@ int EmscriptenQtSDL::exec()
             if (qtKey == Qt::Key_Shift && isPress)
             {
                 qtModifiers |= Qt::ShiftModifier;
+            }
+            if (qtKey == Qt::Key_Control && isPress)
+            {
+                qtModifiers |= Qt::ControlModifier;
             }
 			EMSCRIPTENQT_canvasKeyChanged(unicode, qtKey, qtModifiers, isPress, false);
 		}

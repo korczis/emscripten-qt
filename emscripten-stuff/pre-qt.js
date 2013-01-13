@@ -45,6 +45,7 @@ function _EMSCRIPTENQT_canvas_height_pixels()
 	var canvas = document.getElementById('canvas');
 	return canvas.height;
 }
+var lastRenderedData = null;
 function _EMSCRIPTENQT_flush_pixels_typed_array(data, regionX, regionY, regionW, regionH)
 {
 	// Experimental canvas rendered that makes use of typed arrays.

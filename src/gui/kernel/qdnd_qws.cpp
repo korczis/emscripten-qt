@@ -141,7 +141,11 @@ void QDragManager::updatePixmap()
         if (willDrop) {
             qt_qws_dnd_deco->show();
         } else {
+#ifndef EMSCRIPTEN
+            // Hiding the pixmap feels weird, and doesn't match the desktop behaving;
+            // so I've disabled it for Emscripten.
             qt_qws_dnd_deco->hide();
+#endif
         }
     }
 }
@@ -166,8 +170,12 @@ void QDragManager::updateCursor()
             QApplication::changeOverrideCursor(QCursor(Qt::ForbiddenCursor));
             currentActionForOverrideCursor = Qt::IgnoreAction;
         }
+#ifndef EMSCRIPTEN
+        // Hiding the pixmap feels weird, and doesn't match the desktop behaving;
+        // so I've disabled it for Emscripten.
         if (qt_qws_dnd_deco)
             qt_qws_dnd_deco->hide();
+#endif
     }
 #endif
 }

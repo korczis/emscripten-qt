@@ -42,9 +42,13 @@
 
 #include "dialog.h"
 
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 #ifdef Q_OS_SYMBIAN
     bool smallScreen = true;
 #else
@@ -55,11 +59,19 @@ int main(int argc, char *argv[])
     smallScreen = true;
 #endif
 
-    Dialog dialog(0, smallScreen);
+    Dialog *dialog = new Dialog(0, smallScreen);
 
     if (!smallScreen)
-        dialog.show();
+        dialog->show();
     else
-        dialog.showFullScreen();
-    return app.exec();
+        dialog->showFullScreen();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

@@ -130,103 +130,111 @@ function EMSCRIPTENQT_mouseUp(e)
 {
         EMSCRIPTENQT_mouseButtonEvent(e, false);
 }
-function EMSCRIPTENQT_keyEvent(e, isPress)
+var lastKeyPressCharCode = null;
+function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 {
 	var jsKeyCode = e.keyCode;
 	var qtKeyCode = 0;
 	var qtModifiers = 0;
-	Module.print("keyCode: "  + jsKeyCode + " shifted: " + e.shiftKey + 'a'.charCodeAt());
-	if (jsKeyCode >= 'a'.charCodeAt() && jsKeyCode <= 'z'.charCodeAt())
+
+	var jsKeyCodeIsValidUnicode = true;
+	var recognised = true;
+	// keycodes  that we can immediately recognise - generally ones whose meaning
+	// does not change when coupled with a shift.
+	switch(jsKeyCode)
 	{
-		qtKeyCode = 0x41 + (jsKeyCode - 'a'.charCodeAt());
-		Module.print("keyCode lower: "  + jsKeyCode + " shifted: " + e.shiftKey);
+	case 37: // Left
+		qtKeyCode = 0x01000012;
+		jsKeyCodeIsValidUnicode = false;
+		break;
+	case 38: // Up
+		qtKeyCode = 0x01000013;
+		jsKeyCodeIsValidUnicode = false;
+		break;
+	case 39: // Right
+		qtKeyCode = 0x01000014;
+		jsKeyCodeIsValidUnicode = false;
+		break;
+	case 40: // Down
+		qtKeyCode = 0x01000015;
+		jsKeyCodeIsValidUnicode = false;
+		break;
+	case 8: // Backspace
+		qtKeyCode = 0x01000003;
+		break;
+	case 13: // Enter
+		qtKeyCode = 0x01000004;
+		break;
+	case 32: // Enter
+		qtKeyCode = 0x20;
+		break;
+	case 16: // Shift
+		qtKeyCode = 0x01000020;
+		break;
+	case 17: // Ctrl
+		qtKeyCode = 0x01000021;
+		break;
+	default:
+		recognised = false;
+	};
+	if (recognised)
+	{
 		e.preventDefault();
-	}
-	else if (jsKeyCode >= 'A'.charCodeAt() && jsKeyCode <= 'Z'.charCodeAt())
-	{
-		Module.print("keyCode upper: "  + jsKeyCode + " shifted: " + e.shiftKey);
-		if (!e.shiftKey)
+		if (isKeyPress)
 		{
-			Module.print("Unshifting keycode");
-			jsKeyCode -= 'A'.charCodeAt() - 'a'.charCodeAt();
-			qtKeyCode = 0x41 + (jsKeyCode - 'a'.charCodeAt());
+			// We already processed this in the corresponding keydown, thanks!
+			return;
+		}
+	}
+	else if (isKeyDown && !isKeyPress)
+	{
+		// Need to wait for the pending keypress in order to identify the key.
+		return;
+	}
+
+	if (isKeyPress)
+	{
+		// If we're here, then we're figuring out the code for the last keypress.
+		if (isKeyDown)
+		{
+			jsKeyCode = e.which;
+			// Store this so that we can properly handle a key up for this key.
+			lastKeyPressCharCode = jsKeyCode;
 		}
 		else
 		{
-			qtKeyCode = 0x41 + (jsKeyCode - 'A'.charCodeAt());
+			jsKeyCode = lastKeyPressCharCode;
 		}
 		e.preventDefault();
 	}
-	else
+	if (!jsKeyCodeIsValidUnicode)
 	{
-		var recognised = true;
-                var jsKeyCodeIsValidUnicode = true;
-		switch(jsKeyCode)
-		{
-		case 37: // Left
-			qtKeyCode = 0x01000012;
-                        jsKeyCodeIsValidUnicode = false;
-			break;
-		case 38: // Up
-			qtKeyCode = 0x01000013;
-                        jsKeyCodeIsValidUnicode = false;
-			break;
-		case 39: // Right
-			qtKeyCode = 0x01000014;
-                        jsKeyCodeIsValidUnicode = false;
-			break;
-		case 40: // Down
-			qtKeyCode = 0x01000015;
-                        jsKeyCodeIsValidUnicode = false;
-			break;
-		case 8: // Backspace
-			qtKeyCode = 0x01000003;
-			break;
-		case 13: // Enter
-			qtKeyCode = 0x01000004;
-			break;
-		case 32: // Space
-			qtKeyCode = 0x20;
-			break;
-		case 16: // Shift
-                        qtKeyCode = 0x01000020;
-                        break;
-                case 17: // Ctrl
-                        qtKeyCode = 0x01000021;
-                        break;
-		default:
-			recognised = false;
-		};
-		if (recognised)
-		{
-			e.preventDefault();
-		}
-                if (!jsKeyCodeIsValidUnicode)
-                {
-                        jsKeyCode = 0;
-                }
+		jsKeyCode = 0; 
 	}
-	Module.print("keyCode unshifted: "  + jsKeyCode);
 	// If this key event involves the shift key, and we are not *just* releasing the shift key, then add the Qt shift modifier.
-        // Note that if we releasing some *non-shift* key while we are holding the shift key down, we need to add the Qt shift modifier.
-        if (e.shiftKey && !(qtKeyCode == 0x01000020 && !isPress)) 
-        {
-                qtModifiers += 0x02000000;
-        }
+	// Note that if we releasing some *non-shift* key while we are holding the shift key down, we need to add the Qt shift modifier.
+	if (e.shiftKey && !(qtKeyCode == 0x01000020 && !isKeyDown)) 
+	{
+		qtModifiers += 0x02000000;
+	}
 	// The same as shift, but for ctrl.
-        if (e.ctrlKey && !(qtKeyCode == 0x01000021 && !isPress))
-        {
-                qtModifiers += 0x04000000;
-        }
-	_EMSCRIPTENQT_canvasKeyChanged(jsKeyCode, qtKeyCode, qtModifiers, isPress, false);
+	if (e.ctrlKey && !(qtKeyCode == 0x01000021 && !isKeyDown)) 
+	{
+		qtModifiers += 0x04000000;
+	}
+	_EMSCRIPTENQT_canvasKeyChanged(jsKeyCode, qtKeyCode, qtModifiers, isKeyDown, false);
 }
 function EMSCRIPTENQT_keyUp(e)
 {
-	EMSCRIPTENQT_keyEvent(e, false);
+	EMSCRIPTENQT_keyEvent(e, false, false);
 }
 function EMSCRIPTENQT_keyDown(e)
 {
-	EMSCRIPTENQT_keyEvent(e, true);
+	EMSCRIPTENQT_keyEvent(e, true, false);
+}
+function EMSCRIPTENQT_keyPress(e)
+{
+	EMSCRIPTENQT_keyEvent(e, true, true);
 }
 function _EMSCRIPTENQT_cursorChanged(newCursorShape)
 {
@@ -312,6 +320,8 @@ Module['preRun'] = function() {
                 canvas.addEventListener("mouseup", EMSCRIPTENQT_mouseUp, false);
                 canvas.addEventListener("keydown", EMSCRIPTENQT_keyDown, true);
                 canvas.addEventListener("keyup", EMSCRIPTENQT_keyUp, true);
+                canvas.addEventListener("keypress", EMSCRIPTENQT_keyPress, true);
+
 		canvas.tabIndex = 1;
 		// Data cache dir for QWS
 		Module['FS_createFolder']("/tmp/", 'qtembedded-0', true, true);

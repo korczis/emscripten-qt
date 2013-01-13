@@ -160,19 +160,24 @@ function EMSCRIPTENQT_keyEvent(e, isPress)
 	else
 	{
 		var recognised = true;
+                var jsKeyCodeIsValidUnicode = true;
 		switch(jsKeyCode)
 		{
 		case 37: // Left
 			qtKeyCode = 0x01000012;
+                        jsKeyCodeIsValidUnicode = false;
 			break;
 		case 38: // Up
 			qtKeyCode = 0x01000013;
+                        jsKeyCodeIsValidUnicode = false;
 			break;
 		case 39: // Right
 			qtKeyCode = 0x01000014;
+                        jsKeyCodeIsValidUnicode = false;
 			break;
 		case 40: // Down
 			qtKeyCode = 0x01000015;
+                        jsKeyCodeIsValidUnicode = false;
 			break;
 		case 8: // Backspace
 			qtKeyCode = 0x01000003;
@@ -195,8 +200,11 @@ function EMSCRIPTENQT_keyEvent(e, isPress)
 		if (recognised)
 		{
 			e.preventDefault();
-                        jsKeyCode = 0; // In these cases, it is incorrect to treat jsKeyCode as a unicode value.
 		}
+                if (!jsKeyCodeIsValidUnicode)
+                {
+                        jsKeyCode = 0;
+                }
 	}
 	Module.print("keyCode unshifted: "  + jsKeyCode);
 	// If this key event involves the shift key, and we are not *just* releasing the shift key, then add the Qt shift modifier.

@@ -45,6 +45,56 @@ function _EMSCRIPTENQT_canvas_height_pixels()
 	var canvas = document.getElementById('canvas');
 	return canvas.height;
 }
+function _EMSCRIPTENQT_flush_pixels_typed_array(data, regionX, regionY, regionW, regionH)
+{
+	// Experimental canvas rendered that makes use of typed arrays.
+        var canvasWidth = _EMSCRIPTENQT_canvas_width_pixels();
+        var canvasHeight = _EMSCRIPTENQT_canvas_height_pixels();
+	if (lastRenderedData == null)
+	{
+		var totalPixels = canvasWidth * canvasHeight;
+		lastRenderedData = new Int32Array(totalPixels); 
+		for (var i = 0; i < totalPixels; i++)
+		{
+			lastRenderedData[i] = 0xFFFFFFFF;
+		}
+	}
+        var canvas = document.getElementById('canvas');
+        var canvasContext = canvas.getContext("2d");
+        var imageDataRaw = canvasContext.getImageData(regionX, regionY, regionW, regionH);
+        var imageDataPos = 0;
+        var dataIncAfterRow = (canvasWidth - regionW);
+        var sourceData = (data >> 2) + canvasWidth * regionY + regionX;
+	var lastRenderedDataPos = canvasWidth * regionY + regionX;
+	var imageDataRawBuffer = new ArrayBuffer(imageDataRaw.data.length);
+	var imageData = new Int32Array(imageDataRawBuffer);
+	var imageData8 = new Uint8ClampedArray(imageDataRawBuffer);
+	imageData8.set(imageDataRaw.data);
+        for (var y = 0; y < regionH; y++)
+        {
+                for (var x = 0; x < regionW; x++)
+                {
+                        var argb = HEAP32[sourceData];
+			if (argb != lastRenderedData[lastRenderedDataPos])
+			{
+				argb = argb & 0x00FFFFFF;
+				var convertedToCanvasPixel = (0xFF << 24) |
+                                   (((argb & 0x0000FF) >> 0) << 16) |
+                                   (((argb & 0x00FF00) >> 8) << 8) |
+                                   (((argb & 0xFF0000) >> 16) << 0) ;
+				imageData[imageDataPos] = convertedToCanvasPixel; 
+			}
+                        imageDataPos++;
+                        sourceData++;
+			lastRenderedDataPos++;
+                }
+                sourceData += dataIncAfterRow;
+                lastRenderedDataPos += dataIncAfterRow;
+        }
+	imageDataRaw.data.set(imageData8);
+        canvasContext.putImageData(imageDataRaw, regionX, regionY);
+	lastRenderedData.set(HEAP32.subarray(data >> 2, (data >> 2) + (canvasWidth * canvasHeight)));
+}
 function _EMSCRIPTENQT_flush_pixels(data, regionX, regionY, regionW, regionH)
 {
         var canvasWidth = _EMSCRIPTENQT_canvas_width_pixels();

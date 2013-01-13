@@ -47,17 +47,21 @@
 static const int MouseCount = 7;
 
 //! [0]
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 //! [0]
 
 //! [1]
-    QGraphicsScene scene;
-    scene.setSceneRect(-300, -300, 600, 600);
+    QGraphicsScene *scene = new QGraphicsScene;
+    scene->setSceneRect(-300, -300, 600, 600);
 //! [1] //! [2]
-    scene.setItemIndexMethod(QGraphicsScene::NoIndex);
+    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 //! [2]
 
 //! [3]
@@ -65,31 +69,40 @@ int main(int argc, char **argv)
         Mouse *mouse = new Mouse;
         mouse->setPos(::sin((i * 6.28) / MouseCount) * 200,
                       ::cos((i * 6.28) / MouseCount) * 200);
-        scene.addItem(mouse);
+        scene->addItem(mouse);
     }
 //! [3]
 
 //! [4]
-    QGraphicsView view(&scene);
-    view.setRenderHint(QPainter::Antialiasing);
-    view.setBackgroundBrush(QPixmap(":/images/cheese.jpg"));
+    QGraphicsView *view = new QGraphicsView(scene);
+    view->setRenderHint(QPainter::Antialiasing);
+    view->setBackgroundBrush(QPixmap(":/images/cheese.jpg"));
 //! [4] //! [5]
-    view.setCacheMode(QGraphicsView::CacheBackground);
-    view.setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-    view.setDragMode(QGraphicsView::ScrollHandDrag);
+    view->setCacheMode(QGraphicsView::CacheBackground);
+    view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    view->setDragMode(QGraphicsView::ScrollHandDrag);
 //! [5] //! [6]
-    view.setWindowTitle(QT_TRANSLATE_NOOP(QGraphicsView, "Colliding Mice"));
+    view->setWindowTitle(QT_TRANSLATE_NOOP(QGraphicsView, "Colliding Mice"));
 #if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    view.showMaximized();
+    view->showMaximized();
 #else
-    view.resize(400, 300);
-    view.show();
+    view->resize(400, 300);
+    view->show();
 #endif
 
-    QTimer timer;
-    QObject::connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance()));
-    timer.start(1000 / 33);
+    QTimer *timer = new QTimer;
+    QObject::connect(timer, SIGNAL(timeout()), scene, SLOT(advance()));
+    timer->start(1000 / 33);
 
-    return app.exec();
+    return app->exec();
 }
 //! [6]
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif
+

@@ -303,7 +303,7 @@ namespace
     }
 }
 
-bool EmscriptenSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
+bool EmscriptenQtSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
 {
 	::canvasWidthPixels = canvasWidthPixels;
 	::canvasHeightPixels = canvasHeightPixels;
@@ -325,7 +325,7 @@ bool EmscriptenSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
 	return true;
 }
 
-int EmscriptenSDL::exec()
+int EmscriptenQtSDL::exec()
 {
 	qDebug() << "SDL - woo!";
 	// Any requested timers from before we called SDL_Init would have been ignored, so let's
@@ -379,12 +379,12 @@ int EmscriptenSDL::exec()
 	return 0;
 }
 
-void EmscriptenSDL::setAttemptedLocalEventLoopCallback(void(*callback)() )
+void EmscriptenQtSDL::setAttemptedLocalEventLoopCallback(void(*callback)() )
 {
     attemptedLocalEventCallback = callback;
 }
 extern int emscriptenQtSDLMain(int argc, char** argv);
-int EmscriptenSDL::run(int canvasWidthPixels, int canvasHeightPixels, int argc, char** argv)
+int EmscriptenQtSDL::run(int canvasWidthPixels, int canvasHeightPixels, int argc, char** argv)
 {
    initScreen(canvasWidthPixels, canvasHeightPixels);
    const int runEmscriptenQtSDLMainValue = emscriptenQtSDLMain(argc, argv);

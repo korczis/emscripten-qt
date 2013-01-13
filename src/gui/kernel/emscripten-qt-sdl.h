@@ -9,7 +9,7 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Gui)
 
-class Q_GUI_EXPORT EmscriptenSDL
+class Q_GUI_EXPORT EmscriptenQtSDL
 {
 public:
     static int run(int canvasWidthPixels, int canvasHeightPixels, int argc, char** argv);

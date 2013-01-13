@@ -77,11 +77,26 @@ function _EMSCRIPTENQT_flush_pixels(data, regionX, regionY, regionW, regionH)
 function _EMSCRIPTENQT_attemptedLocalEventLoop()
 {
 }
+var ignoreMouseMovement = false;
+var clearIgnoreMouseMovementTimerSet = false;
 function EMSCRIPTENQT_mouseMoved(e)
 {
+	// Workaround for annoying bug in Firefox, where a flurry of mousemove events seems to starve other
+	// events (timeouts, redrawing the canvas, etc).
+	// Refuse to process subsequent mousemove events until a timeout has been successfully processed.
+        if (ignoreMouseMovement)
+        {
+                if (!clearIgnoreMouseMovementTimerSet)
+                {
+                        setTimeout(function() { ignoreMouseMovement = false; clearIgnoreMouseMovementTimerSet = false; }, 0);
+                        clearIgnoreMouseMovementTimerSet = true;
+                }
+                return;
+        }
         var canvas = document.getElementById('canvas');
         //Module.print("Mouse moved: " + (e.pageX - canvas.offsetLeft) + "," + (e.pageY - canvas.offsetTop));
 	cwrap('EMSCRIPTENQT_mouseCanvasPosChanged', 'number', ['number', 'number'])(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+        ignoreMouseMovement = true;
 }
 function EMSCRIPTENQT_mouseButtonEvent(e, isButtonDown)
 {

@@ -383,6 +383,18 @@ void EmscriptenSDL::setAttemptedLocalEventLoopCallback(void(*callback)() )
 {
     attemptedLocalEventCallback = callback;
 }
+extern int emscriptenQtSDLMain(int argc, char** argv);
+int EmscriptenSDL::run(int canvasWidthPixels, int canvasHeightPixels, int argc, char** argv)
+{
+   initScreen(canvasWidthPixels, canvasHeightPixels);
+   const int runEmscriptenQtSDLMainValue = emscriptenQtSDLMain(argc, argv);
+   if (runEmscriptenQtSDLMainValue != EXIT_SUCCESS)
+   {
+       return runEmscriptenQtSDLMainValue;
+   }
+   return exec();
+}
+
 
 
 #endif

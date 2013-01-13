@@ -12,9 +12,11 @@ QT_MODULE(Gui)
 class Q_GUI_EXPORT EmscriptenSDL
 {
 public:
-	static bool initScreen(int canvasWidthPixels, int canvasHeightPixels);
-	static int exec();
+    static int run(int canvasWidthPixels, int canvasHeightPixels, int argc, char** argv);
     static void setAttemptedLocalEventLoopCallback(void (*callback)() );
+private:
+    static bool initScreen(int canvasWidthPixels, int canvasHeightPixels);
+    static int exec();
 };
 
 QT_END_NAMESPACE

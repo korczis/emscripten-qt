@@ -186,6 +186,9 @@ function EMSCRIPTENQT_keyEvent(e, isPress)
 		case 16: // Shift
                         qtKeyCode = 0x01000020;
                         break;
+                case 17: // Ctrl
+                        qtKeyCode = 0x01000021;
+                        break;
 		default:
 			recognised = false;
 		};
@@ -201,6 +204,11 @@ function EMSCRIPTENQT_keyEvent(e, isPress)
         if (e.shiftKey && !(qtKeyCode == 0x01000020 && !isPress)) 
         {
                 qtModifiers += 0x02000000;
+        }
+	// The same as shift, but for ctrl.
+        if (e.ctrlKey && !(qtKeyCode == 0x01000021 && !isPress))
+        {
+                qtModifiers += 0x04000000;
         }
 	_EMSCRIPTENQT_canvasKeyChanged(jsKeyCode, qtKeyCode, qtModifiers, isPress, false);
 }

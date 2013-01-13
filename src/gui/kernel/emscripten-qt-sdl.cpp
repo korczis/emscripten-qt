@@ -1,6 +1,7 @@
 #ifdef EMSCRIPTEN_NATIVE
 #include "emscripten-qt-sdl.h"
 #include <QtCore/QDebug>
+#include <QtCore/QCoreApplication>
 #include <SDL/SDL.h>
 #include <SDL/SDL_thread.h>
 #include <SDL/SDL_mutex.h>
@@ -161,7 +162,6 @@ Qt::Key sdlToQtKey(SDLKey sdlKey)
 	case SDLK_BACKSPACE:
 		return Qt::Key_Backspace;
 	case SDLK_LEFT:
-		qDebug() << "Left";
 		return Qt::Key_Left;
 	case SDLK_RIGHT:
 		return Qt::Key_Right;
@@ -406,6 +406,10 @@ int EmscriptenQtSDL::run(int canvasWidthPixels, int canvasHeightPixels, int argc
 {
    initScreen(canvasWidthPixels, canvasHeightPixels);
    const int runEmscriptenQtSDLMainValue = emscriptenQtSDLMain(argc, argv);
+   if (QCoreApplication::instance() == 0)
+   {
+       qWarning() << "No QApplication detected - did you stop it being deleted when emscriptenQtSDLMain(...) ended?";
+   }
    if (runEmscriptenQtSDLMainValue != EXIT_SUCCESS)
    {
        return runEmscriptenQtSDLMainValue;

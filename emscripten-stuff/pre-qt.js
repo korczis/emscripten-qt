@@ -251,6 +251,13 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 			jsKeyCode = e.which;
 			// Store this so that we can properly handle a key up for this key.
 			lastKeyPressCharCode = jsKeyCode;
+			if (jsKeyCode == 32) 
+                        { 
+                                // Hack around strange behaviour in Firefox, which seems to deliver a keypress 
+                                // event for spaces, but with e.keyCode = 0 
+                                return; 
+                        }
+
 		}
 		else
 		{

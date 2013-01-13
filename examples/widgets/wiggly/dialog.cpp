@@ -43,12 +43,40 @@
 #include "dialog.h"
 #include "wigglywidget.h"
 
+// This isn't necessary for porting, but it's a fun demo of how an emscripten-qt
+// app can interact with the rest of the webpage.
+Dialog *instance = NULL;
+extern "C"
+{
+	void EMSCRIPTENQT_qtTextChanged(const char* newText)
+#ifdef EMSCRIPTEN_NATIVE
+	{
+		qDebug() << "Ignoring text change to " << newText << " as I am not a web browser!";
+	}
+#endif
+	;
+        void EMSCRIPTENQT_htmlTextChanged(const char* newText)	__attribute__((used));
+        void EMSCRIPTENQT_htmlTextChanged(const char* newText)
+	{
+		instance->htmlTextChanged(QString(newText));
+	}
+}
+void Dialog::qtTextChanged(const QString& newText)
+{
+	EMSCRIPTENQT_qtTextChanged(newText.toUtf8().data());
+}
+void Dialog::htmlTextChanged(const QString& newText)
+{
+	lineEdit->setText(newText);
+}
+
 //! [0]
 Dialog::Dialog(QWidget *parent, bool smallScreen)
     : QDialog(parent)
 {
+    instance = this;
     WigglyWidget *wigglyWidget = new WigglyWidget;
-    QLineEdit *lineEdit = new QLineEdit;
+    lineEdit = new QLineEdit;
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(wigglyWidget);
@@ -68,6 +96,8 @@ Dialog::Dialog(QWidget *parent, bool smallScreen)
 
     connect(lineEdit, SIGNAL(textChanged(QString)),
             wigglyWidget, SLOT(setText(QString)));
+    connect(lineEdit, SIGNAL(textChanged(QString)),
+            this, SLOT(qtTextChanged(QString)));
     if (!smallScreen){
         lineEdit->setText(tr("Hello world!"));
     }

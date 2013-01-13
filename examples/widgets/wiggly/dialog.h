@@ -42,6 +42,7 @@
 #define DIALOG_H
 
 #include <QDialog>
+class QLineEdit;
 
 //! [0]
 class Dialog : public QDialog
@@ -50,6 +51,11 @@ class Dialog : public QDialog
 
 public:
     Dialog(QWidget *parent = 0, bool smallScreen = false);
+    void htmlTextChanged(const QString& newText);
+private slots:
+    void qtTextChanged(const QString& newText);
+private:
+    QLineEdit *lineEdit;
 };
 //! [0]
 

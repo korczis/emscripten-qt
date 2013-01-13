@@ -5395,7 +5395,8 @@ fi
 # detect how jpeg should be built
 if [ "$CFG_JPEG" = "auto" ]; then
     if [ "$CFG_SHARED" = "yes" ]; then
-        CFG_JPEG=plugin
+        #CFG_JPEG=plugin
+	CFG_JPEG=yes # emscripten-native-specific - we don't want to build any plugins - statically compiled instead, please.
     else
         CFG_JPEG=yes
     fi

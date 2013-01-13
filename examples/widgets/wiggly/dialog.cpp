@@ -58,7 +58,7 @@ extern "C"
         void EMSCRIPTENQT_htmlTextChanged(const char* newText)	__attribute__((used));
         void EMSCRIPTENQT_htmlTextChanged(const char* newText)
 	{
-		instance->htmlTextChanged(QString(newText));
+		instance->htmlTextChanged(QString::fromUtf8(newText));
 	}
 }
 void Dialog::qtTextChanged(const QString& newText)

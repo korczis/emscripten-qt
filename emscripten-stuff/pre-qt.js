@@ -183,19 +183,25 @@ function EMSCRIPTENQT_keyEvent(e, isPress)
 		case 32: // Enter
 			qtKeyCode = 0x20;
 			break;
+		case 16: // Shift
+                        qtKeyCode = 0x01000020;
+                        break;
 		default:
 			recognised = false;
 		};
 		if (recognised)
 		{
 			e.preventDefault();
+                        jsKeyCode = 0; // In these cases, it is incorrect to treat jsKeyCode as a unicode value.
 		}
 	}
 	Module.print("keyCode unshifted: "  + jsKeyCode);
-	if (e.shiftKey)
-	{
-		qtModifiers += 0x02000000;
-	}
+	// If this key event involves the shift key, and we are not *just* releasing the shift key, then add the Qt shift modifier.
+        // Note that if we releasing some *non-shift* key while we are holding the shift key down, we need to add the Qt shift modifier.
+        if (e.shiftKey && !(qtKeyCode == 0x01000020 && !isPress)) // i.e. don't add the shift key modifier if *all* we are doing is releasing the shift key!
+        {
+                qtModifiers += 0x02000000;
+        }
 	_EMSCRIPTENQT_canvasKeyChanged(jsKeyCode, qtKeyCode, qtModifiers, isPress, false);
 }
 function EMSCRIPTENQT_keyUp(e)

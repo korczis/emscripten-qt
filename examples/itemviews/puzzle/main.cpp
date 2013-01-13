@@ -57,7 +57,7 @@ int emscriptenQtSDLMain(int argc, char *argv[])
 #else
     window->show();
 #endif
-    window->openImage(":/images/example.png");
+    window->openImage(":/images/example.jpg");
     return app->exec();
 }
 

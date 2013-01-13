@@ -48,10 +48,14 @@
 #include <QtCore>
 #include <QtGui>
 
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char **argv)
+#else
+int emscriptenQtSDLMain(int argc, char** argv)
+#endif
 {
     Q_INIT_RESOURCE(stickman);
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
     StickMan *stickMan = new StickMan;
     stickMan->setDrawSticks(false);
@@ -79,53 +83,61 @@ int main(int argc, char **argv)
     textItem->setPos(-w / 2.0, stickManBoundingRect.bottom() + 25.0);
 #endif
 
-    QGraphicsScene scene;
-    scene.addItem(stickMan);
+    QGraphicsScene *scene = new QGraphicsScene;
+    scene->addItem(stickMan);
 
 #if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    scene.addItem(buttonJump);
-    scene.addItem(buttonDance);
-    scene.addItem(buttonChill);
+    scene->addItem(buttonJump);
+    scene->addItem(buttonDance);
+    scene->addItem(buttonChill);
 #else
-    scene.addItem(textItem);
+    scene->addItem(textItem);
 #endif
-    scene.setBackgroundBrush(Qt::black);
+    scene->setBackgroundBrush(Qt::black);
 
-    GraphicsView view;
-    view.setRenderHints(QPainter::Antialiasing);
-    view.setTransformationAnchor(QGraphicsView::NoAnchor);
-    view.setScene(&scene);
+    GraphicsView *view = new GraphicsView;
+    view->setRenderHints(QPainter::Antialiasing);
+    view->setTransformationAnchor(QGraphicsView::NoAnchor);
+    view->setScene(scene);
 
-    QRectF sceneRect = scene.sceneRect();
+    QRectF sceneRect = scene->sceneRect();
     // making enough room in the scene for stickman to jump and die
-    view.resize(sceneRect.width() + 100, sceneRect.height() + 100);
-    view.setSceneRect(sceneRect);
+    view->resize(sceneRect.width() + 100, sceneRect.height() + 100);
+    view->setSceneRect(sceneRect);
 
 #if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view.showMaximized();
-    view.fitInView(scene.sceneRect(), Qt::KeepAspectRatio);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->showMaximized();
+    view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 #else
-    view.show();
-    view.setFocus();
+    view->show();
+    view->setFocus();
 #endif
 
-    LifeCycle cycle(stickMan, &view);
-    cycle.setDeathAnimation(":/animations/dead");
+    LifeCycle *cycle = new LifeCycle(stickMan, view);
+    cycle->setDeathAnimation(":/animations/dead");
 
 #if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    cycle.addActivity(":/animations/jumping", Qt::Key_J, buttonJump, SIGNAL(clicked()));
-    cycle.addActivity(":/animations/dancing", Qt::Key_D, buttonDance, SIGNAL(clicked()));
-    cycle.addActivity(":/animations/chilling", Qt::Key_C, buttonChill, SIGNAL(clicked()));
+    cycle->addActivity(":/animations/jumping", Qt::Key_J, buttonJump, SIGNAL(clicked()));
+    cycle->addActivity(":/animations/dancing", Qt::Key_D, buttonDance, SIGNAL(clicked()));
+    cycle->addActivity(":/animations/chilling", Qt::Key_C, buttonChill, SIGNAL(clicked()));
 #else
-    cycle.addActivity(":/animations/jumping", Qt::Key_J);
-    cycle.addActivity(":/animations/dancing", Qt::Key_D);
-    cycle.addActivity(":/animations/chilling", Qt::Key_C);
+    cycle->addActivity(":/animations/jumping", Qt::Key_J);
+    cycle->addActivity(":/animations/dancing", Qt::Key_D);
+    cycle->addActivity(":/animations/chilling", Qt::Key_C);
 #endif
 
-    cycle.start();
+    cycle->start();
 
 
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char** argv)
+{
+	EmscriptenQtSDL::run(640, 680, argc, argv);
+}
+#endif

@@ -169,6 +169,9 @@ Qt::Key sdlToQtKey(SDLKey sdlKey)
 		return Qt::Key_Up;
 	case SDLK_DOWN:
 		return Qt::Key_Down;
+    case SDLK_RSHIFT:
+    case SDLK_LSHIFT:
+        return Qt::Key_Shift;
 	default:
 		return static_cast<Qt::Key>(0);
 	}
@@ -368,7 +371,11 @@ int EmscriptenQtSDL::exec()
 			const SDLKey sdlKey = event.key.keysym.sym;
 			const bool isPress = (event.type == SDL_KEYDOWN);
 			const Qt::Key qtKey = sdlToQtKey(sdlKey);
-			const Qt::KeyboardModifiers qtModifiers = sdlModifiersToQtModifiers(event.key.keysym.mod);
+			Qt::KeyboardModifiers qtModifiers = sdlModifiersToQtModifiers(event.key.keysym.mod);
+            if (qtKey == Qt::Key_Shift && isPress)
+            {
+                qtModifiers |= Qt::ShiftModifier;
+            }
 			EMSCRIPTENQT_canvasKeyChanged(unicode, qtKey, qtModifiers, isPress, false);
 		}
 

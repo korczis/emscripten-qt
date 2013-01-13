@@ -42,22 +42,15 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
-#include <emscripten-canvas-sdl.h>
-
-void triggerAssert()
-{
-	Q_ASSERT(false);
-}
-
 
 #include "dialog.h"
 
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
-{
-#ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::initScreen(800, 640);
-    EmscriptenSDL::setAttemptedLocalEventLoopCallback(triggerAssert);
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
 #endif
+{
     QApplication *app = new QApplication(argc, argv);
 
     //QString translatorFileName = QLatin1String("qt_");
@@ -72,9 +65,13 @@ int main(int argc, char *argv[])
 #else
     dialog->show();
 #endif
-    app->exec();
+    return app->exec();
+}
 
 #ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::exec();
-#endif
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
 }
+#endif

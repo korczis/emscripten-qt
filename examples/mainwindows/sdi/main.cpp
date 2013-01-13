@@ -42,15 +42,13 @@
 
 #include "mainwindow.h"
 
-#ifdef EMSCRIPTEN_NATIVE
-#include <QtGui/emscripten-canvas-sdl.h>
-#endif
 
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
-{
-#ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::initScreen(600, 480);
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
 #endif
+{
     Q_INIT_RESOURCE(sdi);
     QApplication *app = new QApplication(argc, argv);
     app->setApplicationName("SDI Example");
@@ -61,9 +59,13 @@ int main(int argc, char *argv[])
 #else
     mainWin->show();
 #endif
-    app->exec();
+    return app->exec();
+}
 
 #ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::exec();
-#endif
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+	return EmscriptenQtSDL::run(640, 480, argc, argv);
 }
+#endif

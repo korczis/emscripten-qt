@@ -41,21 +41,13 @@
 #include <QApplication>
 
 #include "mainwindow.h"
-#ifdef EMSCRIPTEN_NATIVE
-#include <emscripten-canvas-sdl.h>
 
-void triggerAssert()
-{
-        Q_ASSERT(false);
-}
-#endif
-
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
-{
-#ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::initScreen(800, 640);
-    EmscriptenSDL::setAttemptedLocalEventLoopCallback(triggerAssert);
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
 #endif
+{
 
     Q_INIT_RESOURCE(chart);
 
@@ -66,8 +58,13 @@ int main(int argc, char *argv[])
 #else
     window->show();
 #endif
-    app->exec();
-#ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::exec();
-#endif
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

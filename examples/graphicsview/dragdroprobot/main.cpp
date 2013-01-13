@@ -45,16 +45,6 @@
 
 #include <math.h>
 
-#ifdef EMSCRIPTEN_NATIVE
-#include <emscripten-canvas-sdl.h>
-
-void triggerAssert()
-{
-        Q_ASSERT(false);
-}
-#endif
-
-
 class GraphicsView : public QGraphicsView
 {
 public:
@@ -72,12 +62,12 @@ protected:
 };
 
 //! [0]
-int main(int argc, char **argv)
-{
-#ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::initScreen(800, 640);
-    EmscriptenSDL::setAttemptedLocalEventLoopCallback(triggerAssert);
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
 #endif
+{
     QApplication *app = new QApplication(argc, argv);
 
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
@@ -110,10 +100,14 @@ int main(int argc, char **argv)
      view->show();
 #endif
 
-    app->exec();
-
-#ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::exec();
-#endif
+    return app->exec();
 }
 //! [2]
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

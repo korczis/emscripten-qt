@@ -39,20 +39,15 @@
 ****************************************************************************/
 
 #include <QApplication>
-#include <emscripten-canvas-sdl.h>
-void triggerAssert()
-{
-        Q_ASSERT(false);
-}
 
 #include "mainwindow.h"
 
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
-{
-#ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::initScreen(800, 640);
-    EmscriptenSDL::setAttemptedLocalEventLoopCallback(triggerAssert);
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
 #endif
+{
     QApplication *app = new QApplication(argc, argv);
     MainWindow *window = new MainWindow;
 #if defined(Q_OS_SYMBIAN)
@@ -60,8 +55,13 @@ int main(int argc, char *argv[])
 #else
     window->show();
 #endif
-    app->exec();
-#ifdef EMSCRIPTEN_NATIVE
-    EmscriptenSDL::exec();
-#endif
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

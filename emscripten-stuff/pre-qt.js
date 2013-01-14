@@ -52,6 +52,7 @@ function _EMSCRIPTENQT_flush_pixels_typed_array(data, regionX, regionY, regionW,
 	// Experimental canvas rendered that makes use of typed arrays.
         var canvasWidth = _EMSCRIPTENQT_canvas_width_pixels();
         var canvasHeight = _EMSCRIPTENQT_canvas_height_pixels();
+        var fullRepaint = (lastRenderedData == null);
 	if (lastRenderedData == null)
 	{
 		var totalPixels = canvasWidth * canvasHeight;
@@ -77,7 +78,7 @@ function _EMSCRIPTENQT_flush_pixels_typed_array(data, regionX, regionY, regionW,
                 for (var x = 0; x < regionW; x++)
                 {
                         var argb = HEAP32[sourceData];
-			if (argb != lastRenderedData[lastRenderedDataPos])
+			if (argb != lastRenderedData[lastRenderedDataPos] || fullRepaint)
 			{
 				argb = argb & 0x00FFFFFF;
 				var convertedToCanvasPixel = (0xFF << 24) |
@@ -97,7 +98,7 @@ function _EMSCRIPTENQT_flush_pixels_typed_array(data, regionX, regionY, regionW,
         canvasContext.putImageData(imageDataRaw, regionX, regionY);
 	lastRenderedData.set(HEAP32.subarray(data >> 2, (data >> 2) + (canvasWidth * canvasHeight)));
 }
-function _EMSCRIPTENQT_flush_pixels(data, regionX, regionY, regionW, regionH)
+function _EMSCRIPTENQT_flush_pixels_normal(data, regionX, regionY, regionW, regionH)
 {
         var canvasWidth = _EMSCRIPTENQT_canvas_width_pixels();
         var canvasHeight = _EMSCRIPTENQT_canvas_height_pixels();
@@ -125,6 +126,17 @@ function _EMSCRIPTENQT_flush_pixels(data, regionX, regionY, regionW, regionH)
                 sourceData += dataIncAfterRow;
         }
         canvasContext.putImageData(imageData, regionX, regionY);
+}
+function _EMSCRIPTENQT_flush_pixels(data, regionX, regionY, regionW, regionH)
+{
+        if (document.getElementById('experimental-renderer-checkbox').checked)
+        {
+                _EMSCRIPTENQT_flush_pixels_typed_array(data, regionX, regionY, regionW, regionH);
+        }
+        else
+        {
+                _EMSCRIPTENQT_flush_pixels_normal(data, regionX, regionY, regionW, regionH);
+        }
 }
 function _EMSCRIPTENQT_attemptedLocalEventLoop()
 {
@@ -380,6 +392,21 @@ Module['preRun'] = function() {
                 canvas.addEventListener("keydown", EMSCRIPTENQT_keyDown, true);
                 canvas.addEventListener("keyup", EMSCRIPTENQT_keyUp, true);
                 canvas.addEventListener("keypress", EMSCRIPTENQT_keyPress, true);
+		// Add the 'use experimental renderer' checkbox beneath the canvas.
+                var experimentalRendererCheckbox = document.createElement("input");
+                experimentalRendererCheckbox.id = "experimental-renderer-checkbox";
+                experimentalRendererCheckbox.type = "checkbox";
+                experimentalRendererCheckbox.checked = false;
+                // Trigger a full redraw if experimental renderer is switched on.
+                experimentalRendererCheckbox.onchange = function() { if (experimentalRendererCheckbox.checked) { lastRenderedData = null;}; } ;
+                var paragraphForExperimentalCheckboxRenderer = document.createElement("p");
+                paragraphForExperimentalCheckboxRenderer.appendChild(experimentalRendererCheckbox);
+                paragraphForExperimentalCheckboxRenderer.style.textAlign = "center";
+                canvas.parentNode.insertBefore(paragraphForExperimentalCheckboxRenderer, canvas.nextSibling);
+                var experimentalRendererLabel = document.createElement('label');
+                experimentalRendererLabel.innerHTML = "Use experimental renderer";
+                paragraphForExperimentalCheckboxRenderer.appendChild(experimentalRendererLabel);
+
 
 		canvas.tabIndex = 1;
 		// Data cache dir for QWS

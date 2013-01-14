@@ -153,14 +153,8 @@ extern "C"
 
 Qt::Key sdlToQtKey(SDLKey sdlKey)
 {
-	if (sdlKey >= SDLK_a && sdlKey <= SDLK_z)
-	{
-		return static_cast<Qt::Key>((sdlKey - SDLK_a) + Qt::Key_A);
-	}
 	switch (sdlKey)
 	{
-    case SDLK_SPACE:
-        return Qt::Key_Space;
 	case SDLK_BACKSPACE:
 		return Qt::Key_Backspace;
 	case SDLK_LEFT:
@@ -376,9 +370,15 @@ int EmscriptenQtSDL::exec()
 		}
 		else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
 		{
-			const int unicode = event.key.keysym.unicode;
 			const SDLKey sdlKey = event.key.keysym.sym;
 			const bool isPress = (event.type == SDL_KEYDOWN);
+            int unicode = event.key.keysym.unicode;
+            if (!isPress && unicode == 0 && sdlKey <= 0xFF)
+            {
+                // For some reason, SDL neglects to inform us of the unicode when the key is released:
+                // it's usually the same as the sdlKey, though.
+                unicode = sdlKey;
+            }
 			const Qt::Key qtKey = sdlToQtKey(sdlKey);
 			Qt::KeyboardModifiers qtModifiers = sdlModifiersToQtModifiers(event.key.keysym.mod);
             if (qtKey == Qt::Key_Shift && isPress)

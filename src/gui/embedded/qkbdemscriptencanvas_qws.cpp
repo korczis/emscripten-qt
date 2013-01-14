@@ -8,6 +8,16 @@ extern "C"
     void EMSCRIPTENQT_canvasKeyChanged(int unicode, int keycode, int modifiers,
                                  int isPress, int autoRepeat)
     {
+        if (keycode == 0)
+        {
+            // Try to reconstruct the keycode from the unicode.
+            if (unicode <= 0x0ff) {
+                if (unicode >= 'a' && unicode <= 'z')
+                    keycode = Qt::Key_A + unicode - 'a';
+                else
+                    keycode = unicode;
+            }
+        }
         QWSEmscriptenCanvasKeyboardHandler::canvasKeyChanged(unicode, keycode, modifiers, isPress, autoRepeat);
     }
 }

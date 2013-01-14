@@ -155,6 +155,8 @@ Qt::Key sdlToQtKey(SDLKey sdlKey)
 {
 	switch (sdlKey)
 	{
+    case SDLK_RETURN:
+        return Qt::Key_Enter;
 	case SDLK_BACKSPACE:
 		return Qt::Key_Backspace;
 	case SDLK_LEFT:

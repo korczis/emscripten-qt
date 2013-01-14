@@ -129,16 +129,20 @@ protected:
     }
 };
 
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(animatedtiles);
 
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
     QPixmap kineticPix(":/images/kinetic.png");
     QPixmap bgPix(":/images/Time-For-Lunch-2.jpg");
 
-    QGraphicsScene scene(-350, -350, 700, 700);
+    QGraphicsScene *scene = new QGraphicsScene(-350, -350, 700, 700);
 
     QList<Pixmap *> items;
     for (int i = 0; i < 64; ++i) {
@@ -146,7 +150,7 @@ int main(int argc, char **argv)
         item->setOffset(-kineticPix.width()/2, -kineticPix.height()/2);
         item->setZValue(i);
         items << item;
-        scene.addItem(item);
+        scene->addItem(item);
     }
 
     // Buttons
@@ -163,7 +167,7 @@ int main(int argc, char **argv)
     tiledButton->setPos(-100, 100);
     centeredButton->setPos(100, 100);
 
-    scene.addItem(buttonParent);
+    scene->addItem(buttonParent);
     buttonParent->scale(0.75, 0.75);
     buttonParent->setPos(200, 200);
     buttonParent->setZValue(65);
@@ -204,7 +208,7 @@ int main(int argc, char **argv)
     }
 
     // Ui
-    View *view = new View(&scene);
+    View *view = new View(scene);
     view->setWindowTitle(QT_TRANSLATE_NOOP(QGraphicsView, "Animated Tiles"));
     view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     view->setBackgroundBrush(bgPix);
@@ -216,9 +220,9 @@ int main(int argc, char **argv)
     view->show();
 #endif
 
-    QStateMachine states;
-    states.addState(rootState);
-    states.setInitialState(rootState);
+    QStateMachine *states = new QStateMachine;
+    states->addState(rootState);
+    states->setInitialState(rootState);
     rootState->setInitialState(centeredState);
 
     QParallelAnimationGroup *group = new QParallelAnimationGroup;
@@ -243,18 +247,26 @@ int main(int argc, char **argv)
     trans = rootState->addTransition(centeredButton, SIGNAL(pressed()), centeredState);
     trans->addAnimation(group);
 
-    QTimer timer;
-    timer.start(125);
-    timer.setSingleShot(true);
-    trans = rootState->addTransition(&timer, SIGNAL(timeout()), ellipseState);
+    QTimer *timer = new QTimer;
+    timer->start(125);
+    timer->setSingleShot(true);
+    trans = rootState->addTransition(timer, SIGNAL(timeout()), ellipseState);
     trans->addAnimation(group);
 
-    states.start();
+    states->start();
 
 #ifdef QT_KEYPAD_NAVIGATION
     QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
 #endif
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif
 
 #include "main.moc"

@@ -41,20 +41,33 @@
 #include <QtGui>
 #include "window.h"
 
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(easing);
-    QApplication app(argc, argv);
-    Window w;
+    QApplication *app = new QApplication(argc, argv);
+    Window *w = new Window;
 
 #if defined(Q_OS_SYMBIAN)
-    w.showMaximized();
+    w->showMaximized();
 #elif defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    w.show();
+    w->show();
 #else
-    w.resize(400, 400);
-    w.show();
+    w->resize(400, 400);
+    w->show();
 #endif
 
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif
+

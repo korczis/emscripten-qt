@@ -111,11 +111,15 @@ void createAnimations(const QObjectList &objects, QStateMachine *machine)
         machine->addDefaultAnimation(new QPropertyAnimation(objects.at(i), "geometry"));    
 }
 
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(appchooser);
 
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
     Pixmap *p1 = new Pixmap(QPixmap(":/digikam.png"));
     Pixmap *p2 = new Pixmap(QPixmap(":/akregator.png"));
@@ -132,23 +136,23 @@ int main(int argc, char **argv)
     p3->setGeometry(QRectF(236.0, 236.0, 64.0, 64.0));
     p4->setGeometry(QRectF(  0.0, 236.0, 64.0, 64.0));
 
-    QGraphicsScene scene(0, 0, 300, 300);
-    scene.setBackgroundBrush(Qt::white);
-    scene.addItem(p1);
-    scene.addItem(p2);
-    scene.addItem(p3);
-    scene.addItem(p4);
+    QGraphicsScene *scene = new QGraphicsScene(0, 0, 300, 300);
+    scene->setBackgroundBrush(Qt::white);
+    scene->addItem(p1);
+    scene->addItem(p2);
+    scene->addItem(p3);
+    scene->addItem(p4);
 
-    GraphicsView window(&scene);
-    window.setFrameStyle(0);
-    window.setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    window.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    window.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    GraphicsView *window = new GraphicsView(scene);
+    window->setFrameStyle(0);
+    window->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    window->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    window->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    QStateMachine machine;
-    machine.setGlobalRestorePolicy(QStateMachine::RestoreProperties);
+    QStateMachine *machine = new QStateMachine;
+    machine->setGlobalRestorePolicy(QStateMachine::RestoreProperties);
 
-    QState *group = new QState(&machine);
+    QState *group = new QState(machine);
     group->setObjectName("group");
 
     QRect selectedRect(86, 86, 128, 128);
@@ -159,19 +163,27 @@ int main(int argc, char **argv)
     QObjectList objects;
     objects << p1 << p2 << p3 << p4;
     createStates(objects, selectedRect, group);
-    createAnimations(objects, &machine);
+    createAnimations(objects, machine);
 
-    machine.setInitialState(group);
-    machine.start();
+    machine->setInitialState(group);
+    machine->start();
 
 #if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5)
-    window.showMaximized();
+    window->showMaximized();
 #else
-    window.resize(300, 300);
-    window.show();
+    window->resize(300, 300);
+    window->show();
 #endif
 
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif
 
 #include "main.moc"

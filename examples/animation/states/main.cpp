@@ -75,11 +75,15 @@ public:
     }
 };
 
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(states);
 
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
     // Text edit and button
     QTextEdit *edit = new QTextEdit;
@@ -122,22 +126,22 @@ int main(int argc, char *argv[])
     Pixmap *p5 = new Pixmap(QPixmap(":/help-browser.png"));
     Pixmap *p6 = new Pixmap(QPixmap(":/kchart.png"));
 
-    QGraphicsScene scene(0, 0, 400, 300);
-    scene.setBackgroundBrush(scene.palette().window());
-    scene.addItem(widget);
-    scene.addItem(boxProxy);
-    scene.addItem(p1);
-    scene.addItem(p2);
-    scene.addItem(p3);
-    scene.addItem(p4);
-    scene.addItem(p5);
-    scene.addItem(p6);
+    QGraphicsScene *scene = new QGraphicsScene(0, 0, 400, 300);
+    scene->setBackgroundBrush(scene->palette().window());
+    scene->addItem(widget);
+    scene->addItem(boxProxy);
+    scene->addItem(p1);
+    scene->addItem(p2);
+    scene->addItem(p3);
+    scene->addItem(p4);
+    scene->addItem(p5);
+    scene->addItem(p6);
 
-    QStateMachine machine;
-    QState *state1 = new QState(&machine);
-    QState *state2 = new QState(&machine);
-    QState *state3 = new QState(&machine);
-    machine.setInitialState(state1);
+    QStateMachine *machine = new QStateMachine;
+    QState *state1 = new QState(machine);
+    QState *state2 = new QState(machine);
+    QState *state3 = new QState(machine);
+    machine->setInitialState(state1);
 
     // State 1
     state1->assignProperty(button, "text", "Switch to state 2");
@@ -273,17 +277,25 @@ int main(int argc, char *argv[])
     t3->addAnimation(new QPropertyAnimation(p5, "opacity"));
     t3->addAnimation(new QPropertyAnimation(p6, "opacity"));
 
-    machine.start();
+    machine->start();
 
-    GraphicsView view(&scene);
+    GraphicsView *view = new GraphicsView(scene);
 
 #if defined(Q_OS_SYMBIAN)
-    view.showMaximized();
+    view->showMaximized();
 #else
-    view.show();
+    view->show();
 #endif
 
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif
 
 #include "main.moc"

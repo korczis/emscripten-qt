@@ -42,23 +42,35 @@
 
 #include "graphwidget.h"
 
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
     GraphWidget *widget = new GraphWidget;
 
-    QMainWindow mainWindow;
-    mainWindow.setCentralWidget(widget);
+    QMainWindow *mainWindow = new QMainWindow;
+    mainWindow->setCentralWidget(widget);
 
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
-    mainWindow.menuBar()->addAction("Shuffle", widget, SLOT(shuffle()));
-    mainWindow.menuBar()->addAction("Zoom In", widget, SLOT(zoomIn()));
-    mainWindow.menuBar()->addAction("Zoom Out", widget, SLOT(zoomOut()));
-    mainWindow.showMaximized();
+    mainWindow->menuBar()->addAction("Shuffle", widget, SLOT(shuffle()));
+    mainWindow->menuBar()->addAction("Zoom In", widget, SLOT(zoomIn()));
+    mainWindow->menuBar()->addAction("Zoom Out", widget, SLOT(zoomOut()));
+    mainWindow->showMaximized();
 #else
-    mainWindow.show();
+    mainWindow->show();
 #endif
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

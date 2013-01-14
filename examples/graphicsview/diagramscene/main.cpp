@@ -42,14 +42,26 @@
 
 #include "mainwindow.h"
 
-int main(int argv, char *args[])
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(diagramscene);
 
-    QApplication app(argv, args);
-    MainWindow mainWindow;
-    mainWindow.setGeometry(100, 100, 800, 500);
-    mainWindow.show();
+    QApplication *app = new QApplication(argc, argv);
+    MainWindow *mainWindow = new MainWindow;
+    mainWindow->setGeometry(100, 100, 800, 500);
+    mainWindow->show();
 
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

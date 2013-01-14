@@ -172,9 +172,13 @@ protected:
 };
 
 
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
 //![1]
     QGraphicsRectWidget *button1 = new QGraphicsRectWidget;
@@ -184,27 +188,27 @@ int main(int argc, char **argv)
     button2->setZValue(1);
     button3->setZValue(2);
     button4->setZValue(3);
-    QGraphicsScene scene(0, 0, 300, 300);
-    scene.setBackgroundBrush(Qt::black);
-    scene.addItem(button1);
-    scene.addItem(button2);
-    scene.addItem(button3);
-    scene.addItem(button4);
+    QGraphicsScene *scene = new QGraphicsScene(0, 0, 300, 300);
+    scene->setBackgroundBrush(Qt::black);
+    scene->addItem(button1);
+    scene->addItem(button2);
+    scene->addItem(button3);
+    scene->addItem(button4);
 //![1]
-    GraphicsView window(&scene);
-    window.setFrameStyle(0);
-    window.setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    window.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    window.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    GraphicsView *window = new GraphicsView(scene);
+    window->setFrameStyle(0);
+    window->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    window->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    window->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 //![2]
-    QStateMachine machine;
+    QStateMachine *machine = new QStateMachine;
 
     QState *group = new QState();
     group->setObjectName("group");
-    QTimer timer;
-    timer.setInterval(1250);
-    timer.setSingleShot(true);
-    QObject::connect(group, SIGNAL(entered()), &timer, SLOT(start()));
+    QTimer *timer = new QTimer;
+    timer->setInterval(1250);
+    timer->setSingleShot(true);
+    QObject::connect(group, SIGNAL(entered()), timer, SLOT(start()));
 //![2]
 
 //![3]
@@ -257,17 +261,17 @@ int main(int argc, char **argv)
 //![4]
 
 //![5]
-    QParallelAnimationGroup animationGroup;
+    QParallelAnimationGroup *animationGroup = new QParallelAnimationGroup;
     QSequentialAnimationGroup *subGroup;
 
     QPropertyAnimation *anim = new QPropertyAnimation(button4, "geometry");
     anim->setDuration(1000);
     anim->setEasingCurve(QEasingCurve::OutElastic);
-    animationGroup.addAnimation(anim);
+    animationGroup->addAnimation(anim);
 //![5]
 
 //![6]
-    subGroup = new QSequentialAnimationGroup(&animationGroup);
+    subGroup = new QSequentialAnimationGroup(animationGroup);
     subGroup->addPause(100);
     anim = new QPropertyAnimation(button3, "geometry");
     anim->setDuration(1000);
@@ -275,14 +279,14 @@ int main(int argc, char **argv)
     subGroup->addAnimation(anim);
 //![6]
 
-    subGroup = new QSequentialAnimationGroup(&animationGroup);
+    subGroup = new QSequentialAnimationGroup(animationGroup);
     subGroup->addPause(150);
     anim = new QPropertyAnimation(button2, "geometry");
     anim->setDuration(1000);
     anim->setEasingCurve(QEasingCurve::OutElastic);
     subGroup->addAnimation(anim);
 
-    subGroup = new QSequentialAnimationGroup(&animationGroup);
+    subGroup = new QSequentialAnimationGroup(animationGroup);
     subGroup->addPause(200);
     anim = new QPropertyAnimation(button1, "geometry");
     anim->setDuration(1000);
@@ -290,37 +294,44 @@ int main(int argc, char **argv)
     subGroup->addAnimation(anim);
 
 //![7]
-    StateSwitcher *stateSwitcher = new StateSwitcher(&machine);
+    StateSwitcher *stateSwitcher = new StateSwitcher(machine);
     stateSwitcher->setObjectName("stateSwitcher");
-    group->addTransition(&timer, SIGNAL(timeout()), stateSwitcher);
-    stateSwitcher->addState(state1, &animationGroup);
-    stateSwitcher->addState(state2, &animationGroup);
+    group->addTransition(timer, SIGNAL(timeout()), stateSwitcher);
+    stateSwitcher->addState(state1, animationGroup);
+    stateSwitcher->addState(state2, animationGroup);
 //![7]
-    stateSwitcher->addState(state3, &animationGroup);
-    stateSwitcher->addState(state4, &animationGroup);
-    stateSwitcher->addState(state5, &animationGroup);
-    stateSwitcher->addState(state6, &animationGroup);
+    stateSwitcher->addState(state3, animationGroup);
+    stateSwitcher->addState(state4, animationGroup);
+    stateSwitcher->addState(state5, animationGroup);
+    stateSwitcher->addState(state6, animationGroup);
 //![8]
-    stateSwitcher->addState(state7, &animationGroup);
+    stateSwitcher->addState(state7, animationGroup);
 //![8]
 
 //![9]
-    machine.addState(group);
-    machine.setInitialState(group);
-    machine.start();
+    machine->addState(group);
+    machine->setInitialState(group);
+    machine->start();
 //![9]
 
 #if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5)
-    window.showMaximized();
-    window.fitInView(scene.sceneRect() );
+    window->showMaximized();
+    window->fitInView(scene->sceneRect() );
 #else
-    window.resize(300, 300);
-    window.show();
+    window->resize(300, 300);
+    window->show();
 #endif
 
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
-    return app.exec();
+    return app->exec();
 }
 
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif
 #include "main.moc"

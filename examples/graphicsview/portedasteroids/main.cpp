@@ -42,22 +42,34 @@
 
 #include "toplevel.h"
 
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(portedasteroids);
 
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     
-    KAstTopLevel topLevel;
-    topLevel.setWindowTitle("Ported Asteroids Game");
+    KAstTopLevel *topLevel = new KAstTopLevel;
+    topLevel->setWindowTitle("Ported Asteroids Game");
 #if defined(Q_OS_SYMBIAN)
-    topLevel.showFullScreen();
+    topLevel->showFullScreen();
 #else
-    topLevel.show();
+    topLevel->show();
 #endif
 
-    app.setQuitOnLastWindowClosed(true);
-    return app.exec();
+    app->setQuitOnLastWindowClosed(true);
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 680, argc, argv);
+}
+#endif

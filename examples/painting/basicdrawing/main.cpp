@@ -42,16 +42,28 @@
 
 #include "window.h"
 
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(basicdrawing);
 
-    QApplication app(argc, argv);
-    Window window;
+    QApplication *app = new QApplication(argc, argv);
+    Window *window = new Window;
 #if defined(Q_OS_SYMBIAN)
-    window.showMaximized();
+    window->showMaximized();
 #else
-    window.show();
+    window->show();
 #endif
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

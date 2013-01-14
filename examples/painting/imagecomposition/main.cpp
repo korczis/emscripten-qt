@@ -43,17 +43,29 @@
 #include "imagecomposer.h"
 
 //! [0]
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(imagecomposition);
 
-    QApplication app(argc, argv);
-    ImageComposer composer;
+    QApplication *app = new QApplication(argc, argv);
+    ImageComposer *composer = new ImageComposer;
 #if defined(Q_OS_SYMBIAN)
-    composer.showMaximized();
+    composer->showMaximized();
 #else
-    composer.show();
+    composer->show();
 #endif
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif
 //! [0]

@@ -43,23 +43,35 @@
 
 #include <QApplication>
 
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(affine);
 
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
-    XFormWidget xformWidget(0);
+    XFormWidget *xformWidget = new XFormWidget(0);
     QStyle *arthurStyle = new ArthurStyle();
-    xformWidget.setStyle(arthurStyle);
+    xformWidget->setStyle(arthurStyle);
 
-    QList<QWidget *> widgets = xformWidget.findChildren<QWidget *>();
+    QList<QWidget *> widgets = xformWidget->findChildren<QWidget *>();
     foreach (QWidget *w, widgets) {
         w->setStyle(arthurStyle);
         w->setAttribute(Qt::WA_AcceptTouchEvents);
     }
 
-    xformWidget.show();
+    xformWidget->show();
 
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

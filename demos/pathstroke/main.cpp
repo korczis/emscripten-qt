@@ -42,11 +42,15 @@
 #include "pathstroke.h"
 #include <QApplication>
 
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(pathstroke);
 
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
 #ifdef Q_OS_SYMBIAN
     bool smallScreen = true;
@@ -54,22 +58,30 @@ int main(int argc, char **argv)
     bool smallScreen = QApplication::arguments().contains("-small-screen");
 #endif
 
-    PathStrokeWidget pathStrokeWidget(smallScreen);
+    PathStrokeWidget *pathStrokeWidget = new PathStrokeWidget(smallScreen);
     QStyle *arthurStyle = new ArthurStyle();
-    pathStrokeWidget.setStyle(arthurStyle);
-    QList<QWidget *> widgets = pathStrokeWidget.findChildren<QWidget *>();
+    pathStrokeWidget->setStyle(arthurStyle);
+    QList<QWidget *> widgets = pathStrokeWidget->findChildren<QWidget *>();
     foreach (QWidget *w, widgets) {
         w->setStyle(arthurStyle);
         w->setAttribute(Qt::WA_AcceptTouchEvents);
     }
 
     if (smallScreen)
-        pathStrokeWidget.showFullScreen();
+        pathStrokeWidget->showFullScreen();
     else
-        pathStrokeWidget.show();
+        pathStrokeWidget->show();
 
 #ifdef QT_KEYPAD_NAVIGATION
     QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
 #endif
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

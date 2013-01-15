@@ -173,6 +173,11 @@ unix:!mac:!symbian|qpa {
                 painting/qprinterinfo_unix.cpp
 }
 
+emscripten {
+        SOURCES += \
+                painting/qprinterinfo_emscripten.cpp
+}
+
 win32|x11|mac|embedded|qpa|symbian {
         SOURCES += painting/qbackingstore.cpp
         HEADERS += painting/qbackingstore_p.h

@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QPRINTERINFO_UNIX_P_H
 #define QPRINTERINFO_UNIX_P_H
 
@@ -116,7 +115,9 @@ char *qt_parseNsswitchConf(QList<QPrinterDescription> *printers);
 void qt_parseEtcLpMember(QList<QPrinterDescription> *printers);
 void qt_parseSpoolInterface(QList<QPrinterDescription> *printers);
 void qt_parseQconfig(QList<QPrinterDescription> *printers);
+#ifndef EMSCRIPTEN
 int qt_getLprPrinters(QList<QPrinterDescription>& printers);
+#endif
 
 #endif // QT_NO_PRINTER
 

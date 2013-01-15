@@ -374,18 +374,30 @@ private:
     QSize bufferSize;
 };
 
-int main(int argc, char **argv)
-{
-    QApplication app(argc, argv);
-
-    Raycasting w;
-    w.setWindowTitle("Raycasting");
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
-    w.showMaximized();
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
 #else
-    w.resize(640, 480);
-    w.show();
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
+{
+    QApplication *app = new QApplication(argc, argv);
+
+    Raycasting *w = new Raycasting;
+    w->setWindowTitle("Raycasting");
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
+    w->showMaximized();
+#else
+    w->resize(640, 480);
+    w->show();
 #endif
 
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

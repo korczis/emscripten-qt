@@ -42,13 +42,26 @@
 #include "textedit.h"
 #include <QApplication>
 
-int main( int argc, char ** argv )
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
+
 {
     Q_INIT_RESOURCE(textedit);
 
-    QApplication a( argc, argv );
-    TextEdit mw;
-    mw.resize( 700, 800 );
-    mw.show();
-    return a.exec();
+    QApplication *a = new QApplication( argc, argv );
+    TextEdit *mw = new TextEdit;
+    mw->resize( 700, 800 );
+    mw->show();
+    return a->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

@@ -17,5 +17,5 @@ contains(CONFIG, debug_and_release_target) {
 hpux-acc*:LIBS += $$SHARED_FOLDER/libdemo_shared.a
 hpuxi-acc*:LIBS += $$SHARED_FOLDER/libdemo_shared.a
 symbian:LIBS += -ldemo_shared.lib
-!hpuxi-acc*:!hpux-acc*:!symbian:LIBS += -ldemo_shared
+!hpuxi-acc*:!hpux-acc*:!symbian:LIBS += ../shared/demo_shared.a
 

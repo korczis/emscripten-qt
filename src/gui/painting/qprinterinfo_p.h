@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QPRINTERINFO_P_H
 #define QPRINTERINFO_P_H
 

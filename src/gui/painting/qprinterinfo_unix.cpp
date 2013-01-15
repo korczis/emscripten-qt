@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "qprinterinfo.h"
 #include "qprinterinfo_p.h"
 

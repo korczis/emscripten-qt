@@ -44,11 +44,16 @@
 #include <QApplication>
 #include <QDebug>
 
-int main(int argc, char **argv)
+#ifndef EMSCRIPTEN_NATIVE
+int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
+
 {
     Q_INIT_RESOURCE(deform);
 
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
 #ifdef Q_OS_SYMBIAN
     bool smallScreen = true;
@@ -56,21 +61,30 @@ int main(int argc, char **argv)
     bool smallScreen = QApplication::arguments().contains("-small-screen");
 #endif
 
-    PathDeformWidget deformWidget(0, smallScreen);
+    PathDeformWidget *deformWidget = new PathDeformWidget(0, smallScreen);
 
     QStyle *arthurStyle = new ArthurStyle();
-    deformWidget.setStyle(arthurStyle);
-    QList<QWidget *> widgets = deformWidget.findChildren<QWidget *>();
+    deformWidget->setStyle(arthurStyle);
+    QList<QWidget *> widgets = deformWidget->findChildren<QWidget *>();
     foreach (QWidget *w, widgets)
         w->setStyle(arthurStyle);
 
     if (smallScreen)
-        deformWidget.showFullScreen();
+        deformWidget->showFullScreen();
     else
-        deformWidget.show();
+        deformWidget->show();
 
 #ifdef QT_KEYPAD_NAVIGATION
     QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
 #endif
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif
+

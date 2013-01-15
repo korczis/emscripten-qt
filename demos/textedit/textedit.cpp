@@ -531,8 +531,13 @@ void TextEdit::filePrintPdf()
 {
 #ifndef QT_NO_PRINTER
 //! [0]
-    QString fileName = QFileDialog::getSaveFileName(this, "Export PDF",
-                                                    QString(), "*.pdf");
+    //QString fileName = QFileDialog::getSaveFileName(this, "Export PDF",
+                                                    //QString(), "*.pdf");
+#ifndef EMSCRIPTEN_NATIVE
+QString fileName = "/untitled.pdf";
+#else
+QString fileName = "untitled.pdf";
+#endif
     if (!fileName.isEmpty()) {
         if (QFileInfo(fileName).suffix().isEmpty())
             fileName.append(".pdf");

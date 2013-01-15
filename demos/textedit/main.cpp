@@ -60,8 +60,14 @@ int emscriptenQtSDLMain(int argc, char *argv[])
 
 #ifdef EMSCRIPTEN_NATIVE
 #include <QtGui/emscripten-qt-sdl.h>
+void triggerAssert()
+{
+	Q_ASSERT(false);
+}
+
 int main(int argc, char *argv[])
 {
+	EmscriptenQtSDL::setAttemptedLocalEventLoopCallback(triggerAssert);
         return EmscriptenQtSDL::run(640, 480, argc, argv);
 }
 #endif

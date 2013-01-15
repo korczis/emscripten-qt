@@ -72,37 +72,30 @@ win32 {
         dialogs/qprintpropertieswidget.ui
 }
 
-embedded {
-        message("QT_CONFIG: $$QT_CONFIG")
-        emscripten:
-        {
-            message("emscripten")
-            HEADERS += dialogs/qpagesetupdialog_unix_p.h
-            DEFINES += QTOPIA_PRINTDIALOG
-            SOURCES += dialogs/qprintdialog_qws.cpp \
-                       dialogs/qpagesetupdialog_unix.cpp
-        }
-        else !emscripten:
-        {
-            contains(QT_CONFIG,qtopia) {
-                HEADERS += dialogs/qpagesetupdialog_unix_p.h
-                DEFINES += QTOPIA_PRINTDIALOG
-                SOURCES += dialogs/qprintdialog_qws.cpp \
-                        dialogs/qpagesetupdialog_unix.cpp
-            }
-            else:
-            {
-                message("wtf")
-                HEADERS += dialogs/qpagesetupdialog_unix_p.h
-                SOURCES += dialogs/qprintdialog_unix.cpp \
-                        dialogs/qpagesetupdialog_unix.cpp
-                FORMS += dialogs/qprintsettingsoutput.ui \
-                        dialogs/qprintwidget.ui \
-                        dialogs/qprintpropertieswidget.ui
-            }
-        }
+embedded:!emscripten {
+    contains(QT_CONFIG,qtopia) {
+        HEADERS += dialogs/qpagesetupdialog_unix_p.h
+        DEFINES += QTOPIA_PRINTDIALOG
+        SOURCES += dialogs/qprintdialog_qws.cpp \
+                dialogs/qpagesetupdialog_unix.cpp
+    }
+    else:
+    {
+        HEADERS += dialogs/qpagesetupdialog_unix_p.h
+        SOURCES += dialogs/qprintdialog_unix.cpp \
+                dialogs/qpagesetupdialog_unix.cpp
+        FORMS += dialogs/qprintsettingsoutput.ui \
+                dialogs/qprintwidget.ui \
+                dialogs/qprintpropertieswidget.ui
+    }
 }
-    message("here $$SOURCES")
+emscripten:
+{
+        HEADERS += dialogs/qpagesetupdialog_unix_p.h
+        DEFINES += QTOPIA_PRINTDIALOG
+        SOURCES += dialogs/qprintdialog_qws.cpp \
+                dialogs/qpagesetupdialog_unix.cpp
+}
 
 wince*|symbian: FORMS += dialogs/qfiledialog_embedded.ui
 else: FORMS += dialogs/qfiledialog.ui

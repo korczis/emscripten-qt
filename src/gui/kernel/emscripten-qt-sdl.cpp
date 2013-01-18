@@ -6,6 +6,8 @@
 #include <SDL/SDL_thread.h>
 #include <SDL/SDL_mutex.h>
 
+const EmscriptenQtSDL::Callback EmscriptenQtSDL::TRIGGER_ASSERT = &EmscriptenQtSDL::triggerAssert;
+
 namespace
 {
 	int canvasWidthPixels = 800;
@@ -419,6 +421,11 @@ int EmscriptenQtSDL::run(int canvasWidthPixels, int canvasHeightPixels, int argc
        return runEmscriptenQtSDLMainValue;
    }
    return exec();
+}
+
+void EmscriptenQtSDL::triggerAssert()
+{
+    Q_ASSERT(false && "Attempted to enter local event loop!");
 }
 
 

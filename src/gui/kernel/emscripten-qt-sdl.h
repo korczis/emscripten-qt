@@ -13,10 +13,14 @@ class Q_GUI_EXPORT EmscriptenQtSDL
 {
 public:
     static int run(int canvasWidthPixels, int canvasHeightPixels, int argc, char** argv);
-    static void setAttemptedLocalEventLoopCallback(void (*callback)() );
+
+    typedef void(*Callback)();
+    static void setAttemptedLocalEventLoopCallback(Callback callback);
+    static const Callback TRIGGER_ASSERT;
 private:
     static bool initScreen(int canvasWidthPixels, int canvasHeightPixels);
     static int exec();
+    static void triggerAssert();
 };
 
 QT_END_NAMESPACE

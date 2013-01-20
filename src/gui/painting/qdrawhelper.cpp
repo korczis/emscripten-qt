@@ -112,10 +112,15 @@ static uint * QT_FASTCALL destFetchMonoLsb(uint *buffer, QRasterBuffer *rasterBu
 
 static uint * QT_FASTCALL destFetchARGB32(uint *buffer, QRasterBuffer *rasterBuffer, int x, int y, int length)
 {
+    uint *originalBuffer = buffer;
     const uint *data = (const uint *)rasterBuffer->scanLine(y) + x;
-    for (int i = 0; i < length; ++i)
-        buffer[i] = PREMUL(data[i]);
-    return buffer;
+    while (length--)
+    {
+        *buffer = PREMUL(*data);
+        buffer++;
+        data++;
+    }
+    return originalBuffer;
 }
 
 static uint * QT_FASTCALL destFetchARGB32P(uint *, QRasterBuffer *rasterBuffer, int x, int y, int)
@@ -256,16 +261,16 @@ static void QT_FASTCALL destStoreMonoLsb(QRasterBuffer *rasterBuffer, int x, int
 static void QT_FASTCALL destStoreARGB32(QRasterBuffer *rasterBuffer, int x, int y, const uint *buffer, int length)
 {
     uint *data = (uint *)rasterBuffer->scanLine(y) + x;
-    for (int i = 0; i < length; ++i) {
-        int p = buffer[i];
+    for (int i = 0; i < length; ++i, data++, buffer++) {
+        int p = *buffer;
         int alpha = qAlpha(p);
         if (alpha == 255)
-            data[i] = p;
+            *data = p;
         else if (alpha == 0)
-            data[i] = 0;
+            *data = 0;
         else {
-            int inv_alpha = 0xff0000/qAlpha(buffer[i]);
-            data[i] = (p & 0xff000000)
+            int inv_alpha = 0xff0000/qAlpha(p);
+            *data = (p & 0xff000000)
                       | ((qRed(p)*inv_alpha) & 0xff0000)
                       | (((qGreen(p)*inv_alpha) >> 8) & 0xff00)
                       | ((qBlue(p)*inv_alpha) >> 16);
@@ -510,10 +515,16 @@ template <QImage::Format format>
 Q_STATIC_TEMPLATE_FUNCTION const uint * QT_FASTCALL qt_fetchUntransformed(uint *buffer, const Operator *, const QSpanData *data,
                                              int y, int x, int length)
 {
+    uint* originalBuffer = buffer;
     const uchar *scanLine = data->texture.scanLine(y);
-    for (int i = 0; i < length; ++i)
-        buffer[i] = qt_fetchPixel<format>(scanLine, x + i, data->texture.colorTable);
-    return buffer;
+    const QVector<QRgb> *textureColorTable = data->texture.colorTable;
+    while (length--)
+    {
+        *buffer = qt_fetchPixel<format>(scanLine, x, textureColorTable);
+        x++;
+        buffer++;
+    }
+    return originalBuffer;
 }
 
 template <>

@@ -43,7 +43,6 @@
 #define QPLUGINLOADER_H
 
 #include <QtCore/qlibrary.h>
-#include "qplatformdefs.h"
 
 #if defined(QT_NO_LIBRARY) && defined(Q_OS_WIN)
 #undef QT_NO_LIBRARY

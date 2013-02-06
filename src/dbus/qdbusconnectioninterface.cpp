@@ -257,6 +257,7 @@ QDBusConnectionInterface::registerService(const QString &serviceName,
                                           ServiceQueueOptions qoption,
                                           ServiceReplacementOptions roption)
 {
+#ifndef DUMMY_DBUS
     // reconstruct the low-level flags
     uint flags = 0;
     switch (qoption) {
@@ -305,6 +306,9 @@ QDBusConnectionInterface::registerService(const QString &serviceName,
     }
 
     return reply;
+#else
+    return QDBusReply<QDBusConnectionInterface::RegisterServiceReply>::errorReply();
+#endif
 }
 
 /*!
@@ -317,12 +321,16 @@ QDBusConnectionInterface::registerService(const QString &serviceName,
 QDBusReply<bool>
 QDBusConnectionInterface::unregisterService(const QString &serviceName)
 {
+#ifndef DUMMY_DBUS
     QDBusMessage reply = call(QLatin1String("ReleaseName"), serviceName);
     if (reply.type() == QDBusMessage::ReplyMessage) {
         bool success = reply.arguments().at(0).toUInt() == DBUS_RELEASE_NAME_REPLY_RELEASED;
         reply.setArguments(QVariantList() << success);
     }
     return reply;
+#else
+    return QDBusReply<bool>::errorReply();
+#endif
 }
 
 /*!

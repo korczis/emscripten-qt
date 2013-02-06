@@ -45,6 +45,7 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/qvariant.h>
 
+
 #include <QtDBus/qdbusmacros.h>
 #include <QtDBus/qdbusmessage.h>
 #include <QtDBus/qdbuserror.h>
@@ -123,6 +124,11 @@ public:
     inline operator Type () const
     {
         return m_data;
+    }
+    // For EMSCRIPTEN (DUMMY_DBUS is not defined, here).
+    static QDBusReply<T> errorReply()
+    {
+        return QDBusReply<T>(QDBusError(QDBusError::Failed, "DBus not (yet?) supported in Emscripten!"));
     }
 
 private:

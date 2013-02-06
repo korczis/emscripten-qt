@@ -369,6 +369,29 @@ DEFINEFUNC(dbus_bool_t     , dbus_threads_init_default, (), (), return)
 #else
 typedef void* DBusConnection;
 typedef void* DBusServer;
+/* Bus names */
+
+/** The bus name used to talk to the bus itself. */
+#define DBUS_SERVICE_DBUS      "org.freedesktop.DBus"
+
+/* Paths */
+/** The object path used to talk to the bus itself. */
+#define DBUS_PATH_DBUS  "/org/freedesktop/DBus"
+/** The object path used in local/in-process-generated messages. */
+#define DBUS_PATH_LOCAL "/org/freedesktop/DBus/Local"
+
+/* Interfaces, these #define don't do much other than
+ * catch typos at compile time
+ */
+/** The interface exported by the object with #DBUS_SERVICE_DBUS and #DBUS_PATH_DBUS */
+#define DBUS_INTERFACE_DBUS           "org.freedesktop.DBus"
+/** The interface supported by introspectable objects */
+#define DBUS_INTERFACE_INTROSPECTABLE "org.freedesktop.DBus.Introspectable"
+/** The interface supported by objects with properties */
+#define DBUS_INTERFACE_PROPERTIES     "org.freedesktop.DBus.Properties"
+/** The interface supported by most dbus peers */
+#define DBUS_INTERFACE_PEER           "org.freedesktop.DBus.Peer"
+
 #endif
 
 QT_END_NAMESPACE

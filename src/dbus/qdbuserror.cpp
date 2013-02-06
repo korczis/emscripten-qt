@@ -246,12 +246,18 @@ static inline QDBusError::ErrorType get(const char *name)
 QDBusError::QDBusError(const DBusError *error)
     : code(NoError)
 {
+#ifndef DUMMY_DBUS
     if (!error || !q_dbus_error_is_set(error))
         return;
 
     code = ::get(error->name);
     msg = QString::fromUtf8(error->message);
     nm = QString::fromUtf8(error->name);
+#else
+    code = Failed;
+    msg = "DBus not supported in Emscripten!";
+    nm = "DBus not supported in Emscripten!";
+#endif
 }
 
 /*!

@@ -71,10 +71,12 @@ QDBusMessagePrivate::QDBusMessagePrivate()
 
 QDBusMessagePrivate::~QDBusMessagePrivate()
 {
+#ifndef DUMMY_DBUS
     if (msg)
         q_dbus_message_unref(msg);
     if (reply)
         q_dbus_message_unref(reply);
+#endif
     delete localReply;
 }
 
@@ -93,6 +95,7 @@ QString QDBusMessage::errorMessage() const
     return QString();
 }
 
+#ifndef DUMMY_DBUS
 /*!
     \internal
     Constructs a DBusMessage object from \a message. The returned value must be de-referenced
@@ -197,6 +200,7 @@ DBusMessage *QDBusMessagePrivate::toDBusMessage(const QDBusMessage &message, QDB
     *error = QDBusError(QDBusError::Failed, QLatin1String("Marshalling failed: ") + marshaller.errorString);
     return 0;
 }
+#endif
 
 /*
 struct DBusMessage
@@ -219,6 +223,7 @@ DBUS_DISABLE_CHECKS
 };
 */
 
+#ifndef DUMMY_DBUS
 /*!
     \internal
     Constructs a QDBusMessage by parsing the given DBusMessage object.
@@ -246,12 +251,14 @@ QDBusMessage QDBusMessagePrivate::fromDBusMessage(DBusMessage *dmsg, QDBusConnec
             message << demarshaller.toVariantInternal();
     return message;
 }
+#endif
 
 bool QDBusMessagePrivate::isLocal(const QDBusMessage &message)
 {
     return message.d_ptr->localMessage;
 }
 
+#ifndef DUMMY_DBUS
 QDBusMessage QDBusMessagePrivate::makeLocal(const QDBusConnectionPrivate &conn,
                                             const QDBusMessage &asSent)
 {
@@ -308,6 +315,7 @@ QDBusMessage QDBusMessagePrivate::makeLocal(const QDBusConnectionPrivate &conn,
     d->localMessage = true;
     return retval;
 }
+#endif
 
 QDBusMessage QDBusMessagePrivate::makeLocalReply(const QDBusConnectionPrivate &conn,
                                                  const QDBusMessage &callMsg)
@@ -444,6 +452,7 @@ QDBusMessage QDBusMessage::createError(const QString &name, const QString &msg)
 QDBusMessage QDBusMessage::createReply(const QVariantList &arguments) const
 {
     QDBusMessage reply;
+#ifndef DUMMY_DBUS
     reply.setArguments(arguments);
     reply.d_ptr->type = DBUS_MESSAGE_TYPE_METHOD_RETURN;
     if (d_ptr->msg)
@@ -455,6 +464,7 @@ QDBusMessage QDBusMessage::createReply(const QVariantList &arguments) const
 
     // the reply must have a msg or be a local-loop optimization
     Q_ASSERT(reply.d_ptr->reply || reply.d_ptr->localMessage);
+#endif
     return reply;
 }
 
@@ -465,6 +475,7 @@ QDBusMessage QDBusMessage::createReply(const QVariantList &arguments) const
 QDBusMessage QDBusMessage::createErrorReply(const QString name, const QString &msg) const
 {
     QDBusMessage reply = QDBusMessage::createError(name, msg);
+#ifndef DUMMY_DBUS
     if (d_ptr->msg)
         reply.d_ptr->reply = q_dbus_message_ref(d_ptr->msg);
     if (d_ptr->localMessage) {
@@ -474,6 +485,7 @@ QDBusMessage QDBusMessage::createErrorReply(const QString name, const QString &m
 
     // the reply must have a msg or be a local-loop optimization
     Q_ASSERT(reply.d_ptr->reply || reply.d_ptr->localMessage);
+#endif
     return reply;
 }
 
@@ -615,7 +627,11 @@ bool QDBusMessage::isReplyRequired() const
 {
     if (!d_ptr->msg)
         return d_ptr->localMessage; // if it's a local message, reply is required
+#ifndef DUMMY_DBUS
     return !q_dbus_message_get_no_reply(d_ptr->msg);
+#else
+    return false;
+#endif
 }
 
 /*!

@@ -56,10 +56,6 @@
 
 #include <QtCore/qglobal.h>
 
-#ifdef EMSCRIPTEN
-#define DUMMY_DBUS
-#endif
-
 #ifndef DUMMY_DBUS
 #include <dbus/dbus.h>
 #endif
@@ -372,6 +368,23 @@ typedef void* DBusServer;
 typedef void* DBusPendingCall;
 typedef void* DBusWatch;
 typedef void* DBusTimeout;
+typedef void* DBusMessage;
+/* Types of message */
+
+/** This value is never a valid message type, see dbus_message_get_type() */
+#define DBUS_MESSAGE_TYPE_INVALID       0
+/** Message type of a method call message, see dbus_message_get_type() */
+#define DBUS_MESSAGE_TYPE_METHOD_CALL   1
+/** Message type of a method return message, see dbus_message_get_type() */
+#define DBUS_MESSAGE_TYPE_METHOD_RETURN 2
+/** Message type of an error reply message, see dbus_message_get_type() */
+#define DBUS_MESSAGE_TYPE_ERROR         3
+/** Message type of a signal message, see dbus_message_get_type() */
+#define DBUS_MESSAGE_TYPE_SIGNAL        4
+
+#define DBUS_NUM_MESSAGE_TYPES          5
+
+
 /* Bus names */
 
 /** The bus name used to talk to the bus itself. */

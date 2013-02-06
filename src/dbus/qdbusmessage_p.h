@@ -58,7 +58,11 @@
 #include <qdbusmessage.h>
 #include <qdbusconnection.h>
 
+#ifndef DUMMY_DBUS
 struct DBusMessage;
+#else
+typedef void* DBusMessage;
+#endif
 
 #ifndef QT_NO_DBUS
 

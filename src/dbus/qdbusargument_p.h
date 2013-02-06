@@ -147,7 +147,9 @@ public:
     bool appendCrossMarshalling(QDBusDemarshaller *arg);
 
 public:
+#ifndef DUMMY_DBUS
     DBusMessageIter iterator;
+#endif
     QDBusMarshaller *parent;
     QByteArray *ba;
     QString errorString;
@@ -204,7 +206,9 @@ public:
     bool isCurrentTypeStringLike();
 
 public:
+#ifndef DUMMY_DBUS
     DBusMessageIter iterator;
+#endif
     QDBusDemarshaller *parent;
 
 private:

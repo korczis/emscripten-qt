@@ -51,6 +51,9 @@
 //#define _POSIX_TIMERS
 #include <sys/time.h>
 
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include "qglobal.h"
 
 //#define QT_NO_SOCKET_H

@@ -52,16 +52,21 @@ void *qdbus_resolve_me(const char *name);
 
 #if !defined QT_LINKED_LIBDBUS
 
+#ifndef DUMMY_DBUS
 static QLibrary *qdbus_libdbus = 0;
+#endif
 
 void qdbus_unloadLibDBus()
 {
+#ifndef DUMMY_DBUS
     delete qdbus_libdbus;
     qdbus_libdbus = 0;
+#endif
 }
 
 bool qdbus_loadLibDBus()
 {
+#ifndef DUMMY_DBUS
     static volatile bool triedToLoadLibrary = false;
 #ifndef QT_NO_THREAD
     QMutexLocker locker(QMutexPool::globalInstanceGet((void *)&qdbus_resolve_me));
@@ -88,25 +93,31 @@ bool qdbus_loadLibDBus()
     delete lib;
     lib = 0;
     return false;
+#else
+    return false;
+#endif
 }
 
 void *qdbus_resolve_conditionally(const char *name)
 {
+#ifndef DUMMY_DBUS
     if (qdbus_loadLibDBus())
         return qdbus_libdbus->resolve(name);
+#endif
     return 0;
 }
 
 void *qdbus_resolve_me(const char *name)
 {
     void *ptr = 0;
+#ifndef DUMMY_DBUS
     if (!qdbus_loadLibDBus())
         qFatal("Cannot find libdbus-1 in your system to resolve symbol '%s'.", name);
 
     ptr = qdbus_libdbus->resolve(name);
     if (!ptr)
         qFatal("Cannot resolve '%s' in your libdbus-1.", name);
-
+#endif
     return ptr;
 }
 

@@ -88,6 +88,7 @@ class QDBusAbstractInterface;
 class QDBusConnectionInterface;
 class QDBusPendingCallPrivate;
 
+#ifndef DUMMY_DBUS
 class QDBusErrorInternal
 {
     mutable DBusError error;
@@ -99,6 +100,7 @@ public:
     inline operator DBusError *() { q_dbus_error_free(&error); return &error; }
     inline operator QDBusError() const { QDBusError err(&error); q_dbus_error_free(&error); return err; }
 };
+#endif
 
 // QDBusConnectionPrivate holds the DBusConnection and
 // can have many QDBusConnection objects referring to it
@@ -110,6 +112,7 @@ public:
     // structs and enums
     enum ConnectionMode { InvalidMode, ServerMode, ClientMode, PeerMode }; // LocalMode
 
+#ifndef DUMMY_DBUS
     struct Watcher
     {
         Watcher(): watch(0), read(0), write(0) {}
@@ -117,6 +120,7 @@ public:
         QSocketNotifier *read;
         QSocketNotifier *write;
     };
+#endif
 
     struct SignalHook
     {
@@ -159,9 +163,11 @@ public:
 
 public:
     // typedefs
+#ifndef DUMMY_DBUS
     typedef QMultiHash<int, Watcher> WatcherHash;
     typedef QHash<int, DBusTimeout *> TimeoutHash;
     typedef QList<QPair<DBusTimeout *, int> > PendingTimeoutList;
+#endif
 
     typedef QMultiHash<QString, SignalHook> SignalHookHash;
     typedef QHash<QString, QDBusMetaObject* > MetaObjectHash;
@@ -184,9 +190,11 @@ public:
     void deleteYourself();
 
     void setBusService(const QDBusConnection &connection);
+#ifndef DUMMY_DBUS
     void setPeer(DBusConnection *connection, const QDBusErrorInternal &error);
     void setConnection(DBusConnection *connection, const QDBusErrorInternal &error);
     void setServer(DBusServer *server, const QDBusErrorInternal &error);
+#endif
     void closeConnection();
 
     QString getNameOwner(const QString &service);
@@ -228,7 +236,9 @@ public:
 
 private:
     void checkThread();
+#ifndef DUMMY_DBUS
     bool handleError(const QDBusErrorInternal &error);
+#endif
 
     void handleSignal(const QString &key, const QDBusMessage &msg);
     void handleSignal(const QDBusMessage &msg);
@@ -289,9 +299,11 @@ public:
     // but the corresponding timer and QSocketNotifier must be handled
     // only in the object's thread
     QMutex watchAndTimeoutLock;
+#ifndef DUMMY_DBUS
     WatcherHash watchers;
     TimeoutHash timeouts;
     PendingTimeoutList timeoutsPendingAdd;
+#endif
 
     // members accessed through a lock
     QMutex dispatchLock;
@@ -317,7 +329,9 @@ public:
                             const QStringList &argMatch,
                             QObject *receiver, const char *signal, int minMIdx,
                             bool buildSignature);
+#ifndef DUMMY_DBUS
     static DBusHandlerResult messageFilter(DBusConnection *, DBusMessage *, void *);
+#endif
     static bool checkReplyForDelivery(QDBusConnectionPrivate *target, QObject *object,
                                       int idx, const QList<int> &metaTypes,
                                       const QDBusMessage &msg);

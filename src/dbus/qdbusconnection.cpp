@@ -334,6 +334,7 @@ QDBusConnection QDBusConnection::connectToBus(BusType type, const QString &name)
         QDBusConnectionPrivate *d = 0;
         return QDBusConnection(d);
     }
+#ifndef DUMMY_DBUS
 
     QMutexLocker locker(&_q_manager()->mutex);
 
@@ -366,6 +367,7 @@ QDBusConnection QDBusConnection::connectToBus(BusType type, const QString &name)
     d->setBusService(retval);
 
     return retval;
+#endif
 }
 
 /*!
@@ -381,6 +383,7 @@ QDBusConnection QDBusConnection::connectToBus(const QString &address,
         QDBusConnectionPrivate *d = 0;
         return QDBusConnection(d);
     }
+#ifndef DUMMY_DBUS
 
     QMutexLocker locker(&_q_manager()->mutex);
 
@@ -408,6 +411,7 @@ QDBusConnection QDBusConnection::connectToBus(const QString &address,
     d->setBusService(retval);
 
     return retval;
+#endif
 }
 /*!
     \since 4.8
@@ -424,6 +428,7 @@ QDBusConnection QDBusConnection::connectToPeer(const QString &address,
         QDBusConnectionPrivate *d = 0;
         return QDBusConnection(d);
     }
+#ifndef DUMMY_DBUS
 
     QMutexLocker locker(&_q_manager()->mutex);
 
@@ -442,6 +447,7 @@ QDBusConnection QDBusConnection::connectToPeer(const QString &address,
     QDBusConnection retval(d);
 
     return retval;
+#endif
 }
 
 /*!
@@ -998,7 +1004,11 @@ void *QDBusConnection::internalPointer() const
 */
 bool QDBusConnection::isConnected() const
 {
+#ifndef DUMMY_DBUS
     return d && d->connection && q_dbus_connection_get_is_connected(d->connection);
+#else
+    return false;
+#endif
 }
 
 /*!
@@ -1188,10 +1198,14 @@ void QDBusConnectionPrivate::setBusService(const QDBusConnection &connection)
 */
 QByteArray QDBusConnection::localMachineId()
 {
+#ifndef DUMMY_DBUS
     char *dbus_machine_id = q_dbus_get_local_machine_id();
     QByteArray result = dbus_machine_id;
     q_dbus_free(dbus_machine_id);
     return result;
+#else
+    return QByteArray("dummy");
+#endif
 }
 
 /*!

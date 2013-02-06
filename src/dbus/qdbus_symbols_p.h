@@ -55,7 +55,14 @@
 #define QDBUS_SYMBOLS_P_H
 
 #include <QtCore/qglobal.h>
+
+#ifdef EMSCRIPTEN
+#define DUMMY_DBUS
+#endif
+
+#ifndef DUMMY_DBUS
 #include <dbus/dbus.h>
+#endif
 
 #ifndef QT_NO_DBUS
 
@@ -86,6 +93,7 @@ inline bool qdbus_loadLibDBus() { return true; }
 
 #endif // defined QT_LINKED_LIBDBUS
 
+#ifndef DUMMY_DBUS
 /* dbus-bus.h */
 DEFINEFUNC(void, dbus_bus_add_match, (DBusConnection *connection,
                                       const char     *rule,
@@ -358,6 +366,10 @@ DEFINEFUNC(void        , dbus_server_unref, (DBusServer     *server),
 
 /* dbus-thread.h */
 DEFINEFUNC(dbus_bool_t     , dbus_threads_init_default, (), (), return)
+#else
+typedef void* DBusConnection;
+typedef void* DBusServer;
+#endif
 
 QT_END_NAMESPACE
 

@@ -70,6 +70,7 @@ QDBusServer::QDBusServer(const QString &address, QObject *parent)
         d = 0;
         return;
     }
+#ifndef DUMMY_DBUS
     d = new QDBusConnectionPrivate(this);
 
     QObject::connect(d, SIGNAL(newServerConnection(QDBusConnection)),
@@ -77,6 +78,7 @@ QDBusServer::QDBusServer(const QString &address, QObject *parent)
 
     QDBusErrorInternal error;
     d->setServer(q_dbus_server_listen(address.toUtf8().constData(), error), error);
+#endif
 }
 
 /*!
@@ -100,7 +102,11 @@ QDBusServer::~QDBusServer()
 */
 bool QDBusServer::isConnected() const
 {
-    return d && d->server && q_dbus_server_get_is_connected(d->server);
+    return d && d->server
+#ifndef DUMMY_DBUS
+      && q_dbus_server_get_is_connected(d->server)
+#endif
+      ;
 }
 
 /*!
@@ -120,9 +126,11 @@ QString QDBusServer::address() const
 {
     QString addr;
     if (d && d->server) {
+#ifndef DUMMY_DBUS
         char *c = q_dbus_server_get_address(d->server);
         addr = QString::fromUtf8(c);
         q_dbus_free(c);
+#endif
     }
 
     return addr;

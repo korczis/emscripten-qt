@@ -384,6 +384,129 @@ typedef void* DBusMessage;
 
 #define DBUS_NUM_MESSAGE_TYPES          5
 
+/** Type code that is never equal to a legitimate type code */
+#define DBUS_TYPE_INVALID       ((int) '\0')
+/** #DBUS_TYPE_INVALID as a string literal instead of a int literal */
+#define DBUS_TYPE_INVALID_AS_STRING        "\0"
+
+/* Primitive types */
+/** Type code marking an 8-bit unsigned integer */
+#define DBUS_TYPE_BYTE          ((int) 'y')
+/** #DBUS_TYPE_BYTE as a string literal instead of a int literal */
+#define DBUS_TYPE_BYTE_AS_STRING           "y"
+/** Type code marking a boolean */
+#define DBUS_TYPE_BOOLEAN       ((int) 'b')
+/** #DBUS_TYPE_BOOLEAN as a string literal instead of a int literal */
+#define DBUS_TYPE_BOOLEAN_AS_STRING        "b"
+/** Type code marking a 16-bit signed integer */
+#define DBUS_TYPE_INT16         ((int) 'n')
+/** #DBUS_TYPE_INT16 as a string literal instead of a int literal */
+#define DBUS_TYPE_INT16_AS_STRING          "n"
+/** Type code marking a 16-bit unsigned integer */
+#define DBUS_TYPE_UINT16        ((int) 'q')
+/** #DBUS_TYPE_UINT16 as a string literal instead of a int literal */
+#define DBUS_TYPE_UINT16_AS_STRING         "q"
+/** Type code marking a 32-bit signed integer */
+#define DBUS_TYPE_INT32         ((int) 'i')
+/** #DBUS_TYPE_INT32 as a string literal instead of a int literal */
+#define DBUS_TYPE_INT32_AS_STRING          "i"
+/** Type code marking a 32-bit unsigned integer */
+#define DBUS_TYPE_UINT32        ((int) 'u')
+/** #DBUS_TYPE_UINT32 as a string literal instead of a int literal */
+#define DBUS_TYPE_UINT32_AS_STRING         "u"
+/** Type code marking a 64-bit signed integer */
+#define DBUS_TYPE_INT64         ((int) 'x')
+/** #DBUS_TYPE_INT64 as a string literal instead of a int literal */
+#define DBUS_TYPE_INT64_AS_STRING          "x"
+/** Type code marking a 64-bit unsigned integer */
+#define DBUS_TYPE_UINT64        ((int) 't')
+/** #DBUS_TYPE_UINT64 as a string literal instead of a int literal */
+#define DBUS_TYPE_UINT64_AS_STRING         "t"
+/** Type code marking an 8-byte double in IEEE 754 format */
+#define DBUS_TYPE_DOUBLE        ((int) 'd')
+/** #DBUS_TYPE_DOUBLE as a string literal instead of a int literal */
+#define DBUS_TYPE_DOUBLE_AS_STRING         "d"
+/** Type code marking a UTF-8 encoded, nul-terminated Unicode string */
+#define DBUS_TYPE_STRING        ((int) 's')
+/** #DBUS_TYPE_STRING as a string literal instead of a int literal */
+#define DBUS_TYPE_STRING_AS_STRING         "s"
+/** Type code marking a D-Bus object path */
+#define DBUS_TYPE_OBJECT_PATH   ((int) 'o')
+/** #DBUS_TYPE_OBJECT_PATH as a string literal instead of a int literal */
+#define DBUS_TYPE_OBJECT_PATH_AS_STRING    "o"
+/** Type code marking a D-Bus type signature */
+#define DBUS_TYPE_SIGNATURE     ((int) 'g')
+/** #DBUS_TYPE_SIGNATURE as a string literal instead of a int literal */
+#define DBUS_TYPE_SIGNATURE_AS_STRING      "g"
+/** Type code marking a unix file descriptor */
+#define DBUS_TYPE_UNIX_FD      ((int) 'h')
+/** #DBUS_TYPE_UNIX_FD as a string literal instead of a int literal */
+#define DBUS_TYPE_UNIX_FD_AS_STRING        "h"
+
+/* Compound types */
+/** Type code marking a D-Bus array type */
+#define DBUS_TYPE_ARRAY         ((int) 'a')
+/** #DBUS_TYPE_ARRAY as a string literal instead of a int literal */
+#define DBUS_TYPE_ARRAY_AS_STRING          "a"
+/** Type code marking a D-Bus variant type */
+#define DBUS_TYPE_VARIANT       ((int) 'v')
+/** #DBUS_TYPE_VARIANT as a string literal instead of a int literal */
+#define DBUS_TYPE_VARIANT_AS_STRING        "v"
+/** STRUCT and DICT_ENTRY are sort of special since their codes can't
+ * appear in a type string, instead
+ * DBUS_STRUCT_BEGIN_CHAR/DBUS_DICT_ENTRY_BEGIN_CHAR have to appear
+ */
+/** Type code used to represent a struct; however, this type code does not appear
+ * in type signatures, instead #DBUS_STRUCT_BEGIN_CHAR and #DBUS_STRUCT_END_CHAR will
+ * appear in a signature.
+ */
+#define DBUS_TYPE_STRUCT        ((int) 'r')
+/** #DBUS_TYPE_STRUCT as a string literal instead of a int literal */
+#define DBUS_TYPE_STRUCT_AS_STRING         "r"
+/** Type code used to represent a dict entry; however, this type code does not appear
+ * in type signatures, instead #DBUS_DICT_ENTRY_BEGIN_CHAR and #DBUS_DICT_ENTRY_END_CHAR will
+ * appear in a signature.
+ */
+#define DBUS_TYPE_DICT_ENTRY    ((int) 'e')
+/** #DBUS_TYPE_DICT_ENTRY as a string literal instead of a int literal */
+#define DBUS_TYPE_DICT_ENTRY_AS_STRING     "e"
+
+/** Does not include #DBUS_TYPE_INVALID, #DBUS_STRUCT_BEGIN_CHAR, #DBUS_STRUCT_END_CHAR,
+ * #DBUS_DICT_ENTRY_BEGIN_CHAR, or #DBUS_DICT_ENTRY_END_CHAR - i.e. it is the number of
+ * valid types, not the number of distinct characters that may appear in a type signature.
+ */
+#define DBUS_NUMBER_OF_TYPES    (16)
+
+/* characters other than typecodes that appear in type signatures */
+
+/** Code marking the start of a struct type in a type signature */
+#define DBUS_STRUCT_BEGIN_CHAR   ((int) '(')
+/** #DBUS_STRUCT_BEGIN_CHAR as a string literal instead of a int literal */
+#define DBUS_STRUCT_BEGIN_CHAR_AS_STRING   "("
+/** Code marking the end of a struct type in a type signature */
+#define DBUS_STRUCT_END_CHAR     ((int) ')')
+/** #DBUS_STRUCT_END_CHAR a string literal instead of a int literal */
+#define DBUS_STRUCT_END_CHAR_AS_STRING     ")"
+/** Code marking the start of a dict entry type in a type signature */
+#define DBUS_DICT_ENTRY_BEGIN_CHAR   ((int) '{')
+/** #DBUS_DICT_ENTRY_BEGIN_CHAR as a string literal instead of a int literal */
+#define DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING   "{"
+/** Code marking the end of a dict entry type in a type signature */
+#define DBUS_DICT_ENTRY_END_CHAR     ((int) '}')
+/** #DBUS_DICT_ENTRY_END_CHAR as a string literal instead of a int literal */
+#define DBUS_DICT_ENTRY_END_CHAR_AS_STRING     "}"
+
+/** Max length in bytes of a bus name, interface, or member (not object
+ * path, paths are unlimited). This is limited because lots of stuff
+ * is O(n) in this number, plus it would be obnoxious to type in a
+ * paragraph-long method name so most likely something like that would
+ * be an exploit.
+ */
+#define DBUS_MAXIMUM_NAME_LENGTH 255
+
+
+
+
 
 /* Bus names */
 

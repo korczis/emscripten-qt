@@ -369,6 +369,9 @@ DEFINEFUNC(dbus_bool_t     , dbus_threads_init_default, (), (), return)
 #else
 typedef void* DBusConnection;
 typedef void* DBusServer;
+typedef void* DBusPendingCall;
+typedef void* DBusWatch;
+typedef void* DBusTimeout;
 /* Bus names */
 
 /** The bus name used to talk to the bus itself. */

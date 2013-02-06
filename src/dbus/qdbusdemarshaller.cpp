@@ -48,6 +48,7 @@ QT_BEGIN_NAMESPACE
 template <typename T>
 static inline T qIterGet(DBusMessageIter *it)
 {
+#ifndef DUMMY_DBUS
     // Use a union of expected and largest type q_dbus_message_iter_get_basic
     // will return to ensure reading the wrong basic type does not result in
     // stack overwrite
@@ -70,6 +71,9 @@ static inline T qIterGet(DBusMessageIter *it)
     q_dbus_message_iter_get_basic(it, &value);
     q_dbus_message_iter_next(it);
     return value.t;
+#else
+    return T();
+#endif
 }
 
 QDBusDemarshaller::~QDBusDemarshaller()
@@ -78,11 +82,15 @@ QDBusDemarshaller::~QDBusDemarshaller()
 
 inline QString QDBusDemarshaller::currentSignature()
 {
+#ifndef DUMMY_DBUS
     char *sig = q_dbus_message_iter_get_signature(&iterator);
     QString retval = QString::fromUtf8(sig);
     q_dbus_free(sig);
 
     return retval;
+#else
+    return QString();
+#endif
 }
 
 inline uchar QDBusDemarshaller::toByte()
@@ -178,16 +186,21 @@ inline QDBusUnixFileDescriptor QDBusDemarshaller::toUnixFileDescriptor()
 
 inline QDBusVariant QDBusDemarshaller::toVariant()
 {
+#ifndef DUMMY_DBUS
     QDBusDemarshaller sub(capabilities);
     sub.message = q_dbus_message_ref(message);
     q_dbus_message_iter_recurse(&iterator, &sub.iterator);
     q_dbus_message_iter_next(&iterator);
 
     return QDBusVariant( sub.toVariantInternal() );
+#else
+    return QDBusVariant();
+#endif
 }
 
 QDBusArgument::ElementType QDBusDemarshaller::currentType()
 {
+#ifndef DUMMY_DBUS
     switch (q_dbus_message_iter_get_arg_type(&iterator)) {
     case DBUS_TYPE_BYTE:
     case DBUS_TYPE_INT16:
@@ -235,11 +248,13 @@ QDBusArgument::ElementType QDBusDemarshaller::currentType()
 //                 q_dbus_message_iter_get_arg_type(&iterator),
 //                 q_dbus_message_iter_get_arg_type(&iterator));
     }
+#endif
     return QDBusArgument::UnknownType;
 }
 
 QVariant QDBusDemarshaller::toVariantInternal()
 {
+#ifndef DUMMY_DBUS
     switch (q_dbus_message_iter_get_arg_type(&iterator)) {
     case DBUS_TYPE_BYTE:
         return QVariant::fromValue(toByte());
@@ -302,10 +317,15 @@ QVariant QDBusDemarshaller::toVariantInternal()
         return QVariant::fromValue<void *>(ptr);
         break;
     };
+    return QVariant::fromValue<void *>(ptr);
+#else
+    return QVariant::fromValue<void *>(0);
+#endif
 }
 
 bool QDBusDemarshaller::isCurrentTypeStringLike()
 {
+#ifndef DUMMY_DBUS
     const int type = q_dbus_message_iter_get_arg_type(&iterator);
     switch (type) {
     case DBUS_TYPE_STRING:  //FALLTHROUGH
@@ -315,11 +335,15 @@ bool QDBusDemarshaller::isCurrentTypeStringLike()
     default:
         return false;
     }
+#else
+    return false;
+#endif
 }
 
 QStringList QDBusDemarshaller::toStringListUnchecked()
 {
     QStringList list;
+#ifndef DUMMY_DBUS
 
     QDBusDemarshaller sub(capabilities);
     q_dbus_message_iter_recurse(&iterator, &sub.iterator);
@@ -327,20 +351,24 @@ QStringList QDBusDemarshaller::toStringListUnchecked()
     while (!sub.atEnd())
         list.append(sub.toStringUnchecked());
 
+#endif
     return list;
 }
 
 QStringList QDBusDemarshaller::toStringList()
 {
+#ifndef DUMMY_DBUS
     if (q_dbus_message_iter_get_arg_type(&iterator) == DBUS_TYPE_ARRAY
             && q_dbus_message_iter_get_element_type(&iterator) == DBUS_TYPE_STRING)
         return toStringListUnchecked();
     else
+#endif
         return QStringList();
 }
 
 QByteArray QDBusDemarshaller::toByteArrayUnchecked()
 {
+#ifndef DUMMY_DBUS
     DBusMessageIter sub;
     q_dbus_message_iter_recurse(&iterator, &sub);
     q_dbus_message_iter_next(&iterator);
@@ -348,21 +376,30 @@ QByteArray QDBusDemarshaller::toByteArrayUnchecked()
     char* data;
     q_dbus_message_iter_get_fixed_array(&sub,&data,&len);
     return QByteArray(data,len);
+#else
+    return QByteArray();
+#endif
 }
 
 QByteArray QDBusDemarshaller::toByteArray()
 {
+#ifndef DUMMY_DBUS
     if (q_dbus_message_iter_get_arg_type(&iterator) == DBUS_TYPE_ARRAY
             && q_dbus_message_iter_get_element_type(&iterator) == DBUS_TYPE_BYTE) {
         return toByteArrayUnchecked();
     }
+#endif
     return QByteArray();
 }
 
 bool QDBusDemarshaller::atEnd()
 {
+#ifndef DUMMY_DBUS
     // dbus_message_iter_has_next is broken if the list has one single element
     return q_dbus_message_iter_get_arg_type(&iterator) == DBUS_TYPE_INVALID;
+#else
+    return true;
+#endif
 }
 
 inline QDBusDemarshaller *QDBusDemarshaller::beginStructure()
@@ -387,6 +424,7 @@ inline QDBusDemarshaller *QDBusDemarshaller::beginMapEntry()
 
 QDBusDemarshaller *QDBusDemarshaller::beginCommon()
 {
+#ifndef DUMMY_DBUS
     QDBusDemarshaller *d = new QDBusDemarshaller(capabilities);
     d->parent = this;
     d->message = q_dbus_message_ref(message);
@@ -395,6 +433,9 @@ QDBusDemarshaller *QDBusDemarshaller::beginCommon()
     q_dbus_message_iter_recurse(&iterator, &d->iterator);
     q_dbus_message_iter_next(&iterator);
     return d;
+#else
+    return 0;
+#endif
 }
 
 inline QDBusDemarshaller *QDBusDemarshaller::endStructure()
@@ -426,12 +467,16 @@ QDBusDemarshaller *QDBusDemarshaller::endCommon()
 
 QDBusArgument QDBusDemarshaller::duplicate()
 {
+#ifndef DUMMY_DBUS
     QDBusDemarshaller *d = new QDBusDemarshaller(capabilities);
     d->iterator = iterator;
     d->message = q_dbus_message_ref(message);
 
     q_dbus_message_iter_next(&iterator);
     return QDBusArgumentPrivate::create(d);
+#else
+    return QDBusArgumentPrivate::create(0);
+#endif
 }
 
 QT_END_NAMESPACE

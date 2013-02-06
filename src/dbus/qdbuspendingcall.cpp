@@ -133,8 +133,10 @@ void QDBusPendingCallWatcherHelper::add(QDBusPendingCallWatcher *watcher)
 QDBusPendingCallPrivate::~QDBusPendingCallPrivate()
 {
     if (pending) {
+#ifndef DUMMY_DBUS
         q_dbus_pending_call_cancel(pending);
         q_dbus_pending_call_unref(pending);
+#endif
     }
     delete watcherHelper;
 }

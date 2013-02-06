@@ -369,6 +369,18 @@ typedef void* DBusPendingCall;
 typedef void* DBusWatch;
 typedef void* DBusTimeout;
 typedef void* DBusMessage;
+typedef void* DBusMessageIter;
+
+typedef quint16 dbus_uint16_t;
+typedef qint16 dbus_int16_t;
+typedef quint32 dbus_uint32_t;
+typedef qint32 dbus_int32_t;
+typedef quint64 dbus_uint64_t;
+typedef qint64 dbus_int64_t;
+/* boolean size must be fixed at 4 bytes due to wire protocol! */
+typedef dbus_uint32_t  dbus_bool_t;
+
+
 /* Types of message */
 
 /** This value is never a valid message type, see dbus_message_get_type() */
@@ -504,9 +516,16 @@ typedef void* DBusMessage;
  */
 #define DBUS_MAXIMUM_NAME_LENGTH 255
 
+/* XML introspection format */
 
-
-
+/** XML namespace of the introspection format version 1.0 */
+#define DBUS_INTROSPECT_1_0_XML_NAMESPACE         "http://www.freedesktop.org/standards/dbus"
+/** XML public identifier of the introspection format version 1.0 */
+#define DBUS_INTROSPECT_1_0_XML_PUBLIC_IDENTIFIER "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+/** XML system identifier of the introspection format version 1.0 */
+#define DBUS_INTROSPECT_1_0_XML_SYSTEM_IDENTIFIER "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd"
+/** XML document type declaration of the introspection format version 1.0 */
+#define DBUS_INTROSPECT_1_0_XML_DOCTYPE_DECL_NODE "<!DOCTYPE node PUBLIC \""DBUS_INTROSPECT_1_0_XML_PUBLIC_IDENTIFIER"\"\n\""DBUS_INTROSPECT_1_0_XML_SYSTEM_IDENTIFIER"\">\n"
 
 /* Bus names */
 

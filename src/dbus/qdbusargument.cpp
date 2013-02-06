@@ -62,8 +62,10 @@ QT_BEGIN_NAMESPACE
 
 QDBusArgumentPrivate::~QDBusArgumentPrivate()
 {
+#ifndef DUMMY_DBUS
     if (message)
         q_dbus_message_unref(message);
+#endif
 }
 
 QByteArray QDBusArgumentPrivate::createSignature(int id)
@@ -107,6 +109,7 @@ QByteArray QDBusArgumentPrivate::createSignature(int id)
 
 bool QDBusArgumentPrivate::checkWrite(QDBusArgumentPrivate *&d)
 {
+#ifndef DUMMY_DBUS
     if (!d)
         return false;
     if (d->direction == Marshalling) {
@@ -130,6 +133,7 @@ bool QDBusArgumentPrivate::checkWrite(QDBusArgumentPrivate *&d)
 #else
     qWarning("QDBusArgument: write from a read-only object");
 #endif
+#endif
     return false;
 }
 
@@ -151,6 +155,7 @@ bool QDBusArgumentPrivate::checkRead(QDBusArgumentPrivate *d)
 
 bool QDBusArgumentPrivate::checkReadAndDetach(QDBusArgumentPrivate *&d)
 {
+#ifndef DUMMY_DBUS
     if (!checkRead(d))
         return false;           //  don't bother
 
@@ -165,6 +170,9 @@ bool QDBusArgumentPrivate::checkReadAndDetach(QDBusArgumentPrivate *&d)
         delete d;
     d = dd;
     return true;
+#else
+    return false;
+#endif
 }
 
 /*!
@@ -294,6 +302,7 @@ QDBusArgument::QDBusArgument()
         d = 0;
         return;
     }
+#ifndef DUMMY_DBUS
 
     QDBusMarshaller *dd = new QDBusMarshaller(0);
     d = dd;
@@ -301,6 +310,7 @@ QDBusArgument::QDBusArgument()
     // create a new message with any type, we won't sent it anyways
     dd->message = q_dbus_message_new(DBUS_MESSAGE_TYPE_METHOD_CALL);
     q_dbus_message_iter_init_append(dd->message, &dd->iterator);
+#endif
 }
 
 /*!

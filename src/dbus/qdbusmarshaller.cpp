@@ -50,10 +50,12 @@ QT_BEGIN_NAMESPACE
 
 static void qIterAppend(DBusMessageIter *it, QByteArray *ba, int type, const void *arg)
 {
+#ifndef DUMMY_DBUS
     if (ba)
         *ba += char(type);
     else
         q_dbus_message_iter_append_basic(it, type, arg);
+#endif
 }
 
 QDBusMarshaller::~QDBusMarshaller()
@@ -63,8 +65,10 @@ QDBusMarshaller::~QDBusMarshaller()
 
 inline QString QDBusMarshaller::currentSignature()
 {
+#ifndef DUMMY_DBUS
     if (message)
         return QString::fromUtf8(q_dbus_message_get_signature(message));
+#endif
     return QString();
 }
 
@@ -75,8 +79,10 @@ inline void QDBusMarshaller::append(uchar arg)
 
 inline void QDBusMarshaller::append(bool arg)
 {
+#ifndef DUMMY_DBUS
     dbus_bool_t cast = arg;
     qIterAppend(&iterator, ba, DBUS_TYPE_BOOLEAN, &cast);
+#endif
 }
 
 inline void QDBusMarshaller::append(short arg)
@@ -155,6 +161,7 @@ inline void QDBusMarshaller::append(const QByteArray &arg)
         *ba += DBUS_TYPE_ARRAY_AS_STRING DBUS_TYPE_BYTE_AS_STRING;
         return;
     }
+#ifndef DUMMY_DBUS
 
     const char* cdata = arg.constData();
     DBusMessageIter subiterator;
@@ -162,6 +169,7 @@ inline void QDBusMarshaller::append(const QByteArray &arg)
                                      &subiterator);
     q_dbus_message_iter_append_fixed_array(&subiterator, DBUS_TYPE_BYTE, &cdata, arg.length());
     q_dbus_message_iter_close_container(&iterator, &subiterator);
+#endif
 }
 
 inline bool QDBusMarshaller::append(const QDBusVariant &arg)
@@ -288,6 +296,7 @@ inline QDBusMarshaller *QDBusMarshaller::beginMapEntry()
 
 void QDBusMarshaller::open(QDBusMarshaller &sub, int code, const char *signature)
 {
+#ifndef DUMMY_DBUS
     sub.parent = this;
     sub.ba = ba;
     sub.ok = true;
@@ -311,6 +320,7 @@ void QDBusMarshaller::open(QDBusMarshaller &sub, int code, const char *signature
         }
     else
         q_dbus_message_iter_open_container(&iterator, code, signature, &sub.iterator);
+#endif
 }
 
 QDBusMarshaller *QDBusMarshaller::beginCommon(int code, const char *signature)
@@ -341,12 +351,14 @@ QDBusMarshaller *QDBusMarshaller::endCommon()
 
 void QDBusMarshaller::close()
 {
+#ifndef DUMMY_DBUS
     if (ba) {
         if (closeCode)
             *ba += closeCode;
     } else if (parent) {
         q_dbus_message_iter_close_container(&parent->iterator, &iterator);
     }
+#endif
 }
 
 void QDBusMarshaller::error(const QString &msg)
@@ -360,6 +372,7 @@ void QDBusMarshaller::error(const QString &msg)
 
 bool QDBusMarshaller::appendVariantInternal(const QVariant &arg)
 {
+#ifndef DUMMY_DBUS
     int id = arg.userType();
     if (id == QVariant::Invalid) {
         qWarning("QDBusMarshaller: cannot add an invalid QVariant");
@@ -499,6 +512,9 @@ bool QDBusMarshaller::appendVariantInternal(const QVariant &arg)
     }
 
     return true;
+#else
+    return false;
+#endif
 }
 
 bool QDBusMarshaller::appendRegisteredType(const QVariant &arg)
@@ -510,6 +526,7 @@ bool QDBusMarshaller::appendRegisteredType(const QVariant &arg)
 
 bool QDBusMarshaller::appendCrossMarshalling(QDBusDemarshaller *demarshaller)
 {
+#ifndef DUMMY_DBUS
     int code = q_dbus_message_iter_get_arg_type(&demarshaller->iterator);
     if (QDBusUtil::isValidBasicType(code)) {
         // easy: just append
@@ -566,6 +583,9 @@ bool QDBusMarshaller::appendCrossMarshalling(QDBusDemarshaller *demarshaller)
 
     delete drecursed;
     return true;
+#else
+    return false;
+#endif
 }
 
 QT_END_NAMESPACE

@@ -48,6 +48,10 @@
 
 #include "qglobal.h"
 
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+
 //#define QT_NO_SOCKET_H
 //#define QT_NO_SETTINGS
 //#define QT_NO_CODECS

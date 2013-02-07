@@ -779,6 +779,7 @@ qint64 QNativeSocketEnginePrivate::nativeBytesAvailable() const
     return available;
 }
 const int MSG_PEEK              = 0x02; /* Peek at incoming messages.  */ // TODO - upstream this into Emscripten, and get the semantics right!
+const int SO_TYPE = 3; // TODO - upstream this into Emscripten!
 
 
 bool QNativeSocketEnginePrivate::nativeHasPendingDatagrams() const
@@ -972,6 +973,7 @@ bool QNativeSocketEnginePrivate::fetchConnectionParameters()
     // Determine the socket type (UDP/TCP)
     int value = 0;
     QT_SOCKOPTLEN_T valueSize = sizeof(int);
+    qWarning() << "SO_TYPE not implemented in Emscripten!"; // TODO - remove this after upstreaming support for SO_TYPE in Emscripten.
     if (::getsockopt(socketDescriptor, SOL_SOCKET, SO_TYPE, &value, &valueSize) == 0) {
         if (value == SOCK_STREAM)
             socketType = QAbstractSocket::TcpSocket;

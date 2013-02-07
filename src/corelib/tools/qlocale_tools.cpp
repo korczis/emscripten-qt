@@ -54,7 +54,7 @@
 #   include "qfunctions_wince.h"    // for _control87
 #endif
 
-#if defined(Q_OS_LINUX) && !defined(__UCLIBC__)
+#if defined(Q_OS_LINUX) && !defined(__UCLIBC__) && !defined(Q_OS_EMSCRIPTEN)
 #    include <fenv.h>
 #endif
 

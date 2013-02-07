@@ -125,7 +125,8 @@ Q_GLOBAL_STATIC(CustomFormatVector, customFormatVectorFunc)
 Q_GLOBAL_STATIC(QMutex, globalMutex)
 static QSettings::Format globalDefaultFormat = QSettings::NativeFormat;
 
-#ifndef Q_OS_WIN
+
+#if !(defined(Q_OS_WIN)) && !(defined(Q_OS_EMSCRIPTEN))
 inline bool qt_isEvilFsTypeName(const char *name)
 {
     return (qstrncmp(name, "nfs", 3) == 0
@@ -1441,6 +1442,7 @@ void QConfFileSettingsPrivate::syncConfFile(int confFileNo)
     if (!createFile && !file.isOpen())
         setStatus(QSettings::AccessError);
 
+#ifndef Q_OS_EMSCRIPTEN
 #ifdef Q_OS_WIN
     HANDLE readSemaphore = 0;
     HANDLE writeSemaphore = 0;
@@ -1486,6 +1488,7 @@ void QConfFileSettingsPrivate::syncConfFile(int confFileNo)
 #else
     if (file.isOpen())
         unixLock(file.handle(), readOnly ? F_RDLCK : F_WRLCK);
+#endif
 #endif
 
     // If we have created the file, apply the file perms

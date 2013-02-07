@@ -43,9 +43,13 @@
 
 #include "httpwindow.h"
 
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
 #if defined(Q_OS_SYMBIAN)
     // Change current directory from default private to c:\data
@@ -55,12 +59,21 @@ int main(int argc, char *argv[])
     QDir::setCurrent("/home/user");
 #endif
 
-    HttpWindow httpWin;
+    HttpWindow *httpWin = new HttpWindow;
 
 #if defined(Q_OS_SYMBIAN)
-    httpWin.showMaximized();
+    httpWin->showMaximized();
 #else
-    httpWin.show();
+    httpWin->show();
 #endif
-    return app.exec();
+    return app->exec();
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        EmscriptenQtSDL::setAttemptedLocalEventLoopCallback(EmscriptenQtSDL::TRIGGER_ASSERT);
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

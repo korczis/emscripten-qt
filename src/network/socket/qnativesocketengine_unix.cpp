@@ -778,6 +778,8 @@ qint64 QNativeSocketEnginePrivate::nativeBytesAvailable() const
 #endif
     return available;
 }
+const int MSG_PEEK              = 0x02; /* Peek at incoming messages.  */ // TODO - upstream this into Emscripten, and get the semantics right!
+
 
 bool QNativeSocketEnginePrivate::nativeHasPendingDatagrams() const
 {
@@ -789,6 +791,7 @@ bool QNativeSocketEnginePrivate::nativeHasPendingDatagrams() const
     // Peek 0 bytes into the next message. The size of the message may
     // well be 0, so we can't check recvfrom's return value.
     ssize_t readBytes;
+    qWarning() << "MSG_PEEK not yet implemented!"; // TODO - remove when upstreamed into Emscripten
     do {
         char c;
         readBytes = ::recvfrom(socketDescriptor, &c, 1, MSG_PEEK, &storage.a, &storageSize);
@@ -810,6 +813,7 @@ qint64 QNativeSocketEnginePrivate::nativePendingDatagramSize() const
     QVarLengthArray<char, 8192> udpMessagePeekBuffer(8192);
     ssize_t recvResult = -1;
 
+    qWarning() << "MSG_PEEK not yet implemented!"; // TODO - remove when upstreamed into Emscripten
     for (;;) {
         // the data written to udpMessagePeekBuffer is discarded, so
         // this function is still reentrant although it might not look

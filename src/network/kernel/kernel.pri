@@ -24,7 +24,7 @@ symbian: SOURCES += kernel/qhostinfo_symbian.cpp kernel/qnetworkinterface_symbia
 unix:!symbian:SOURCES += kernel/qhostinfo_unix.cpp kernel/qnetworkinterface_unix.cpp
 win32:SOURCES += kernel/qhostinfo_win.cpp kernel/qnetworkinterface_win.cpp
 integrity:SOURCES += kernel/qhostinfo_unix.cpp kernel/qnetworkinterface_unix.cpp
-emscripten:SOURCES += kernel/qhostinfo_unix.cpp kernel/qnetworkinterface_unix.cpp
+emscripten:SOURCES += kernel/qhostinfo_unix.cpp kernel/qnetworkinterface_emscripten.cpp
 
 mac:LIBS_PRIVATE += -framework SystemConfiguration -framework CoreFoundation -framework CoreServices
 qpa:mac:!ios:SOURCES += kernel/qnetworkproxy_mac.cpp

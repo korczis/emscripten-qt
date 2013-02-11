@@ -32,4 +32,8 @@ integrity {
 	SOURCES += plugin/qlibrary_unix.cpp
 }
 
+emscripten {
+    SOURCES += plugin/qlibrary_emscripten.cpp
+}
+
 LIBS_PRIVATE += $$QMAKE_LIBS_DYNLOAD

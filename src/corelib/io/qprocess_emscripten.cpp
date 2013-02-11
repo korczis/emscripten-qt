@@ -43,6 +43,8 @@
 #include "qprocess.h"
 #include "qprocess_p.h"
 
+#include <qdebug.h>
+
 #ifndef QT_NO_PROCESS
 
 QT_BEGIN_NAMESPACE
@@ -153,17 +155,6 @@ void QProcessPrivate::findExitCode()
 {
     warnUnsupported();
     exitCode = -1;
-}
-
-void QProcessPrivate::flushPipeWriter()
-{
-    warnUnsupported();
-}
-
-qint64 QProcessPrivate::pipeWriterBytesToWrite() const
-{
-    warnUnsupported();
-    return -1;
 }
 
 qint64 QProcessPrivate::writeToStdin(const char *data, qint64 maxlen)

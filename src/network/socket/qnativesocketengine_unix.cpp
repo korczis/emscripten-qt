@@ -778,8 +778,10 @@ qint64 QNativeSocketEnginePrivate::nativeBytesAvailable() const
 #endif
     return available;
 }
+#if (defined(EMSCRIPTEN)) && !(defined(EMSCRIPTEN_NATIVE))
 const int MSG_PEEK              = 0x02; /* Peek at incoming messages.  */ // TODO - upstream this into Emscripten, and get the semantics right!
 const int SO_TYPE = 3; // TODO - upstream this into Emscripten!
+#endif
 
 
 bool QNativeSocketEnginePrivate::nativeHasPendingDatagrams() const

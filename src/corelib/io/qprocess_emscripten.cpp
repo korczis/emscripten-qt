@@ -157,10 +157,21 @@ void QProcessPrivate::findExitCode()
     exitCode = -1;
 }
 
+bool QProcessPrivate::waitForDeadChild()
+{
+    warnUnsupported();
+    return false;
+}
+
 qint64 QProcessPrivate::writeToStdin(const char *data, qint64 maxlen)
 {
     warnUnsupported();
     return -1;
+}
+
+void QProcessPrivate::initializeProcessManager()
+{
+    warnUnsupported();
 }
 
 bool QProcessPrivate::waitForWrite(int msecs)

@@ -258,10 +258,10 @@ bool QDBusMessagePrivate::isLocal(const QDBusMessage &message)
     return message.d_ptr->localMessage;
 }
 
-#ifndef DUMMY_DBUS
 QDBusMessage QDBusMessagePrivate::makeLocal(const QDBusConnectionPrivate &conn,
                                             const QDBusMessage &asSent)
 {
+#ifndef DUMMY_DBUS
     // simulate the message being sent to the bus and then received back
     // the only field that the bus sets when delivering the message
     // (as opposed to the message as we send it), is the sender
@@ -314,8 +314,10 @@ QDBusMessage QDBusMessagePrivate::makeLocal(const QDBusConnectionPrivate &conn,
     d->signature = computedSignature;
     d->localMessage = true;
     return retval;
-}
 #endif
+    QDBusMessage retval;
+    return retval;
+}
 
 QDBusMessage QDBusMessagePrivate::makeLocalReply(const QDBusConnectionPrivate &conn,
                                                  const QDBusMessage &callMsg)

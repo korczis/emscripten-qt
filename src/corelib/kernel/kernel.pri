@@ -171,7 +171,9 @@ blackberry {
 
 emscripten {
        SOURCES += \
+                 kernel/qcore_unix.cpp \
                  kernel/qeventdispatcher_emscripten.cpp
        HEADERS += \
+                 kernel/qcore_unix_p.h \
                  kernel/qeventdispatcher_emscripten_p.h
 }

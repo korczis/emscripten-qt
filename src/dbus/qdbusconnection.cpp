@@ -330,11 +330,11 @@ QDBusConnection QDBusConnection::connectToBus(BusType type, const QString &name)
 {
 //    Q_ASSERT_X(QCoreApplication::instance(), "QDBusConnection::addConnection",
 //               "Cannot create connection without a Q[Core]Application instance");
+#ifndef DUMMY_DBUS
     if (!qdbus_loadLibDBus()) {
         QDBusConnectionPrivate *d = 0;
         return QDBusConnection(d);
     }
-#ifndef DUMMY_DBUS
 
     QMutexLocker locker(&_q_manager()->mutex);
 
@@ -357,6 +357,23 @@ QDBusConnection QDBusConnection::connectToBus(BusType type, const QString &name)
             break;
     }
     d->setConnection(c, error); //setConnection does the error handling for us
+
+    _q_manager()->setConnection(name, d);
+
+    QDBusConnection retval(d);
+
+    // create the bus service
+    // will lock in QDBusConnectionPrivate::connectRelay()
+    d->setBusService(retval);
+
+    return retval;
+#else
+    QDBusConnectionPrivate *d = _q_manager()->connection(name);
+    if (d || name.isEmpty())
+        return QDBusConnection(d);
+
+    d = new QDBusConnectionPrivate;
+    QDBusErrorInternal error;
 
     _q_manager()->setConnection(name, d);
 

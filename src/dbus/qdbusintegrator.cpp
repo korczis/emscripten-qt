@@ -1745,6 +1745,7 @@ void QDBusConnectionPrivate::setConnection(DBusConnection *dbc, const QDBusError
 
     connection = dbc;
     mode = ClientMode;
+#ifndef DUMMY_DBUS
 
     const char *service = q_dbus_bus_get_unique_name(connection);
     Q_ASSERT(service);
@@ -1780,6 +1781,7 @@ void QDBusConnectionPrivate::setConnection(DBusConnection *dbc, const QDBusError
 
     // schedule a dispatch:
     QMetaObject::invokeMethod(this, "doDispatch", Qt::QueuedConnection);
+#endif
 }
 
 extern "C"{

@@ -88,19 +88,23 @@ class QDBusAbstractInterface;
 class QDBusConnectionInterface;
 class QDBusPendingCallPrivate;
 
-#ifndef DUMMY_DBUS
 class QDBusErrorInternal
 {
+#ifndef DUMMY_DBUS
     mutable DBusError error;
+#endif
     Q_DISABLE_COPY(QDBusErrorInternal)
 public:
+#ifndef DUMMY_DBUS
     inline QDBusErrorInternal() { q_dbus_error_init(&error); }
     inline ~QDBusErrorInternal() { q_dbus_error_free(&error); }
     inline bool operator !() const { return !q_dbus_error_is_set(&error); }
     inline operator DBusError *() { q_dbus_error_free(&error); return &error; }
     inline operator QDBusError() const { QDBusError err(&error); q_dbus_error_free(&error); return err; }
-};
+#else
+    inline QDBusErrorInternal() {}
 #endif
+};
 
 // QDBusConnectionPrivate holds the DBusConnection and
 // can have many QDBusConnection objects referring to it

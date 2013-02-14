@@ -8,7 +8,7 @@ try
 catch (e)
 {
         Module.setStatus("Aborted - Unsupported Browser :/");
-        window.alert( "Javascript typed arrays apparently are not supported by your browser: unfortunately, emscripten-qt apps cannot run it it.");
+        window.alert( "Javascript typed arrays apparently are not supported by your browser: unfortunately, emscripten-qt apps cannot run in it.");
         throw e;
 }
 

@@ -147,6 +147,9 @@ QDragManager::QDragManager()
 #ifdef Q_WS_X11
     xdndMimeTransferedPixmapIndex = 0;
 #endif
+#ifdef QT_NO_LOCALEVENTLOOP
+    dragObjectRetained = 0;
+#endif
 }
 
 

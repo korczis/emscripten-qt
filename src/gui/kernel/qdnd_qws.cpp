@@ -455,12 +455,21 @@ void QDragManager::drop()
 }
 
 #ifdef QT_NO_LOCALEVENTLOOP
+#include <qdebug.h>
 void QDragManager::asyncDragFinished()
 {
      delete qt_qws_dnd_deco;
      qt_qws_dnd_deco = 0;
      qt_qws_dnd_dragging = false;
-     dragObjectRetained->notifyAsyncDragFinished(global_accepted_action);
+     if (!dragObjectRetained)
+     {
+         qWarning() << "It looks like this drag was not started via AsyncDialogHelper::startDrag - it probably won't work correctly!";
+     }
+     else
+     {
+        dragObjectRetained->notifyAsyncDragFinished(global_accepted_action);
+        dragObjectRetained = 0;
+     }
 }
 #endif
 

@@ -141,6 +141,10 @@ function _EMSCRIPTENQT_flush_pixels(data, regionX, regionY, regionW, regionH)
 function _EMSCRIPTENQT_attemptedLocalEventLoop()
 {
 }
+function _EMSCRIPTENQT_launchWebBrowser(urlCString)
+{
+    window.open(Pointer_stringify(urlCString), '_blank');
+}
 var ignoreMouseMovement = false;
 var clearIgnoreMouseMovementTimerSet = false;
 function EMSCRIPTENQT_mouseMoved(e)

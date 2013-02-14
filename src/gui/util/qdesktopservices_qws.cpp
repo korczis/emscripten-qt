@@ -41,14 +41,26 @@
 
 #include <qcoreapplication.h>
 #include <qdir.h>
+#include <qurl.h>
+
+#ifdef EMSCRIPTEN
+extern "C"
+{
+    bool EMSCRIPTENQT_launchWebBrowser(const char* url);
+}
+#endif
 
 QT_BEGIN_NAMESPACE
 
 static bool launchWebBrowser(const QUrl &url)
 {
     Q_UNUSED(url);
+#ifndef EMSCRIPTEN
     qWarning("QDesktopServices::launchWebBrowser not implemented");
     return false;
+#else
+    return EMSCRIPTENQT_launchWebBrowser(url.toString().toAscii());
+#endif
 }
 
 static bool openDocument(const QUrl &file)

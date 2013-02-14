@@ -151,6 +151,12 @@ extern "C"
             attemptedLocalEventCallback();
         }
     }
+
+    bool EMSCRIPTENQT_launchWebBrowser(const char* url)
+    {
+        qWarning() << "launchWebBrowser not supported";
+        return false;
+    }
 }
 
 Qt::Key sdlToQtKey(SDLKey sdlKey)

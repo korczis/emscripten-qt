@@ -209,7 +209,7 @@ QApplicationPrivate::QApplicationPrivate(int &argc, char **argv, QApplication::T
     gestureWidget = 0;
 #endif // QT_NO_GESTURES
 
-#if defined(Q_WS_X11) || defined(Q_WS_WIN)
+#if defined(Q_WS_X11) || defined(Q_WS_WIN) || defined(Q_OS_EMSCRIPTEN)
     move_cursor = 0;
     copy_cursor = 0;
     link_cursor = 0;
@@ -1145,7 +1145,7 @@ QApplication::~QApplication()
     qt_clipboard = 0;
 #endif
 
-#if defined(Q_WS_X11) || defined(Q_WS_WIN)
+#if defined(Q_WS_X11) || defined(Q_WS_WIN) || defined(Q_OS_EMSCRIPTEN)
     delete d->move_cursor; d->move_cursor = 0;
     delete d->copy_cursor; d->copy_cursor = 0;
     delete d->link_cursor; d->link_cursor = 0;
@@ -6177,7 +6177,7 @@ static const char * const link_xpm[] = {
 
 QPixmap QApplicationPrivate::getPixmapCursor(Qt::CursorShape cshape)
 {
-#if defined(Q_WS_X11) || defined(Q_WS_WIN)
+#if defined(Q_WS_X11) || defined(Q_WS_WIN) || defined(Q_OS_EMSCRIPTEN)
     if (!move_cursor) {
         move_cursor = new QPixmap((const char **)move_xpm);
         copy_cursor = new QPixmap((const char **)copy_xpm);

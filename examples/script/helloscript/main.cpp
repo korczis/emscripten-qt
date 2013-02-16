@@ -47,26 +47,30 @@
 #include <QtScript>
 
 //! [0]
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(helloscript);
 //! [0]
 
 //! [1]
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
-    QScriptEngine engine;
+    QScriptEngine *engine = new QScriptEngine;
 
-    QTranslator translator;
-    translator.load("helloscript_la");
-    app.installTranslator(&translator);
-    engine.installTranslatorFunctions();
+    QTranslator *translator = new QTranslator;
+    translator->load("helloscript_la");
+    app->installTranslator(translator);
+    engine->installTranslatorFunctions();
 //! [1]
 
 //! [2]
-    QPushButton button;
-    QScriptValue scriptButton = engine.newQObject(&button);
-    engine.globalObject().setProperty("button", scriptButton);
+    QPushButton *button = new QPushButton;
+    QScriptValue scriptButton = engine->newQObject(button);
+    engine->globalObject().setProperty("button", scriptButton);
 //! [2]
 
 //! [3]
@@ -79,11 +83,11 @@ int main(int argc, char *argv[])
 //! [3]
 
 #ifdef Q_OS_SYMBIAN
-    contents.replace("button.show()", "button.showMaximized()");
+    contents.replace("button->show()", "button->showMaximized()");
 #endif
 
 //! [4]
-    QScriptValue result = engine.evaluate(contents, fileName);
+    QScriptValue result = engine->evaluate(contents, fileName);
 //! [4]
 
 //! [5]
@@ -98,6 +102,15 @@ int main(int argc, char *argv[])
 //! [5]
 
 //! [6]
-    return app.exec();
+    return app->exec();
 }
 //! [6]
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        EmscriptenQtSDL::setAttemptedLocalEventLoopCallback(EmscriptenQtSDL::TRIGGER_ASSERT);
+        return EmscriptenQtSDL::run(640, 480, argc, argv);
+}
+#endif

@@ -7761,6 +7761,9 @@ EOF
         ;;
     symbian-armcc)
         ;;
+    *emscripten*)
+        canBuildQtScript="yes" # TODO - less hackish way of doing this - we *can* build QtScript, actually!
+        ;;
 esac
 
 if [ "$CFG_GUI" = "no" ]; then

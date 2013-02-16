@@ -374,6 +374,11 @@
 #define WTF_OS_MAC_OS_X 1
 #endif
 
+/* OS(FREEBSD) - Emscripten */
+#ifdef EMSCRIPTEN
+#define WTF_OS_EMSCRIPTEN 1
+#endif
+
 /* OS(FREEBSD) - FreeBSD */
 #ifdef __FreeBSD__
 #define WTF_OS_FREEBSD 1

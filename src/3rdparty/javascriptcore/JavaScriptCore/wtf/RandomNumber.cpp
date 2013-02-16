@@ -69,7 +69,7 @@ double randomNumber()
 #elif OS(DARWIN)
     uint32_t bits = arc4random();
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
-#elif OS(UNIX)
+#elif OS(UNIX) && !OS(EMSCRIPTEN)
     uint32_t part1 = random() & (RAND_MAX - 1);
     uint32_t part2 = random() & (RAND_MAX - 1);
     // random only provides 31 bits

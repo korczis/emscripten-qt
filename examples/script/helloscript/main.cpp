@@ -44,7 +44,8 @@
 #include <QPushButton>
 #include <QTextStream>
 #include <QTranslator>
-#include <QtScript>
+#include <QtScript/QtScript>
+QScriptEngine *engine;
 
 //! [0]
 #ifndef EMSCRIPTEN_NATIVE
@@ -59,7 +60,7 @@ int emscriptenQtSDLMain(int argc, char *argv[])
 //! [1]
     QApplication *app = new QApplication(argc, argv);
 
-    QScriptEngine *engine = new QScriptEngine;
+    engine = new QScriptEngine;
 
     QTranslator *translator = new QTranslator;
     translator->load("helloscript_la");
@@ -111,6 +112,8 @@ int emscriptenQtSDLMain(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
         EmscriptenQtSDL::setAttemptedLocalEventLoopCallback(EmscriptenQtSDL::TRIGGER_ASSERT);
-        return EmscriptenQtSDL::run(640, 480, argc, argv);
+        const int retval = EmscriptenQtSDL::run(640, 480, argc, argv);
+        delete engine;
+        return retval;
 }
 #endif

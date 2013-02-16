@@ -91,6 +91,13 @@
 
 #define COLLECT_ON_EVERY_ALLOCATION 0
 
+#if OS(EMSCRIPTEN) && !defined(EMSCRIPTEN_NATIVE)
+extern "C"
+{
+    void *EMSCRIPTENQT_stackBase();
+}
+#endif
+
 using std::max;
 
 namespace JSC {
@@ -644,6 +651,8 @@ static inline void* currentThreadStackBase()
     thread_info threadInfo;
     get_thread_info(find_thread(NULL), &threadInfo);
     return threadInfo.stack_end;
+#elif OS(EMSCRIPTEN) && !(defined(EMSCRIPTEN_NATIVE))
+    return EMSCRIPTENQT_stackBase();
 #elif OS(UNIX)
     AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
     MutexLocker locker(mutex);

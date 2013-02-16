@@ -189,6 +189,7 @@
 #define WTF_CPU_SPARC 1
 #endif
 
+#ifndef EMSCRIPTEN
 /* CPU(X86) - i386 / x86 32-bit */
 #if   defined(__i386__) \
     || defined(i386)     \
@@ -202,6 +203,7 @@
 #if   defined(__x86_64__) \
     || defined(_M_X64)
 #define WTF_CPU_X86_64 1
+#endif
 #endif
 
 /* 64-bit mode on AIX */
@@ -969,8 +971,10 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define JSC_HOST_CALL
 #endif
 
+#ifndef EMSCRIPTEN
 #if COMPILER(GCC) && !ENABLE(JIT)
 #define HAVE_COMPUTED_GOTO 1
+#endif
 #endif
 
 #if ENABLE(JIT) && defined(COVERAGE)

@@ -41,12 +41,13 @@
 #include "tetrixboard.h"
 
 #include <QtGui>
-#include <QtScript>
-#include <QUiLoader>
+#include <QtScript/QtScript>
+#include <QtUiTools/QUiLoader>
 
 #ifndef QT_NO_SCRIPTTOOLS
-#include <QtScriptTools>
+#include <QtScriptTools/QtScriptTools>
 #endif
+QScriptEngine *engine;
 
 struct QtMetaObject : private QObject
 {
@@ -82,30 +83,34 @@ static QScriptValue evaluateFile(QScriptEngine &engine, const QString &fileName)
     return engine.evaluate(file.readAll(), fileName);
 }
 
+#ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
+#else
+int emscriptenQtSDLMain(int argc, char *argv[])
+#endif
 {
     Q_INIT_RESOURCE(tetrix);
 
 //! [1]
-    QApplication app(argc, argv);
-    QScriptEngine engine;
+    QApplication *app = new QApplication(argc, argv);
+    engine = new QScriptEngine;
 
-    QScriptValue Qt = engine.newQMetaObject(QtMetaObject::get());
-    Qt.setProperty("App", engine.newQObject(&app));
-    engine.globalObject().setProperty("Qt", Qt);
+    QScriptValue *Qt  = new QScriptValue(engine->newQMetaObject(QtMetaObject::get()));
+    Qt->setProperty("App", engine->newQObject(app));
+    engine->globalObject().setProperty("Qt", *Qt);
 //! [1]
 
 #if !defined(QT_NO_SCRIPTTOOLS)
-    QScriptEngineDebugger debugger;
-    debugger.attachTo(&engine);
-    QMainWindow *debugWindow = debugger.standardWindow();
-    debugWindow->resize(1024, 640);
+    //QScriptEngineDebugger *debugger = new QScriptEngineDebugger;
+    //debugger->attachTo(engine);
+    //QMainWindow *debugWindow = debugger->standardWindow();
+    //debugWindow->resize(1024, 640);
 #endif
 
 //! [2]
-    evaluateFile(engine, ":/tetrixpiece.js");
-    evaluateFile(engine, ":/tetrixboard.js");
-    evaluateFile(engine, ":/tetrixwindow.js");
+    evaluateFile(*engine, ":/tetrixpiece.js");
+    evaluateFile(*engine, ":/tetrixboard.js");
+    evaluateFile(*engine, ":/tetrixwindow.js");
 //! [2]
 
 //! [3]
@@ -115,18 +120,18 @@ int main(int argc, char *argv[])
     QWidget *ui = loader.load(&uiFile);
     uiFile.close();
 
-    QScriptValue ctor = engine.evaluate("TetrixWindow");
-    QScriptValue scriptUi = engine.newQObject(ui, QScriptEngine::ScriptOwnership);
-    QScriptValue tetrix = ctor.construct(QScriptValueList() << scriptUi);
+    QScriptValue *ctor  = new QScriptValue(engine->evaluate("TetrixWindow"));
+    QScriptValue *scriptUi  = new QScriptValue(engine->newQObject(ui, QScriptEngine::ScriptOwnership));
+    QScriptValue *tetrix  = new QScriptValue(ctor->construct(QScriptValueList() << *scriptUi));
 //! [3]
 
     QPushButton *debugButton = ui->findChild<QPushButton*>("debugButton");
 #if !defined(QT_NO_SCRIPTTOOLS)
-    QObject::connect(debugButton, SIGNAL(clicked()),
-                     debugger.action(QScriptEngineDebugger::InterruptAction),
-                     SIGNAL(triggered()));
-    QObject::connect(debugButton, SIGNAL(clicked()),
-                     debugWindow, SLOT(show()));
+    //QObject::connect(debugButton, SIGNAL(clicked()),
+    //                 debugger->action(QScriptEngineDebugger::InterruptAction),
+    //                 SIGNAL(triggered()));
+    //QObject::connect(debugButton, SIGNAL(clicked()),
+    //                 debugWindow, SLOT(show()));
 #else
     debugButton->hide();
 #endif
@@ -136,6 +141,17 @@ int main(int argc, char *argv[])
     ui->show();
 
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-    return app.exec();
+    return app->exec();
 //! [4]
 }
+
+#ifdef EMSCRIPTEN_NATIVE
+#include <QtGui/emscripten-qt-sdl.h>
+int main(int argc, char *argv[])
+{
+        EmscriptenQtSDL::setAttemptedLocalEventLoopCallback(EmscriptenQtSDL::TRIGGER_ASSERT);
+        EmscriptenQtSDL::run(640, 480, argc, argv);
+        delete engine;
+        return 0;
+}
+#endif

@@ -30,6 +30,7 @@
 #include "UString.h"
 #include <stddef.h> // for size_t
 
+
 namespace JSC {
 
     extern const double NaN;

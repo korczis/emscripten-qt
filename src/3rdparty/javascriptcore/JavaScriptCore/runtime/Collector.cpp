@@ -18,6 +18,7 @@
  *
  */
 
+#include <iostream>
 #include "config.h"
 #include "Collector.h"
 
@@ -651,8 +652,10 @@ static inline void* currentThreadStackBase()
     thread_info threadInfo;
     get_thread_info(find_thread(NULL), &threadInfo);
     return threadInfo.stack_end;
-#elif OS(EMSCRIPTEN) && !(defined(EMSCRIPTEN_NATIVE))
-    return EMSCRIPTENQT_stackBase();
+//#elif defined(EMSCRIPTEN) && !defined(EMSCRIPTEN_NATIVE)
+#elif defined(EMSCRIPTEN)
+    std::cout << "returning null for stackbase" << std::endl;
+    return NULL;
 #elif OS(UNIX)
     AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
     MutexLocker locker(mutex);
@@ -792,6 +795,10 @@ static inline bool isPossibleCell(void* p)
 
 void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
 {
+//#if defined(EMSCRIPTEN) && !defined(EMSCRIPTEN_NATIVE)
+#if defined(EMSCRIPTEN)
+    return;
+#endif
     if (start > end) {
         void* tmp = start;
         start = end;
@@ -1149,7 +1156,10 @@ void Heap::markRoots()
     clearMarkBits();
 
     // Mark stack roots.
+#if !defined(EMSCRIPTEN)
+//#if !defined(EMSCRIPTEN) || defined(EMSCRIPTEN_NATIVE)
     markStackObjectsConservatively(markStack);
+#endif
     m_globalData->interpreter->registerFile().markCallFrames(markStack, this);
 
     // Mark explicitly registered roots.
@@ -1270,6 +1280,7 @@ void Heap::reset()
 {
     JAVASCRIPTCORE_GC_BEGIN();
 
+    std::cout << "Uh-oh - GC time!" << std::endl;
     markRoots();
 
     JAVASCRIPTCORE_GC_MARKED();

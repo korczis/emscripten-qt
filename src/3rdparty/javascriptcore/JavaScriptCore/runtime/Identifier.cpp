@@ -27,7 +27,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
-
+#include <cassert>
 using WTF::ThreadSpecific;
 
 namespace JSC {
@@ -55,6 +55,12 @@ public:
     {
         std::pair<HashSet<UString::Rep*>::iterator, bool> result = m_table.add<U, V>(value);
         (*result.first)->setIsIdentifier(true);
+        {
+            // Right - this weird "assert" here is basically to work around a bug that occurs somewhere in
+            // Emscripten - basically, it seems we have to make some use of ->size() and ->data() or it
+            // gets trashed.  I'll see if I can come up with a proper fix in due course.
+            assert((*result.first)->size() > 0 && (*result.first)->data());
+        }
         return result;
     }
 

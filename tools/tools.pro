@@ -9,11 +9,8 @@ TEMPLATE        = subdirs
         } else:wince* {
             SUBDIRS = qtestlib designer
         } else {
-            SUBDIRS = assistant \
-                      pixeltool \
-                      porting \
-                      qtestlib \
-                      qttracereplay
+            SUBDIRS = qtestlib 
+                      
             contains(QT_EDITION, Console) {
                 SUBDIRS += designer/src/uitools     # Linguist depends on this
             } else {
@@ -24,23 +21,23 @@ TEMPLATE        = subdirs
         win32:!wince*:SUBDIRS += activeqt
     }
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += qml
-        !wince*:!symbian: SUBDIRS += qmlplugindump
+        #SUBDIRS += qml
+        #!wince*:!symbian: SUBDIRS += qmlplugindump
     }
 }
 
-!wince*:!symbian:SUBDIRS += linguist
+#!wince*:!symbian:SUBDIRS += linguist
 
 mac {
     SUBDIRS += macdeployqt
 }
 
-embedded:SUBDIRS += kmap2qmap
+#embedded:SUBDIRS += kmap2qmap
 
-contains(QT_CONFIG, dbus):SUBDIRS += qdbus
+#contains(QT_CONFIG, dbus):SUBDIRS += qdbus
 # We don't need these command line utilities on embedded platforms.
 !wince*:!symbian:contains(QT_CONFIG, xmlpatterns): SUBDIRS += xmlpatterns xmlpatternsvalidator
-embedded: SUBDIRS += makeqpf
+#embedded: SUBDIRS += makeqpf
 
 !wince*:!cross_compile:SUBDIRS += qdoc3
 

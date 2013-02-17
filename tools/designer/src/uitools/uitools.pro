@@ -12,6 +12,7 @@ symbian {
 
 win32|mac:!macx-xcode:CONFIG += debug_and_release build_all
 
+message("gobbles")
 DEFINES += QFORMINTERNAL_NAMESPACE QT_DESIGNER_STATIC QT_FORMBUILDER_NO_SCRIPT
 isEmpty(QT_MAJOR_VERSION) {
    VERSION=4.3.0

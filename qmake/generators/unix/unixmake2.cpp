@@ -619,7 +619,7 @@ UnixMakefileGenerator::writeMakeParts(QTextStream &t)
             t << endl << endl;
         }
     } else {
-        const bool useLLVMLinkForStaticLibs = project->values("DEFINES").contains("EMSCRIPTEN");
+        const bool useLLVMLinkForStaticLibs = project->values("DEFINES").contains("EMSCRIPTEN") && QString(qgetenv("EMSCRIPTEN_USE_AR_FOR_STATIC_LIBRARIES")) != "yes";
         QString destdir = project->first("DESTDIR");
         t << "all: " << escapeDependencyPath(deps) << " " << valGlue(escapeDependencyPaths(project->values("ALL_DEPS")),""," "," ") << destdir << "$(TARGET) "
           << varGlue("QMAKE_AR_SUBLIBS", destdir, " " + destdir, "") << "\n\n"

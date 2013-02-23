@@ -92,13 +92,6 @@
 
 #define COLLECT_ON_EVERY_ALLOCATION 0
 
-#if OS(EMSCRIPTEN) && !defined(EMSCRIPTEN_NATIVE)
-extern "C"
-{
-    void *EMSCRIPTENQT_stackBase();
-}
-#endif
-
 using std::max;
 
 namespace JSC {
@@ -654,8 +647,8 @@ static inline void* currentThreadStackBase()
     return threadInfo.stack_end;
 //#elif defined(EMSCRIPTEN) && !defined(EMSCRIPTEN_NATIVE)
 #elif defined(EMSCRIPTEN)
-    std::cout << "returning null for stackbase" << std::endl;
-    return NULL;
+    Q_ASSERT(false && "Shouldn't be walking the native stack in Emscripten!");
+    return NULL; // Keep the compiler happy
 #elif OS(UNIX)
     AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
     MutexLocker locker(mutex);

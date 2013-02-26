@@ -236,6 +236,9 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
             case 13: // Enter
                 qtKeyCode = 0x01000004;
                 break;
+            case 27: // Esc
+                qtKeyCode = 0x01000000;
+                break;
             case 32: // Space
                 qtKeyCode = 0x20;
                 break;

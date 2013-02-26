@@ -207,44 +207,52 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 
 	var jsKeyCodeIsValidUnicode = true;
 	var recognised = true;
-	// keycodes  that we can immediately recognise - generally ones whose meaning
-	// does not change when coupled with a shift.
-	switch(jsKeyCode)
-	{
-	case 37: // Left
-		qtKeyCode = 0x01000012;
-		jsKeyCodeIsValidUnicode = false;
-		break;
-	case 38: // Up
-		qtKeyCode = 0x01000013;
-		jsKeyCodeIsValidUnicode = false;
-		break;
-	case 39: // Right
-		qtKeyCode = 0x01000014;
-		jsKeyCodeIsValidUnicode = false;
-		break;
-	case 40: // Down
-		qtKeyCode = 0x01000015;
-		jsKeyCodeIsValidUnicode = false;
-		break;
-	case 8: // Backspace
-		qtKeyCode = 0x01000003;
-		break;
-	case 13: // Enter
-		qtKeyCode = 0x01000004;
-		break;
-	case 32: // Space
-		qtKeyCode = 0x20;
-		break;
-	case 16: // Shift
-		qtKeyCode = 0x01000020;
-		break;
-	case 17: // Ctrl
-		qtKeyCode = 0x01000021;
-		break;
-	default:
-		recognised = false;
-	};
+    if (!(isKeyPress && lastKeyDownCharCode != jsKeyCode)) // Sigh - Chrome's "(" is almost indistinguishable from
+        // its shift+down, save that the keypress and keydown keyCodes are different in the  former.
+    {
+        // keycodes  that we can immediately recognise - generally ones whose meaning
+        // does not change when coupled with a shift.
+        switch(jsKeyCode)
+        {
+            case 37: // Left
+                qtKeyCode = 0x01000012;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 38: // Up
+                qtKeyCode = 0x01000013;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 39: // Right
+                qtKeyCode = 0x01000014;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 40: // Down
+                qtKeyCode = 0x01000015;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 8: // Backspace
+                qtKeyCode = 0x01000003;
+                break;
+            case 13: // Enter
+                qtKeyCode = 0x01000004;
+                break;
+            case 32: // Space
+                qtKeyCode = 0x20;
+                break;
+            case 16: // Shift
+                qtKeyCode = 0x01000020;
+                break;
+            case 17: // Ctrl
+                qtKeyCode = 0x01000021;
+                break;
+            default:
+                recognised = false;
+        };
+    }
+    else 
+    {
+        recognised = false;
+    }
 	if (recognised)
 	{
 		e.preventDefault();
@@ -257,6 +265,7 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 	else if (isKeyDown && !isKeyPress)
 	{
 		// Need to wait for the pending keypress in order to identify the key.
+        lastKeyDownCharCode = jsKeyCode;
 		return;
 	}
 

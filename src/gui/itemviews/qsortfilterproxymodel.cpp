@@ -298,7 +298,12 @@ void QSortFilterProxyModelPrivate::_q_clearMapping()
     // store the persistent indexes
     QModelIndexPairList source_indexes = store_persistent_indexes();
 
-    qDeleteAll(source_index_mapping);
+    // A completely "magical" fix that works around an LLVM compiler error.
+    //qDeleteAll(source_index_mapping);
+    for (QHash<QModelIndex, QSortFilterProxyModelPrivate::Mapping*>::iterator it = source_index_mapping.begin(); it !=source_index_mapping.end(); it++)
+    {
+        delete *it;
+    }
     source_index_mapping.clear();
     if (dynamic_sortfilter && update_source_sort_column()) {
         //update_source_sort_column might have created wrong mapping so we have to clear it again

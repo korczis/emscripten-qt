@@ -2456,6 +2456,14 @@ function globalMinify(ast)
         throw 'No function obfuscation information provided!';
     }
     printErr("global minify not yet implemented");
+    traverseGeneratedFunctions(ast,
+            function(fun)
+            {
+                delete generatedFunctions[fun[1]];
+                fun[1] = functionObfuscation[fun[1]];
+                generatedFunctions[fun[1]] = 0;
+            }
+            );
 }
 
 // Passes table

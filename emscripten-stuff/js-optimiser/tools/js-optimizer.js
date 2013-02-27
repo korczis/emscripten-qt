@@ -2038,7 +2038,7 @@ function reduceVariableScopes(ast) {
 						{
 							if (declaration[1][0] == 'name' && declaration[1][1] == 'STACKTOP' && localStackTopAlias == null)
 							{
-								printErr("Setting localStackTopAlias from declaration: " + declaration);
+								//printErr("Setting localStackTopAlias from declaration: " + declaration);
 								localStackTopAlias = declaration[0];
 							}
 						}
@@ -2055,7 +2055,7 @@ function reduceVariableScopes(ast) {
 				}
 			});
 		//var localsAssignedToStackOffset = [];
-		printErr("localStackTopAlias: " + localStackTopAlias);
+		//printErr("localStackTopAlias: " + localStackTopAlias);
 		if (blockStack.length != 0)
 		{
 			throw "5what the hell1";
@@ -2220,7 +2220,7 @@ function reduceVariableScopes(ast) {
 			var blocksThatAreRelocationTargets = [];
 			localsToRelocate.forEach(function(localToRelocate) 
 				{
-					printErr("Removing declaration/ initialisation of " + localToRelocate);
+					//printErr("Removing declaration/ initialisation of " + localToRelocate);
 					traverse(functionBodyAsBlock, function(node, type)
 						{
 							
@@ -2322,7 +2322,7 @@ function reduceVariableScopes(ast) {
 					var nextStatement = getStatements(functionBodyAsBlock)[statementIndex + 1];
 					if (nextStatement[0] == "var")
 					{
-						printErr("var: " + JSON.stringify(nextStatement));
+						//printErr("var: " + JSON.stringify(nextStatement));
 						for (var varNum = 0; varNum < nextStatement[1].length; varNum++)
 						{
 							currentStatement[1].push(nextStatement[1][varNum]);
@@ -2332,7 +2332,7 @@ function reduceVariableScopes(ast) {
 					}
 					else 
 					{
-						printErr("current: " + JSON.stringify(currentStatement) + " next: " + JSON.stringify(nextStatement));
+						//printErr("current: " + JSON.stringify(currentStatement) + " next: " + JSON.stringify(nextStatement));
 					}
 				}
 			}
@@ -2455,7 +2455,6 @@ function globalMinify(ast)
     {
         throw 'No function obfuscation information provided!';
     }
-    printErr("global minify not yet implemented");
     traverseGeneratedFunctions(ast,
         function(fun)
         {
@@ -2495,7 +2494,7 @@ function globalMinify(ast)
                 {
                     if (type == 'name')
                     {
-                        printErr(" Found usage of name: " + node[1]);
+                        //printErr(" Found usage of name: " + node[1]);
                         var name = node[1];
                         if (locals.indexOf(name) == -1)
                         {
@@ -2506,7 +2505,7 @@ function globalMinify(ast)
                                 {
                                     throw 'Renaming local variables that clash with obfuscated names not yet implemented!';
                                 }
-                                printErr("Obfuscating " + name + " to " + obfuscatedName);
+                                //printErr("Obfuscating " + name + " to " + obfuscatedName);
                                 node[1] = obfuscatedName;
                             }
                         }
@@ -2526,10 +2525,10 @@ function globalMinify(ast)
             {
                 var name = node[1];
                 var obfuscatedName = functionObfuscation[name];
-                printErr("Found global name: " + name);
+                //printErr("Found global name: " + name);
                 if (obfuscatedName)
                 {
-                    printErr("Obfuscating global name to " + obfuscatedName);
+                    //printErr("Obfuscating global name to " + obfuscatedName);
                     node[1] = obfuscatedName;
                 }
             }

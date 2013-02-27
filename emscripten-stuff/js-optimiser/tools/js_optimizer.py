@@ -220,16 +220,6 @@ def run(filename, passes, js_engine, jcache):
         def write_chunk(chunk, i):
             temp_file = temp_files.get('.jsfunc_%d.ll' % i).name
             f = open(temp_file, 'w')
-            if obfuscate_globals:
-                print "About to obfuscate names in a chunk\n"
-                name_num = 0
-                total_names = len(obfuscated_names_by_size)
-                for obfuscatable_name in obfuscated_names_by_size:
-        #chunk = chunk.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
-                    name_num = name_num + 1
-                    if (name_num % 100 == 0):
-                        print "Done " + str(name_num) + " of " + str(total_names)
-                print "... done\n"
             f.write(chunk)
             f.write(suffix)
             f.close()

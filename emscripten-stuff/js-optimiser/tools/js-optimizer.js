@@ -2459,9 +2459,14 @@ function globalMinify(ast)
     traverseGeneratedFunctions(ast,
         function(fun)
         {
-            delete generatedFunctions[fun[1]];
-            fun[1] = functionObfuscation[fun[1]];
-            generatedFunctions[fun[1]] = 0;
+            // Rename the function, if it is one that can be obfuscated (some generated functions
+            // are exempted from global obfuscation)
+            if (functionObfuscation[fun[1]])
+            {
+                delete generatedFunctions[fun[1]];
+                fun[1] = functionObfuscation[fun[1]];
+                generatedFunctions[fun[1]] = 0;
+            }
 
             // Collect local variable/ parameter names.
             var locals = [];
@@ -2501,7 +2506,7 @@ function globalMinify(ast)
                                 {
                                     throw 'Renaming local variables that clash with obfuscated names not yet implemented!';
                                 }
-                                printErr("Obfuscating to " + obfuscatedName);
+                                printErr("Obfuscating " + name + " to " + obfuscatedName);
                                 node[1] = obfuscatedName;
                             }
                         }

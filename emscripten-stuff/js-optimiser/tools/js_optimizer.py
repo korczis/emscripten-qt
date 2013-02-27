@@ -73,7 +73,11 @@ def run(filename, passes, js_engine, jcache):
           gen_start = m.start()
           assert gen_start
         gen_end = js.find('\n}\n', m.end()) + 3
+    print ("old gen_start: " , gen_start)
+    gen_start = js.rfind("var FUNCTION_TABLE", 0, gen_start)
+    print ("new gen_start: " , gen_start)
     assert gen_end > gen_start
+    
     pre = js[:gen_start]
     post = js[gen_end:]
     js = js[gen_start:gen_end]

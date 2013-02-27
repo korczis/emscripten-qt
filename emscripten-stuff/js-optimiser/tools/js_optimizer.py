@@ -120,12 +120,7 @@ def run(filename, passes, js_engine, jcache):
         #print "all_globals: "  , all_globals , "\n-------\n"
         reserved_names = set(all_globals + ["Module", "var", "do",   "break",
               "case", "catch", "const", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile"])
-        no_obfuscate = ["_malloc", "_free", "_main"] + all_globals + filter(lambda x : x.find("EMSCRIPTENQT") != -1,  list(generated))
         obfuscatable_names = list(generated)
-        for not_obfuscatable in no_obfuscate:
-            if not_obfuscatable in obfuscatable_names:
-                obfuscatable_names.remove(not_obfuscatable)
-        obfuscatable_names = ["HEAP32"] + obfuscatable_names
         global_dec_regex = re.compile("\nvar ([^;\s]+);")
         next_global_var_dec_search_pos = 0
         while True:
@@ -136,6 +131,11 @@ def run(filename, passes, js_engine, jcache):
 
             next_global_var_dec_search_pos = global_var_dec.end()
 
+        no_obfuscate = ["_malloc", "_free", "_main", "___dso_handle"] + all_globals + filter(lambda x : x.find("EMSCRIPTENQT") != -1,  list(generated)) + filter(lambda x : x.find("__GLOBAL__") != -1,  list(generated))
+        for not_obfuscatable in no_obfuscate:
+            if not_obfuscatable in obfuscatable_names:
+                obfuscatable_names.remove(not_obfuscatable)
+        obfuscatable_names = ["HEAP32"] + obfuscatable_names # HEAP32 is common enough to warrant being a special case.
         print ("obfuscatable names: " , obfuscatable_names)
         obfuscated_name = {}
         obfuscated_name_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'

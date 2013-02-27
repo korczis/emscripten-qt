@@ -141,10 +141,27 @@ var TRUE_NODE = ['unary-prefix', '!', ['num', 0]];
 var FALSE_NODE = ['unary-prefix', '!', ['num', 1]];
 
 var GENERATED_FUNCTIONS_MARKER = '// EMSCRIPTEN_GENERATED_FUNCTIONS:';
+var FUNCTION_OBFUSCATION_MARKER = '// EMSCRIPTEN_FUNCTION_OBFUSCATION:';
 var generatedFunctions = null;
 function setGeneratedFunctions(metadata) {
   var start = metadata.indexOf(GENERATED_FUNCTIONS_MARKER);
   generatedFunctions = set(eval(metadata.substr(start + GENERATED_FUNCTIONS_MARKER.length)));
+}
+var functionObfuscation = null;
+function setFunctionObfuscation(metadata) {
+  var start = metadata.indexOf(FUNCTION_OBFUSCATION_MARKER);
+  var functionObfuscationMarkerInfo = metadata.substr(start + FUNCTION_OBFUSCATION_MARKER.length);
+  var functionObfuscationArray = eval(functionObfuscationMarkerInfo);
+  functionObfuscation = {};
+  for (var i = 0; i < functionObfuscationArray.length; i+=2)
+  {
+    functionObfuscation[functionObfuscationArray[i]] = functionObfuscationArray[i + 1];
+  }
+  //printErr("functionObfuscation: ");
+  //for (var key in generatedFunctions)
+  //{
+     //printErr(" " + key + " = " + functionObfuscation[key])
+  //}
 }
 function isGenerated(ident) {
   return ident in generatedFunctions;
@@ -2469,6 +2486,8 @@ var ast = srcToAst(src);
 var metadata = src.split('\n').filter(function(line) { return line.indexOf(GENERATED_FUNCTIONS_MARKER) >= 0 })[0];
 //assert(metadata, 'Must have EMSCRIPTEN_GENERATED_FUNCTIONS metadata');
 if (metadata) setGeneratedFunctions(metadata);
+var metadata = src.split('\n').filter(function(line) { return line.indexOf(FUNCTION_OBFUSCATION_MARKER) >= 0 })[0];
+if (metadata) setFunctionObfuscation(metadata);
 
 arguments_.slice(1).forEach(function(arg) {
   passes[arg](ast);

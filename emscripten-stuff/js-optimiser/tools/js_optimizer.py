@@ -131,7 +131,7 @@ def run(filename, passes, js_engine, jcache):
 
             next_global_var_dec_search_pos = global_var_dec.end()
 
-        no_obfuscate = ["_malloc", "_free", "_main", "___dso_handle"] + all_globals + filter(lambda x : x.find("EMSCRIPTENQT") != -1,  list(generated)) + filter(lambda x : x.find("__GLOBAL__") != -1,  list(generated))
+        no_obfuscate = ["_malloc", "_free", "_main", "___dso_handle", "__nl_msg_cat_cntr"] + all_globals + filter(lambda x : x.find("EMSCRIPTENQT") != -1,  list(generated)) + filter(lambda x : x.find("__GLOBAL__") != -1,  list(generated))
         for not_obfuscatable in no_obfuscate:
             if not_obfuscatable in obfuscatable_names:
                 obfuscatable_names.remove(not_obfuscatable)

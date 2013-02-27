@@ -2449,6 +2449,15 @@ function reduceUnusedVarDecs(ast)
 );
 }
 
+function globalMinify(ast)
+{
+    if (!functionObfuscation)
+    {
+        throw 'No function obfuscation information provided!';
+    }
+    printErr("global minify not yet implemented");
+}
+
 // Passes table
 
 var compress = false, printMetadata = true, mangle = false;
@@ -2473,7 +2482,8 @@ var passes = {
   mangle: function() { mangle = true; },
   squeeze: squeeze,
   reduceVariableScopes : reduceVariableScopes,
-  reduceUnusedVarDecs : reduceUnusedVarDecs
+  reduceUnusedVarDecs : reduceUnusedVarDecs,
+  globalMinify : globalMinify
 };
 
 // Main

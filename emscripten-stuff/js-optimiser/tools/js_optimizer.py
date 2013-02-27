@@ -245,7 +245,6 @@ def run(filename, passes, js_engine, jcache):
         print >>sys.stderr, 'commands: ' , commands
 
         cores = min(multiprocessing.cpu_count(), filenames)
-        cores = 1 # TODO - remove this
         if len(chunks) > 1 and cores >= 2:
             # We can parallelize
             if DEBUG: print >> sys.stderr, 'splitting up js optimization into %d chunks, using %d cores  (total: %.2f MB)' % (len(chunks), cores, total_size/(1024*1024.))

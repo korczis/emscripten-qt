@@ -2457,13 +2457,59 @@ function globalMinify(ast)
     }
     printErr("global minify not yet implemented");
     traverseGeneratedFunctions(ast,
-            function(fun)
-            {
-                delete generatedFunctions[fun[1]];
-                fun[1] = functionObfuscation[fun[1]];
-                generatedFunctions[fun[1]] = 0;
+        function(fun)
+        {
+            delete generatedFunctions[fun[1]];
+            fun[1] = functionObfuscation[fun[1]];
+            generatedFunctions[fun[1]] = 0;
+
+            // Collect local variable/ parameter names.
+            var locals = [];
+            if (fun[2]) {
+               fun[2].forEach(function(arg) {
+                    locals.push(arg);  
+                });
             }
+            var functionBodyAsBlock = [ 'block', fun[3]];
+            traverse(functionBodyAsBlock, function(node, type)
+                {
+                    if (type == 'var')
+                    {
+                        var declarations = node[1];
+                        for (var declarationNum = 0; declarationNum < declarations.length; declarationNum++)
+                        {		
+                            var declaration = declarations[declarationNum];
+                            //printErr("New local: " + declaration);
+                            locals.push(declaration[0]);
+                        }
+                    }
+                }
             );
+            
+            traverse(functionBodyAsBlock, function(node, type)
+                {
+                    if (type == 'name')
+                    {
+                        printErr(" Found usage of name: " + node[1]);
+                        var name = node[1];
+                        if (locals.indexOf(name) == -1)
+                        {
+                            var obfuscatedName = functionObfuscation[name];
+                            if (obfuscatedName)
+                            {
+                                if (locals.indexOf(obfuscatedName) != -1)
+                                {
+                                    throw 'Renaming local variables that clash with obfuscated names not yet implemented!';
+                                }
+                                printErr("Obfuscating to" + obfuscatedName);
+                                node[1] = obfuscatedName;
+                            }
+                        }
+                    }
+                }
+            );
+        }
+    );
 }
 
 // Passes table

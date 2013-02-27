@@ -163,16 +163,15 @@ def run(filename, passes, js_engine, jcache):
         obfuscated_names_by_size = sorted(list(obfuscatable_names), key=lambda name: len(name))
         obfuscated_names_by_size.reverse()
 
-        suffix = suffix + "\n// EMSCRIPTEN_FUNCTION_OBFUSCATION: ["
+        obfuscation_entry_list = []
         for obfuscatable_name in obfuscated_names_by_size:
             print "goobles: " + obfuscatable_name
         #for obfuscatable_name in obfuscated_names_by_size:
               #global_allocs = global_allocs.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
               #post = post.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
             #suffix = suffix.replace(obfuscatable_name, obfuscated_name[obfuscatable_name])
-            suffix = suffix + "\"" + obfuscatable_name + "\",\""  + obfuscated_name[obfuscatable_name] + "\""
-            if obfuscatable_name != obfuscated_names_by_size[-1]: suffix = suffix + ","
-        suffix = suffix + "]\n"
+            obfuscation_entry_list.append("\"" + obfuscatable_name + "\",\""  + obfuscated_name[obfuscatable_name] + "\"")
+        suffix = suffix + "\n// EMSCRIPTEN_FUNCTION_OBFUSCATION: [" + ",".join(obfuscation_entry_list) + "]\n"
         print "suffix: " + suffix
         global_allocs = "var " + obfuscated_name["HEAP32"] + " = HEAP32;\n" + global_allocs
         pre = pre[:global_allocs_start] + global_allocs + pre[global_allocs_end:]

@@ -398,7 +398,7 @@ function _EMSCRIPTENQT_cursorChanged(newCursorShape)
 	canvas.style.cursor = cssCursorStyle;
 }
 Module.noExitRuntime = true;
-Module['preRun'] = function() {
+Module['preRun'].push(function() {
 	try
 	{
                 var canvas = document.getElementById('canvas');
@@ -432,5 +432,5 @@ Module['preRun'] = function() {
 	{
 		window.alert("Exception while setting up qws filesystem: " + e);
 	}
-}
+});
 

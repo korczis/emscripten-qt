@@ -1974,6 +1974,12 @@ function reduceVariableScopes(ast) {
 		var blockStack = [];
 		var indent = "";
 		var localStackTopAlias = null;
+        // params
+        if (fun[2]) {
+           fun[2].forEach(function(arg) {
+                locals.push(arg);  
+            });
+        }
 		traverse(functionBodyAsBlock, function(node, type)
 			{
 				if (type == "block")
@@ -2319,6 +2325,113 @@ function reduceVariableScopes(ast) {
 			
 	});
 }
+
+function reduceUnusedVarDecs(ast)
+{
+  traverseGeneratedFunctions(ast,
+	function(fun)
+	{
+    printErr("reduceUnusedVarDecs for " + fun[1]);
+        var functionBodyAsBlock = [ 'block', fun[3]];
+        var varNames = [];
+        if (fun[2]) {
+           fun[2].forEach(function(arg) {
+                varNames.push(arg);  
+            });
+        }
+        var blockStack = [];
+        traverse(functionBodyAsBlock, function(node, type)
+			{
+				if (type == "block")
+				{
+					blockStack.push(node);
+				}
+				if (type == 'var')
+				{
+					if (blockStack.length > 1)
+					{
+						throw "not yet able to handle variable declarations anywhere but at the top-level";
+					}
+					var declarations = node[1];
+					for (var declarationNum = 0; declarationNum < declarations.length; declarationNum++)
+					{		
+						var declaration = declarations[declarationNum];
+						//printErr("New local: " + declaration);
+						varNames.push(declaration[0]);
+					}
+				}
+			},
+			function(node, type)
+			{
+				if (type == "block")
+				{
+					blockStack.pop();
+					//printErr("popped: " + blockStack.length);
+				}
+			})
+        // Now reduce them by changing some of the assignments into declarations.
+        var doNotNeedEmptyDec = [];
+        var usedVars = [];
+        function collectVarUsages(ast)
+        {
+        var varUsages = [];
+        traverseChildren(ast, function(node) {
+            if (node[0] == 'name' && varNames.indexOf(node[1]) != -1)
+            {
+            varUsages = varUsages.concat([node[1]]);
+            }
+            });
+        return varUsages;
+        }
+        for (var statementNum = 1; statementNum < getStatements(fun).length; statementNum++)
+        {
+        var statement = getStatements(fun)[statementNum];
+        var isAssignmentOfLocalVar = false;
+        if (statement[0] == 'stat' && statement[1][0] == 'assign' && statement[1][2][0] == 'name')
+        {
+            var varAssigned = statement[1][2][1]; 
+            usedVars = usedVars.concat(collectVarUsages(statement[1][3]));
+            if (varNames.indexOf(varAssigned) != -1)
+            {
+                isAssignmentOfLocalVar = true;
+                if (usedVars.indexOf(varAssigned) == -1) 
+                {
+                    // This variable has not been used prior to this assignment; make it into a declaration.
+                    doNotNeedEmptyDec.push(varAssigned);
+                    getStatements(fun)[statementNum] = ['var' , [[varAssigned, statement[1][3]]]];
+                }
+            }
+        }
+        if (!isAssignmentOfLocalVar)
+        {
+            usedVars = usedVars.concat(collectVarUsages(statement));
+        }
+        }
+      // Remove the empty declarations
+      var emptyDeclarations = getStatements(fun)[0][1];
+      if (emptyDeclarations == null)
+      {
+        return;
+      }
+      for (var varDecNum = 0; varDecNum < emptyDeclarations.length; )
+      {
+          if (doNotNeedEmptyDec.indexOf(emptyDeclarations[varDecNum][0]) != -1)
+          {
+              emptyDeclarations.splice(varDecNum, 1);
+          }
+          else
+          {
+              varDecNum++;
+          }
+      }
+      if (emptyDeclarations.length == 0)
+      {
+          getStatements(fun).splice(0, 1);
+      }
+    }
+);
+}
+
 // Passes table
 
 var compress = false, printMetadata = true, mangle = false;
@@ -2342,7 +2455,8 @@ var passes = {
   noPrintMetadata: function() { printMetadata = false; },
   mangle: function() { mangle = true; },
   squeeze: squeeze,
-  reduceVariableScopes : reduceVariableScopes
+  reduceVariableScopes : reduceVariableScopes,
+  reduceUnusedVarDecs : reduceUnusedVarDecs
 };
 
 // Main

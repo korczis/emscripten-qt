@@ -119,7 +119,7 @@ def run(filename, passes, js_engine, jcache):
         all_globals = open(all_globals_filename).read().split("\n")
         #print "all_globals: "  , all_globals , "\n-------\n"
         reserved_names = set(all_globals + ["Module", "var", "do",   "break",
-              "case", "catch", "const", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile"])
+              "case", "catch", "const", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile", "top"])
         obfuscatable_names = list(generated)
         global_dec_regex = re.compile("\nvar ([^;\s]+);")
         next_global_var_dec_search_pos = 0

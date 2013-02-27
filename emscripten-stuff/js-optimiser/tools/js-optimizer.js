@@ -2501,7 +2501,7 @@ function globalMinify(ast)
                                 {
                                     throw 'Renaming local variables that clash with obfuscated names not yet implemented!';
                                 }
-                                printErr("Obfuscating to" + obfuscatedName);
+                                printErr("Obfuscating to " + obfuscatedName);
                                 node[1] = obfuscatedName;
                             }
                         }
@@ -2510,6 +2510,25 @@ function globalMinify(ast)
             );
         }
     );
+    // Non-functions.
+    traverse(ast, function(node, type)
+        {
+            if (type == 'defun')
+            {
+                return null;
+            }
+            else if (type == 'name')
+            {
+                var name = node[1];
+                var obfuscatedName = functionObfuscation[name];
+                printErr("Found global name: " + name);
+                if (obfuscatedName)
+                {
+                    printErr("Obfuscating global name to " + obfuscatedName);
+                    node[1] = obfuscatedName;
+                }
+            }
+        });
 }
 
 // Passes table

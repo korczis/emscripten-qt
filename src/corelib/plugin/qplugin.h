@@ -71,7 +71,8 @@ void Q_CORE_EXPORT qRegisterStaticPluginInstanceFunction(QtPluginInstanceFunctio
                 qRegisterStaticPluginInstanceFunction(qt_plugin_instance_##PLUGIN); \
                 } \
         }; \
-       static Static##PLUGIN##PluginInstance static##PLUGIN##Instance;
+       static Static##PLUGIN##PluginInstance static##PLUGIN##Instance;\
+       void* dummyForce##PLUGIN##Instantiate = (void*)&static##PLUGIN##Instance;
 
 #define Q_PLUGIN_INSTANCE(IMPLEMENTATION) \
         { \

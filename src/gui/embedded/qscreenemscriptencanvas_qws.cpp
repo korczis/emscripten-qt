@@ -76,6 +76,7 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
     // first, call the parent implementation. The parent implementation will update
     // the region on our in-memory surface
     QScreen::exposeRegion(r, changing);
+    r = r.intersected(QRect(0, 0, EMSCRIPTENQT_canvas_width_pixels(), EMSCRIPTENQT_canvas_height_pixels()));
     EMSCRIPTENQT_flush_pixels(data, r.boundingRect().left(), r.boundingRect().top(), r.boundingRect().width(), r.boundingRect().height());
 }
 

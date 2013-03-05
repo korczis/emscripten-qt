@@ -120,6 +120,7 @@ def run(filename, passes, js_engine, jcache):
         #print "all_globals: "  , all_globals , "\n-------\n"
         reserved_names = set(all_globals + ["Module", "var", "do",   "break",
               "case", "catch", "const", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile", "top"])
+        reserved_names.add("ret") # TODO - this is a workaround - need to enhance js-global-lister so that it recognise e.g. actuallyGlobal in  'if (a) { var actuallyGlobal;}' as a global i.e. just being declared inside a block does not necessarily mean that the variable is not global!
         obfuscatable_names = list(generated)
         global_dec_regex = re.compile("\nvar ([^;\s]+);")
         next_global_var_dec_search_pos = 0

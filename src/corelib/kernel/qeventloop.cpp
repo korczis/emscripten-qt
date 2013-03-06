@@ -156,7 +156,9 @@ bool QEventLoop::processEvents(ProcessEventsFlags flags)
         QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
     return d->threadData->eventDispatcher->processEvents(flags);
 }
-
+#ifdef QT_NO_LOCALEVENTLOOP
+bool mainEventLoopStarted = false;
+#endif
 /*!
     Enters the main event loop and waits until exit() is called.
     Returns the value that was passed to exit().
@@ -183,7 +185,6 @@ bool QEventLoop::processEvents(ProcessEventsFlags flags)
 int QEventLoop::exec(ProcessEventsFlags flags)
 {
 #ifdef QT_NO_LOCALEVENTLOOP
-    static bool mainEventLoopStarted = false;
     if (!mainEventLoopStarted)
     {
         qDebug() << "Starting single main event loop and returning immediately";

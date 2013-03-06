@@ -199,6 +199,7 @@ function EMSCRIPTENQT_mouseUp(e)
         EMSCRIPTENQT_mouseButtonEvent(e, false);
 }
 var lastKeyPressCharCode = null;
+var lastKeyDownCharCode = null;
 function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 {
 	var jsKeyCode = e.keyCode;

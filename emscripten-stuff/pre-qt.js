@@ -469,12 +469,28 @@ Module['preRun'].push(function() {
 	try
 	{
                 var canvas = document.getElementById('canvas');
-                canvas.addEventListener("mousemove", EMSCRIPTENQT_mouseMoved, false);
-                canvas.addEventListener("mousedown", EMSCRIPTENQT_mouseDown, false);
-                canvas.addEventListener("mouseup", EMSCRIPTENQT_mouseUp, false);
-                canvas.addEventListener("keydown", EMSCRIPTENQT_keyDown, true);
-                canvas.addEventListener("keyup", EMSCRIPTENQT_keyUp, true);
-                canvas.addEventListener("keypress", EMSCRIPTENQT_keyPress, true);
+                canvas.onfocus = function()
+                {
+                    // Capturing at the document level is necessary in Chrome if we want to intercept e.g.
+                    // ctrl+c, etc.
+                    document.addEventListener("mousemove", EMSCRIPTENQT_mouseMoved, false);
+                    document.addEventListener("mousedown", EMSCRIPTENQT_mouseDown, false);
+                    document.addEventListener("mouseup", EMSCRIPTENQT_mouseUp, false);
+                    document.addEventListener("keydown", EMSCRIPTENQT_keyDown, true);
+                    document.addEventListener("keyup", EMSCRIPTENQT_keyUp, true);
+                    document.addEventListener("keypress", EMSCRIPTENQT_keyPress, true);
+                }
+                canvas.onblur = function()
+                {
+                    // Capturing at the document level is necessary in Chrome if we want to intercept e.g.
+                    // ctrl+c, etc.
+                    document.removeEventListener("mousemove", EMSCRIPTENQT_mouseMoved, false);
+                    document.removeEventListener("mousedown", EMSCRIPTENQT_mouseDown, false);
+                    document.removeEventListener("mouseup", EMSCRIPTENQT_mouseUp, false);
+                    document.removeEventListener("keydown", EMSCRIPTENQT_keyDown, true);
+                    document.removeEventListener("keyup", EMSCRIPTENQT_keyUp, true);
+                    document.removeEventListener("keypress", EMSCRIPTENQT_keyPress, true);
+                }
 		// Add the 'use experimental renderer' checkbox beneath the canvas.
                 var experimentalRendererCheckbox = document.createElement("input");
                 experimentalRendererCheckbox.id = "experimental-renderer-checkbox";

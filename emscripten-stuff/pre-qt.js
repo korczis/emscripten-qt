@@ -398,6 +398,64 @@ function _EMSCRIPTENQT_cursorChanged(newCursorShape)
 	var canvas = document.getElementById('canvas');
 	canvas.style.cursor = cssCursorStyle;
 }
+
+function addDownloadableFile(filePath, linkTextWhenFileDoesNotExist, linkTextWhenFileDoesExist, fileMimeType)
+{
+    // Add a link that we can click with instructions to save your file.
+    var linkUrlParagraph = document.createElement("p");
+    canvas.parentNode.insertBefore(linkUrlParagraph, canvas.nextSibling);
+    linkUrlParagraph.style.textAlign = "center";
+    var linkUrl = document.createElement("a");
+    linkUrl.href="javascript: void(0)";
+    linkUrl.innerHTML = linkTextWhenFileDoesNotExist;
+    linkUrl.target = "_blank";
+    linkUrlParagraph.appendChild(linkUrl);
+    var fileTimeStamp = null;
+    setInterval(function() {
+            var file = FS.analyzePath(filePath).object;
+            if (fileTimeStamp != null && file["timestamp"] == fileTimeStamp)
+            {
+                return;
+            }
+            var contents;
+            try
+            {
+                contents = file["contents"];
+            }
+            catch (e)
+            {
+                return;
+            }
+            function encode64(data) {
+                var BASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+                var PAD = '=';
+                var ret = '';
+                var leftchar = 0;
+                var leftbits = 0;
+                for (var i = 0; i < data.length; i++) {
+                    leftchar = (leftchar << 8) | data[i];
+                    leftbits += 8;
+                    while (leftbits >= 6) {
+                        var curr = (leftchar >> (leftbits-6)) & 0x3f;
+                        leftbits -= 6;
+                        ret += BASE[curr];
+                    }
+                }
+                if (leftbits == 2) {
+                    ret += BASE[(leftchar&3) << 4];
+                    ret += PAD + PAD;
+                } else if (leftbits == 4) {
+                    ret += BASE[(leftchar&0xf) << 2];
+                    ret += PAD;
+                }
+                    return ret;
+            };
+            linkUrl.href = "data:" + fileMimeType +  ";base64," + encode64(contents);
+            linkUrl.innerHTML = linkTextWhenFileDoesExist;
+            fileTimeStamp = file["timestamp"];
+    }, 1000);
+}
+
 Module.noExitRuntime = true;
 Module['preRun'].push(function() {
 	try

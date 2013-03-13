@@ -200,8 +200,11 @@ function EMSCRIPTENQT_mouseUp(e)
 }
 var lastKeyPressCharCode = null;
 var lastKeyDownCharCode = null;
+var waitingForkeyPress = false;
 function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 {
+    var wasWaitingForKeyPress = waitingForkeyPress;
+    waitingForkeyPress = false;
     if (e.ctrlKey )
     {
         e.preventDefault();
@@ -270,10 +273,11 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 			return;
 		}
 	}
-	else if (isKeyDown && !isKeyPress && !e.ctrlKey)
+	else if (isKeyDown && !isKeyPress)
 	{
 		// Need to wait for the pending keypress in order to identify the key.
         lastKeyDownCharCode = jsKeyCode;
+        waitingForkeyPress = true;;
 		return;
 	}
 
@@ -310,13 +314,18 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 		qtModifiers += 0x02000000;
 	}
 	// The same as shift, but for ctrl.
-	if (e.ctrlKey && !(qtKeyCode == 0x01000021 && !isKeyDown)) 
+	if (e.ctrlKey && !(qtKeyCode == 0x01000021 && !isKeyDown) ) 
 	{
 		qtModifiers += 0x04000000;
 	}
     if (e.ctrlKey && (jsKeyCode >= "A".charCodeAt(0) && jsKeyCode <= "Z".charCodeAt(0)))
     {
         jsKeyCode = "a".charCodeAt(0) + (jsKeyCode - "A".charCodeAt(0));
+    }
+    if (wasWaitingForKeyPress && !isKeyPress)
+    {
+        // Damn you, Chrome: synthesise the keyPress event that we should have had
+        _EMSCRIPTENQT_canvasKeyChanged(jsKeyCode, qtKeyCode, qtModifiers, true, false);
     }
 	_EMSCRIPTENQT_canvasKeyChanged(jsKeyCode, qtKeyCode, qtModifiers, isKeyDown, false);
 }

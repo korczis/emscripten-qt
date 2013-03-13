@@ -202,6 +202,10 @@ var lastKeyPressCharCode = null;
 var lastKeyDownCharCode = null;
 function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 {
+    if (e.ctrlKey )
+    {
+        e.preventDefault();
+    }
 	var jsKeyCode = e.keyCode;
 	var qtKeyCode = 0;
 	var qtModifiers = 0;
@@ -266,7 +270,7 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 			return;
 		}
 	}
-	else if (isKeyDown && !isKeyPress)
+	else if (isKeyDown && !isKeyPress && !e.ctrlKey)
 	{
 		// Need to wait for the pending keypress in order to identify the key.
         lastKeyDownCharCode = jsKeyCode;
@@ -310,6 +314,10 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 	{
 		qtModifiers += 0x04000000;
 	}
+    if (e.ctrlKey && (jsKeyCode >= "A".charCodeAt(0) && jsKeyCode <= "Z".charCodeAt(0)))
+    {
+        jsKeyCode = "a".charCodeAt(0) + (jsKeyCode - "A".charCodeAt(0));
+    }
 	_EMSCRIPTENQT_canvasKeyChanged(jsKeyCode, qtKeyCode, qtModifiers, isKeyDown, false);
 }
 function EMSCRIPTENQT_keyUp(e)

@@ -12,4 +12,5 @@ private:
 private slots:
     void newConnection();
     void disconnected();
+    void newCommandIncoming();
 };

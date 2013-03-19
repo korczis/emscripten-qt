@@ -28,6 +28,7 @@ void TestDriver::runNextTest()
         {
             if (numTestMethodsFound == m_testIndex)
             {
+                CanvasInterface::clearCanvas(0xFF3344);
                 method.invoke(m_tests);
                 m_testIndex++;
                 QTimer::singleShot(0, this, SLOT(runNextTest()));

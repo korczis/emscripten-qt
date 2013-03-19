@@ -1,4 +1,5 @@
 #include "../canvasdimensions.h"
+#include "commandlistener.h"
 
 #include <QtGui/QApplication>
 #include <QtWebKit/QWebView>
@@ -74,5 +75,8 @@ int main(int argc, char** argv)
         qDebug() << "height of canvas should be " << CANVAS_HEIGHT;
         return EXIT_FAILURE;
     }
+
+    CommandListener *commandListener = new CommandListener;
+    
     return app.exec();
 }

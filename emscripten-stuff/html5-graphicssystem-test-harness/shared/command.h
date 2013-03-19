@@ -9,15 +9,15 @@ class Command
 public:
     enum CommandType { ClearCanvas };
     Command(CommandType commandType);
+    Command(const Command& other);
     ~Command();
     CommandType commandType() const;
     QDataStream& commandData();
 
-    Command createFrom(QIODevice *commandSource);
+    static Command createFrom(QIODevice *commandSource);
     QByteArray toData() const;
 private:
     Command(CommandType commandType, const QByteArray& commandData);
-    Command(const Command& other);
     
     CommandType m_commandType;
     QDataStream *m_dataStream;

@@ -1,4 +1,5 @@
 #include "commandlistener.h"
+#include "../shared/command.h"
 
 #include <QtNetwork/QTcpSocket>
 
@@ -28,20 +29,10 @@ void CommandListener::disconnected()
 
 void CommandListener::newCommandIncoming()
 {
-    QDataStream command(m_commandSource);
-    while (m_commandSource->bytesAvailable() < sizeof(quint32))
-    {
-        m_commandSource->waitForReadyRead();
-    }
-    quint32 commandLength;
-    command >> commandLength;
-    while (m_commandSource->bytesAvailable() < commandLength)
-    {
-        m_commandSource->waitForReadyRead();
-    }
-    // Can now read whole command.
-    quint32 commandType, colour;
-    command >> commandType;
-    command >> colour;
-    qDebug() << "commandType: " << commandType << " colour: " << colour;
+    Command command = Command::createFrom(m_commandSource);
+    quint32 colour;
+
+    // TODO - remove this.
+    command.commandData() >> colour;
+    qDebug() << "commandType: " << command.commandType() << " colour: " << colour;
 }

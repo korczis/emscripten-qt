@@ -17,15 +17,6 @@ void CanvasInterface::init()
 
 void CanvasInterface::clearCanvas(Rgba colour)
 {
-    //QByteArray commandData;
-    //QDataStream commandStream(&commandData, QIODevice::WriteOnly);
-    //commandStream << (quint32)8;
-    //commandStream << (quint32)0;
-    //commandStream << (quint32)colour;
-    //commandBuffer.close();
-    //qDebug() << "Command consists of " << commandData.size() << " bytes";
-    //commandSender->sendCommand(commandData);
-    
     Command clearCanvasCommand(Command::ClearCanvas);
     clearCanvasCommand.commandData() << colour;
     commandSender->sendCommand(clearCanvasCommand);

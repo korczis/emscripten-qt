@@ -1,7 +1,7 @@
 project(QtWebkit-Server)
 find_package(Qt4)
 
-set(SRC main.cpp commandlistener.cpp)
+set(SRC main.cpp commandlistener.cpp ../shared/command.cpp)
 qt4_wrap_cpp(SRC_MOC commandlistener.h)
 
 include_directories(${QT_INCLUDES})

@@ -1,5 +1,7 @@
 #include "commandlistener.h"
 
+#include <QtNetwork/QTcpSocket>
+
 CommandListener::CommandListener()
     : m_server(new QTcpServer), m_commandSource(NULL)
 {
@@ -14,4 +16,11 @@ void CommandListener::newConnection()
     m_commandSource = m_server->nextPendingConnection();
     Q_ASSERT(m_commandSource);
     qDebug() << "Whoo!" << m_commandSource;
+    connect(m_commandSource, SIGNAL(disconnected()), this, SLOT(disconnected()));
+}
+
+void CommandListener::disconnected()
+{
+    m_commandSource->deleteLater();
+    m_commandSource = 0;
 }

@@ -11,4 +11,5 @@ private:
     QTcpSocket *m_commandSource;
 private slots:
     void newConnection();
+    void disconnected();
 };

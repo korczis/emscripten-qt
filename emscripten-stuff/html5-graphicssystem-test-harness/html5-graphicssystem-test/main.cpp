@@ -2,6 +2,7 @@
 #include <QtGui/QApplication>
 
 #include "testdriver.h"
+#include "commandsender.h"
 
 #ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
@@ -15,6 +16,8 @@ int emscriptenQtSDLMain(int argc, char *argv[])
 
     TestDriver *testDriver = new TestDriver();
     testDriver->beginRunAllTestsAsync();
+    
+    CommandSender *commandSender = new CommandSender;
 
     return app->exec();
 }

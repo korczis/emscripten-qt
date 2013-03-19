@@ -4,10 +4,6 @@ typedef quint32 Rgba;
 class CanvasInterface
 {
 public:
-    
-    static const int CANVAS_WIDTH = 200;
-    static const int CANVAS_HEIGHT = 100;
-
     static void init();
 
     static void clearCanvas(Rgba rgba);

@@ -1,4 +1,4 @@
-#include "../canvasdimensions.h"
+#include "../shared/canvasdimensions.h"
 #include "commandlistener.h"
 
 #include <QtGui/QApplication>

@@ -1,6 +1,8 @@
 #include <QtGui/QWidget>
 #include <QtGui/QApplication>
 
+#include "testdriver.h"
+
 #ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
 #else
@@ -10,6 +12,9 @@ int emscriptenQtSDLMain(int argc, char *argv[])
     QApplication *app = new QApplication(argc, argv);
     QWidget *widget = new QWidget(0);
     widget->showFullScreen();
+
+    TestDriver *testDriver = new TestDriver();
+    testDriver->beginRunAllTestsAsync();
 
     return app->exec();
 }

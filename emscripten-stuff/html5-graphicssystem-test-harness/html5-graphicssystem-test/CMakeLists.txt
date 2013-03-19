@@ -1,7 +1,7 @@
 project(HTML5RendererTest)
 find_package(Qt4)
 
-set(SRC main.cpp tests.cpp testdriver.cpp)
+set(SRC main.cpp tests.cpp testdriver.cpp ../shared/command.cpp)
 if (EMSCRIPTEN_NATIVE)
     set(SRC ${SRC} canvasinterface-emscripten-native.cpp commandsender.cpp)
 endif()

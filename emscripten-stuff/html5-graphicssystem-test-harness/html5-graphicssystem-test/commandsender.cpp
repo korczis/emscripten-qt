@@ -1,4 +1,5 @@
 #include "commandsender.h"
+#include "../shared/command.h"
 
 #include <QtCore/QDebug>
 
@@ -19,8 +20,9 @@ CommandSender::CommandSender()
     }
 }
 
-void CommandSender::sendCommand(const QByteArray& commandAsBytes)
+void CommandSender::sendCommand(const Command& command)
 {
+    const QByteArray commandAsBytes = command.toData();
     const int bytesSent = SDLNet_TCP_Send(m_commandServerSocket, (void*)commandAsBytes.data(), commandAsBytes.size());
     Q_ASSERT(bytesSent == commandAsBytes.size());
     qDebug() << "Sent " << bytesSent;

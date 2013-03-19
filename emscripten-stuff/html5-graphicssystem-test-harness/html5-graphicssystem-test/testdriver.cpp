@@ -1,5 +1,6 @@
 #include "testdriver.h"
 #include "tests.h"
+#include "canvasinterface.h"
 
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
@@ -12,6 +13,7 @@ TestDriver::TestDriver()
 
 void TestDriver::beginRunAllTestsAsync()
 {
+    CanvasInterface::init();
     QTimer::singleShot(0, this, SLOT(runNextTest()));
 }
 

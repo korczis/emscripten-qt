@@ -1,5 +1,8 @@
+#include "../canvasdimensions.h"
+
 #include <QtGui/QApplication>
 #include <QtWebKit/QWebView>
+#include <QtWebKit/QWebFrame>
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 
@@ -49,7 +52,27 @@ int main(int argc, char** argv)
 
     QApplication app(argc, argv);
     QWebView *webView = new QWebView;
+    webView->setHtml(html);
     webView->show();
-
+    
+    QVariant canvasExists = webView->page()->currentFrame()->evaluateJavaScript("(function() { return document.getElementById('canvas') != null})()");
+    if (!canvasExists.toBool())
+    {
+        qDebug() << "Could not find canvas!";
+        return EXIT_FAILURE;
+    }
+    QVariant width = webView->page()->currentFrame()->evaluateJavaScript("(function() { return document.getElementById('canvas').width})()");
+    if (width.toInt() != CANVAS_WIDTH)
+    {
+        qDebug() << "Width of canvas should be " << CANVAS_WIDTH;
+        return EXIT_FAILURE;
+    }
+    QVariant height = webView->page()->currentFrame()->evaluateJavaScript("(function() { return document.getElementById('canvas').height})()");
+    //QVariant height = webView->page()->currentFrame()->evaluateJavaScript("(function() { return 123;})()");
+    if (height.toInt() != CANVAS_HEIGHT)
+    {
+        qDebug() << "height of canvas should be " << CANVAS_HEIGHT;
+        return EXIT_FAILURE;
+    }
     return app.exec();
 }

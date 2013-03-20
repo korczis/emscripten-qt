@@ -10,8 +10,6 @@ int emscriptenQtSDLMain(int argc, char *argv[])
 #endif
 {
     QApplication *app = new QApplication(argc, argv);
-    QWidget *widget = new QWidget(0);
-    widget->showFullScreen();
 
     TestDriver *testDriver = new TestDriver();
     testDriver->beginRunAllTestsAsync();

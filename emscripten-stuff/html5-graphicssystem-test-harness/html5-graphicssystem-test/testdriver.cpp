@@ -6,10 +6,13 @@
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
 #include <QtCore/QMetaMethod>
+#include <QtGui/QWidget>
 
 TestDriver::TestDriver()
     : QObject(), m_testIndex(0), m_tests(new Html5GraphicsSystemTests)
 {
+    m_testWidget = new QWidget(0);
+    m_testWidget->showFullScreen();
 }
 
 void TestDriver::beginRunAllTestsAsync()
@@ -29,6 +32,7 @@ void TestDriver::runNextTest()
         {
             if (numTestMethodsFound == m_testIndex)
             {
+                QMetaMethod method2; 
                 CanvasTestInterface::clearCanvas(0xFF0000FF);
                 method.invoke(m_tests);
                 m_testIndex++;

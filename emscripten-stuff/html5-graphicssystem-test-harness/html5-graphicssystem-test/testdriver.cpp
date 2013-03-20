@@ -1,17 +1,17 @@
 #include "testdriver.h"
 #include "tests.h"
 #include "canvastestinterface.h"
+#include "testwidget.h"
 #include "../shared/canvasdimensions.h"
 
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
 #include <QtCore/QMetaMethod>
-#include <QtGui/QWidget>
 
 TestDriver::TestDriver()
     : QObject(), m_testIndex(0), m_tests(new Html5GraphicsSystemTests)
 {
-    m_testWidget = new QWidget(0);
+    m_testWidget = new TestWidget();
     m_testWidget->showFullScreen();
 }
 

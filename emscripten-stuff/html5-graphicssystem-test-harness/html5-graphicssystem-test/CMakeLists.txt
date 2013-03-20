@@ -1,12 +1,13 @@
 project(HTML5RendererTest)
 find_package(Qt4)
 
-set(SRC main.cpp tests.cpp testdriver.cpp ../shared/command.cpp)
+set(SRC main.cpp tests.cpp testdriver.cpp ../shared/command.cpp testwidget.cpp)
 if (EMSCRIPTEN_NATIVE)
     set(SRC ${SRC} canvasinterface-emscripten-native.cpp commandsender.cpp)
 endif()
 qt4_wrap_cpp(SRC_MOC tests.h)
 qt4_wrap_cpp(SRC_MOC testdriver.h)
+qt4_wrap_cpp(SRC_MOC testwidget.h)
 
 include_directories(${QT_INCLUDES})
 

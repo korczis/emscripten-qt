@@ -11,7 +11,7 @@
 TestDriver::TestDriver()
     : QObject(), m_testIndex(0), m_tests(new Html5GraphicsSystemTests)
 {
-    m_testWidget = new TestWidget();
+    m_testWidget = new TestWidget(this);
     m_testWidget->showFullScreen();
 }
 
@@ -19,6 +19,11 @@ void TestDriver::beginRunAllTestsAsync()
 {
     CanvasTestInterface::init();
     QTimer::singleShot(0, this, SLOT(runNextTest()));
+}
+
+void TestDriver::runTestWithPainter(QPainter *painter)
+{
+    m_tests->setPainterForTest(painter);
 }
 
 void TestDriver::runNextTest()

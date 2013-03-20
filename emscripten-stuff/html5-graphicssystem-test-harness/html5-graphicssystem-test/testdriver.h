@@ -3,6 +3,7 @@
 
 class Html5GraphicsSystemTests;
 class TestWidget;
+class QPainter;
 
 class TestDriver : public QObject
 {
@@ -10,6 +11,7 @@ Q_OBJECT
 public:
     TestDriver();
     void beginRunAllTestsAsync();
+    void runTestWithPainter(QPainter *painter);
 private slots:
     void runNextTest();
 private:

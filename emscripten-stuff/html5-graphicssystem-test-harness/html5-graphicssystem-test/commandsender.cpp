@@ -27,3 +27,20 @@ void CommandSender::sendCommand(const Command& command)
     Q_ASSERT(bytesSent == commandAsBytes.size());
     qDebug() << "Sent " << bytesSent;
 }
+
+void *CommandSender::readCommandResponse(const quint32 numBytes)
+{
+    void* destBuffer = malloc(numBytes);
+    // *sigh* the docs for SDLNet_TCP_Recv are wrong: see http://comments.gmane.org/gmane.comp.lib.sdl/357
+    int bytesRemaining = numBytes;
+    char *destBufferWriter = (char*)destBuffer;
+    while (bytesRemaining > 0)
+    {
+        const int bytesReceived = SDLNet_TCP_Recv(m_commandServerSocket, (void*)destBufferWriter, numBytes);
+        bytesRemaining -= bytesReceived;
+        destBufferWriter += bytesReceived;
+        qDebug() << "Received " << bytesReceived << " bytes (remaining " << bytesRemaining << ")";
+        Q_ASSERT(bytesReceived > 0);
+    }
+    return destBuffer;
+}

@@ -1,6 +1,7 @@
 #include "canvasinterface.h"
 #include "commandsender.h"
 #include "../shared/command.h"
+#include "../shared/canvasdimensions.h"
 
 #include <QtCore/QDataStream>
 #include <QtCore/QBuffer>
@@ -24,7 +25,9 @@ void CanvasInterface::clearCanvas(Rgba colour)
 
 Rgba* CanvasInterface::canvasContents()
 {
-    return NULL;
+    Command getCanvasPixelsCommand(Command::GetCanvasPixels);
+    commandSender->sendCommand(getCanvasPixelsCommand);
+    return static_cast<Rgba*>(commandSender->readCommandResponse(sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT));
 }
 
 void CanvasInterface::deInit()

@@ -1,5 +1,5 @@
+#include "../shared/rgba.h"
 #include <QtCore/QtGlobal>
-typedef quint32 Rgba;
 
 class CanvasInterface
 {

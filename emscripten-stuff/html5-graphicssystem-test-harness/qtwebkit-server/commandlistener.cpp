@@ -1,7 +1,10 @@
 #include "commandlistener.h"
 #include "../shared/command.h"
+#include "../shared/canvasdimensions.h"
+#include "../shared/rgba.h"
 
 #include <QtNetwork/QTcpSocket>
+#include <QtCore/QTimer>
 
 CommandListener::CommandListener()
     : m_server(new QTcpServer), m_commandSource(NULL)
@@ -29,10 +32,34 @@ void CommandListener::disconnected()
 
 void CommandListener::newCommandIncoming()
 {
+    Q_ASSERT(m_commandSource->bytesAvailable() > 0);
+    qDebug() << "newCommandIncoming";
     Command command = Command::createFrom(m_commandSource);
-    quint32 colour;
-
-    // TODO - remove this.
-    command.commandData() >> colour;
-    qDebug() << "commandType: " << command.commandType() << " colour: " << colour;
+    qDebug() << "Fully read command: " << command.commandType();
+    switch(command.commandType())
+    {
+        case Command::ClearCanvas:
+            break;
+        case Command::GetCanvasPixels:
+            const qint64 bytesToWrite = sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT;
+            qDebug() << "About to write " << bytesToWrite;
+            Rgba* fakeRgba = static_cast<Rgba*>(malloc(bytesToWrite));
+            for (int i = 0; i < bytesToWrite; i++)
+            {
+                ((char*)fakeRgba)[i] = i % 256;
+            }
+            const qint64 bytesWritten = m_commandSource->write((char*)fakeRgba, bytesToWrite);
+            if (bytesWritten != bytesToWrite)
+            {
+                const bool succeeded = m_commandSource->waitForBytesWritten(-1); 
+                Q_ASSERT(succeeded);
+            }
+            qDebug() << "Wrote " << bytesToWrite;
+            break;
+    }
+    if (m_commandSource->bytesAvailable() > 0)
+    {
+        // Call ourselves again - we can't depend on readyRead callinng us.
+        QTimer::singleShot(0, this, SLOT(newCommandIncoming()));
+    }
 }

@@ -1,6 +1,7 @@
 #include "testdriver.h"
 #include "tests.h"
 #include "canvasinterface.h"
+#include "../shared/canvasdimensions.h"
 
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
@@ -31,6 +32,13 @@ void TestDriver::runNextTest()
                 CanvasInterface::clearCanvas(0xFF3344);
                 method.invoke(m_tests);
                 m_testIndex++;
+                Rgba* canvasRgba = CanvasInterface::canvasContents();
+                for (int i = 0; i < sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT; i++)
+                {
+                    qDebug() << (int)((char*)canvasRgba)[i];
+                }
+                free(canvasRgba);
+
                 QTimer::singleShot(0, this, SLOT(runNextTest()));
                 return;
             }

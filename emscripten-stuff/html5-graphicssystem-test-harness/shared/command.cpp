@@ -48,6 +48,7 @@ Command Command::createFrom(QIODevice* commandSource)
     commandDataStream >> commandLength;
     while (commandSource->bytesAvailable() < commandLength)
     {
+        qDebug() << "bytesAvailable: " << commandSource->bytesAvailable() << " commandLength: " << commandLength;
         commandSource->waitForReadyRead(-1);
     }
     quint32 commandType;

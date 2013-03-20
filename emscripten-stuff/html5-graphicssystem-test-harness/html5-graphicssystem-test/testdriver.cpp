@@ -23,6 +23,25 @@ void TestDriver::beginRunAllTestsAsync()
 
 void TestDriver::runNextTest()
 {
+    const int nextTestMethodIndex = findNextTestMethodIndex();
+    if (nextTestMethodIndex == -1)
+    {
+        qDebug() << "No more tests found";
+        return;
+    }
+
+    QMetaMethod testMethod = m_tests->metaObject()->method(nextTestMethodIndex); 
+    CanvasTestInterface::clearCanvas(0xFF0000FF);
+    testMethod.invoke(m_tests);
+    QImage canvasContents = CanvasTestInterface::canvasContents();
+    canvasContents.save("flibble.png");
+
+    m_testIndex++;
+    QTimer::singleShot(0, this, SLOT(runNextTest()));
+}
+
+int TestDriver::findNextTestMethodIndex()
+{
     int numTestMethodsFound = 0;
     const QMetaObject *testsMetaObject = m_tests->metaObject();
     for (int methodIndex = testsMetaObject->methodOffset(); methodIndex < testsMetaObject->methodCount(); methodIndex++)
@@ -32,18 +51,10 @@ void TestDriver::runNextTest()
         {
             if (numTestMethodsFound == m_testIndex)
             {
-                QMetaMethod method2; 
-                CanvasTestInterface::clearCanvas(0xFF0000FF);
-                method.invoke(m_tests);
-                m_testIndex++;
-                QImage canvasContents = CanvasTestInterface::canvasContents();
-                canvasContents.save("flibble.png");
-
-                QTimer::singleShot(0, this, SLOT(runNextTest()));
-                return;
+                return methodIndex;
             }
             numTestMethodsFound++;
         }
     }
-    qDebug() << "No more tests found";
+    return -1;
 }

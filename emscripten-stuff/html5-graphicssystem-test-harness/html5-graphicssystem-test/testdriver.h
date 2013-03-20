@@ -15,4 +15,5 @@ private:
     int m_testIndex;
     QWidget *m_testWidget;
     Html5GraphicsSystemTests *m_tests;
+    int findNextTestMethodIndex();
 };

@@ -2,7 +2,7 @@
 #include <QtCore/QtGlobal>
 #include <QtGui/QImage>
 
-class CanvasInterface
+class CanvasTestInterface
 {
 public:
     static void init();

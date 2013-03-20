@@ -1,6 +1,6 @@
 #include "testdriver.h"
 #include "tests.h"
-#include "canvasinterface.h"
+#include "canvastestinterface.h"
 #include "../shared/canvasdimensions.h"
 
 #include <QtCore/QTimer>
@@ -14,7 +14,7 @@ TestDriver::TestDriver()
 
 void TestDriver::beginRunAllTestsAsync()
 {
-    CanvasInterface::init();
+    CanvasTestInterface::init();
     QTimer::singleShot(0, this, SLOT(runNextTest()));
 }
 
@@ -29,10 +29,10 @@ void TestDriver::runNextTest()
         {
             if (numTestMethodsFound == m_testIndex)
             {
-                CanvasInterface::clearCanvas(0xFF0000FF);
+                CanvasTestInterface::clearCanvas(0xFF0000FF);
                 method.invoke(m_tests);
                 m_testIndex++;
-                QImage canvasContents = CanvasInterface::canvasContents();
+                QImage canvasContents = CanvasTestInterface::canvasContents();
                 canvasContents.save("flibble.png");
 
                 QTimer::singleShot(0, this, SLOT(runNextTest()));

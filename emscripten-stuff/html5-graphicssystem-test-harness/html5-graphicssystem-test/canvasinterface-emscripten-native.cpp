@@ -1,4 +1,4 @@
-#include "canvasinterface.h"
+#include "canvastestinterface.h"
 #include "commandsender.h"
 #include "../shared/command.h"
 #include "../shared/canvasdimensions.h"
@@ -12,19 +12,19 @@ namespace
 {
     CommandSender *commandSender = NULL;
 }
-void CanvasInterface::init()
+void CanvasTestInterface::init()
 {
     commandSender = new CommandSender;
 }
 
-void CanvasInterface::clearCanvas(Rgba colour)
+void CanvasTestInterface::clearCanvas(Rgba colour)
 {
     Command clearCanvasCommand(Command::ClearCanvas);
     clearCanvasCommand.commandData() << colour;
     commandSender->sendCommand(clearCanvasCommand);
 }
 
-QImage CanvasInterface::canvasContents()
+QImage CanvasTestInterface::canvasContents()
 {
     Command getCanvasPixelsCommand(Command::GetCanvasPixels);
     commandSender->sendCommand(getCanvasPixelsCommand);
@@ -42,7 +42,7 @@ QImage CanvasInterface::canvasContents()
     return canvasContentsImage;
 }
 
-void CanvasInterface::deInit()
+void CanvasTestInterface::deInit()
 {
     delete commandSender;
     commandSender = NULL;

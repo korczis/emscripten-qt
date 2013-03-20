@@ -29,15 +29,11 @@ void TestDriver::runNextTest()
         {
             if (numTestMethodsFound == m_testIndex)
             {
-                CanvasInterface::clearCanvas(0xFFEEDDCC);
+                CanvasInterface::clearCanvas(0xFF0000FF);
                 method.invoke(m_tests);
                 m_testIndex++;
-                Rgba* canvasRgba = CanvasInterface::canvasContents();
-                for (int i = 0; i < sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT; i++)
-                {
-                    qDebug() << (( int)((char*)canvasRgba)[i] & 0xFF);
-                }
-                free(canvasRgba);
+                QImage canvasContents = CanvasInterface::canvasContents();
+                canvasContents.save("flibble.png");
 
                 QTimer::singleShot(0, this, SLOT(runNextTest()));
                 return;

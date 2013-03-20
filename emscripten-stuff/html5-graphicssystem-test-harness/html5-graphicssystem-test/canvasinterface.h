@@ -1,5 +1,6 @@
 #include "../shared/rgba.h"
 #include <QtCore/QtGlobal>
+#include <QtGui/QImage>
 
 class CanvasInterface
 {
@@ -8,10 +9,7 @@ public:
 
     static void clearCanvas(Rgba rgba);
     
-    /**
-     * Caller assumes ownership of the returned array of canvas width * canvas height elements.
-     */
-    static Rgba* canvasContents();
+    static QImage canvasContents();
 
     static void deInit();
 };

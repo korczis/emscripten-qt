@@ -4,7 +4,7 @@
 
 void Html5GraphicsSystemTests::testSanityTest()
 {
-    qDebug() << "First test!";    
+    qDebug() << "First test!" << m_painter;    
 }
 
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)

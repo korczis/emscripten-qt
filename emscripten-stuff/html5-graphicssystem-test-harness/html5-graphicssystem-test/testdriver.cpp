@@ -24,6 +24,7 @@ void TestDriver::beginRunAllTestsAsync()
 void TestDriver::runTestWithPainter(QPainter *painter)
 {
     m_tests->setPainterForTest(painter);
+    m_currentTestMethod.invoke(m_tests);
 }
 
 void TestDriver::runNextTest()
@@ -38,7 +39,9 @@ void TestDriver::runNextTest()
     m_currentTestMethod = m_tests->metaObject()->method(nextTestMethodIndex); 
     CanvasTestInterface::clearCanvas(0xFF0000FF);
     m_tests->setExpectedImage(QImage());
-    m_currentTestMethod.invoke(m_tests);
+
+    m_testWidget->repaint();
+
     QImage canvasContents = CanvasTestInterface::canvasContents();
     canvasContents.save("flibble.png");
 

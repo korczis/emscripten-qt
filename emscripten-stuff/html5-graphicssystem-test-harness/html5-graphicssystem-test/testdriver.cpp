@@ -30,9 +30,10 @@ void TestDriver::runNextTest()
         return;
     }
 
-    QMetaMethod testMethod = m_tests->metaObject()->method(nextTestMethodIndex); 
+    m_currentTestMethod = m_tests->metaObject()->method(nextTestMethodIndex); 
     CanvasTestInterface::clearCanvas(0xFF0000FF);
-    testMethod.invoke(m_tests);
+    m_tests->setExpectedImage(QImage());
+    m_currentTestMethod.invoke(m_tests);
     QImage canvasContents = CanvasTestInterface::canvasContents();
     canvasContents.save("flibble.png");
 

@@ -1,4 +1,5 @@
 #include <QtCore/QObject>
+#include <QtCore/QMetaMethod>
 
 class Html5GraphicsSystemTests;
 class TestWidget;
@@ -13,6 +14,7 @@ private slots:
     void runNextTest();
 private:
     int m_testIndex;
+    QMetaMethod m_currentTestMethod;
     TestWidget *m_testWidget;
     Html5GraphicsSystemTests *m_tests;
     int findNextTestMethodIndex();

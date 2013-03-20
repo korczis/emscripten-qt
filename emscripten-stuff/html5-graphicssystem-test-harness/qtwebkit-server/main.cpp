@@ -76,7 +76,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    CommandListener *commandListener = new CommandListener;
+    CommandListener *commandListener = new CommandListener(webView->page()->currentFrame());
     
     return app.exec();
 }

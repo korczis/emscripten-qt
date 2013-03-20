@@ -4,10 +4,11 @@
 #include "../shared/rgba.h"
 
 #include <QtNetwork/QTcpSocket>
+#include <QtWebKit/QWebFrame>
 #include <QtCore/QTimer>
 
-CommandListener::CommandListener()
-    : m_server(new QTcpServer), m_commandSource(NULL)
+CommandListener::CommandListener(QWebFrame *canvasPageFrame)
+    : m_server(new QTcpServer), m_commandSource(NULL), m_canvasPageFrame(canvasPageFrame)
 {
     m_server->listen(QHostAddress::LocalHost, 2222);
     Q_ASSERT(m_server->isListening());
@@ -39,14 +40,24 @@ void CommandListener::newCommandIncoming()
     switch(command.commandType())
     {
         case Command::ClearCanvas:
+        {
+            Rgba newCanvasColour;
+            command.commandData() >> newCanvasColour;
+            const QString clearCanvasJS = QString("(function() { return EMSCRIPTENNATIVEHELPER_clearCanvas(%1); })();").arg(newCanvasColour);
+            qDebug() << "Evaluating JS:" << clearCanvasJS;
+            const QVariant result = m_canvasPageFrame->evaluateJavaScript(clearCanvasJS);
+            qDebug() << "Result: " << result;
             break;
+        }
         case Command::GetCanvasPixels:
             const qint64 bytesToWrite = sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT;
             qDebug() << "About to write " << bytesToWrite;
             Rgba* fakeRgba = static_cast<Rgba*>(malloc(bytesToWrite));
+            const QVariant result = m_canvasPageFrame->evaluateJavaScript("(function() { return EMSCRIPTENNATIVEHELPER_canvasPixelsAsRGBAString(); })()");
+            const QString rgbaHexString = result.toString();
             for (int i = 0; i < bytesToWrite; i++)
             {
-                ((char*)fakeRgba)[i] = i % 256;
+                ((char*)fakeRgba)[i] = rgbaHexString.mid(i * 2, 2).toInt(NULL, 16); 
             }
             const qint64 bytesWritten = m_commandSource->write((char*)fakeRgba, bytesToWrite);
             if (bytesWritten != bytesToWrite)

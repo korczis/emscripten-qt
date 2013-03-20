@@ -29,13 +29,13 @@ void TestDriver::runNextTest()
         {
             if (numTestMethodsFound == m_testIndex)
             {
-                CanvasInterface::clearCanvas(0xFF3344);
+                CanvasInterface::clearCanvas(0xFFEEDDCC);
                 method.invoke(m_tests);
                 m_testIndex++;
                 Rgba* canvasRgba = CanvasInterface::canvasContents();
                 for (int i = 0; i < sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT; i++)
                 {
-                    qDebug() << (int)((char*)canvasRgba)[i];
+                    qDebug() << (( int)((char*)canvasRgba)[i] & 0xFF);
                 }
                 free(canvasRgba);
 

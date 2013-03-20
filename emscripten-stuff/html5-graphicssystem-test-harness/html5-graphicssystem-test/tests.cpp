@@ -16,3 +16,13 @@ QImage Html5GraphicsSystemTests::expectedImage()
 {
     return m_expectedImage;
 }
+
+void Html5GraphicsSystemTests::setPainterForTest(QPainter *painter)
+{
+    m_painter = painter;
+}
+
+QPainter *Html5GraphicsSystemTests::painter()
+{
+    return m_painter;
+}

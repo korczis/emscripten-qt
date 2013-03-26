@@ -18,10 +18,6 @@ QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
     qDebug() << "Initialising graphics system";
     QGraphicsSystem *graphics_system = QGraphicsSystemFactory::create(QApplicationPrivate::graphics_system_name);
     setGraphicsSystem(graphics_system);
-    if (dynamic_cast<QHtml5CanvasGraphicsSystem*>(graphics_system))
-    {
-        static_cast<QHtml5CanvasGraphicsSystem*>(graphics_system)->setScreen(this);
-    }
 }
 QEmscriptenCanvasScreen::~QEmscriptenCanvasScreen()
 {

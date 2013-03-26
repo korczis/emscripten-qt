@@ -20,19 +20,12 @@ class Q_GUI_EXPORT QHtml5CanvasGraphicsSystem : public QGraphicsSystem
 {
 public:
 
-    QHtml5CanvasGraphicsSystem()
-        : screen(NULL) {}
+    QHtml5CanvasGraphicsSystem() {};
 
     virtual QPixmapData *createPixmapData(QPixmapData::PixelType type) const;
     QWindowSurface *createWindowSurface(QWidget *widget) const;
 
-    void setScreen(QScreen *screen)
-    {
-        this->screen = screen;
-    }
-
 private:
-    QScreen* screen;
 };
 
 QT_END_NAMESPACE

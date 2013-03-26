@@ -8,8 +8,8 @@ QT_BEGIN_NAMESPACE
 QPixmapData *QHtml5CanvasGraphicsSystem::createPixmapData(QPixmapData::PixelType type) const
 {
     qDebug() << "QHtml5CanvasGraphicsSystem::createPixmapData: " << type;
-    if (screen->pixmapDataFactory())
-        return screen->pixmapDataFactory()->create(type); //### For 4.4 compatibility
+    if (QScreen::instance()->pixmapDataFactory())
+        return QScreen::instance()->pixmapDataFactory()->create(type); //### For 4.4 compatibility
     else
         return new QRasterPixmapData(type);
 }
@@ -17,7 +17,7 @@ QPixmapData *QHtml5CanvasGraphicsSystem::createPixmapData(QPixmapData::PixelType
 QWindowSurface *QHtml5CanvasGraphicsSystem::createWindowSurface(QWidget *widget) const
 {
     qDebug() << "QHtml5CanvasGraphicsSystem::createWindowSurface: ";
-    return screen->createSurface(widget);
+    return QScreen::instance()->createSurface(widget);
 }
 
 QT_END_NAMESPACE

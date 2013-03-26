@@ -47,6 +47,7 @@
 #include "qapplication.h"
 #include "qgraphicssystem_raster_p.h"
 #include "qgraphicssystem_runtime_p.h"
+#include "qgraphicssystem_html5canvas_p.h"
 #include "qdebug.h"
 
 QT_BEGIN_NAMESPACE
@@ -81,6 +82,10 @@ QGraphicsSystem *QGraphicsSystemFactory::create(const QString& key)
 
     if (system == QLatin1String("raster"))
         return new QRasterGraphicsSystem;
+#ifdef EMSCRIPTEN
+    if (system == QLatin1String("html5canvas"))
+        return new QHtml5CanvasGraphicsSystem;
+#endif
     else if (system == QLatin1String("runtime"))
         return new QRuntimeGraphicsSystem;
     else if (system.isEmpty() || system == QLatin1String("native"))

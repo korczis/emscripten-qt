@@ -140,6 +140,24 @@ embedded {
         painting/qwindowsurface_raster.cpp
 }
 
+emscripten: {
+    HEADERS += \
+        painting/qgraphicssystem_raster_p.h \
+        painting/qgraphicssystem_html5canvas_p.h \
+        painting/qgraphicssystem_runtime_p.h \
+        painting/qgraphicssystemfactory_p.h \
+        painting/qgraphicssystemplugin_p.h \
+        painting/qwindowsurface_raster_p.h
+
+    SOURCES += \
+        painting/qgraphicssystem_raster.cpp \
+        painting/qgraphicssystem_html5canvas.cpp \
+        painting/qgraphicssystem_runtime.cpp \
+        painting/qgraphicssystemfactory.cpp \
+        painting/qgraphicssystemplugin.cpp \
+        painting/qwindowsurface_raster.cpp
+}
+
 unix:x11 {
         HEADERS += \
                 painting/qpaintengine_x11_p.h

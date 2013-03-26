@@ -1,4 +1,7 @@
 #include "qscreenemscriptencanvas_qws.h"
+#include <kernel/qapplication_p.h>
+#include <painting/qgraphicssystemfactory_p.h>
+#include <painting/qgraphicssystem_html5canvas_p.h>
 #include <qdebug.h>
 
 extern "C"
@@ -12,6 +15,13 @@ QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
     : QScreen(display_id, CustomClass)
 {
     qDebug() << "QEmscriptenCanvasScreen::QEmscriptenCanvasScreen: display_id: " << display_id;
+    qDebug() << "Initialising graphics system";
+    QGraphicsSystem *graphics_system = QGraphicsSystemFactory::create(QApplicationPrivate::graphics_system_name);
+    setGraphicsSystem(graphics_system);
+    if (dynamic_cast<QHtml5CanvasGraphicsSystem*>(graphics_system))
+    {
+        static_cast<QHtml5CanvasGraphicsSystem*>(graphics_system)->setScreen(this);
+    }
 }
 QEmscriptenCanvasScreen::~QEmscriptenCanvasScreen()
 {

@@ -526,3 +526,14 @@ Module['preRun'].push(function() {
 	}
 });
 
+function EMSCRIPTENQT_handleForMainCanvas()
+{
+    if (document.getElementById('canvas') == undefined)
+    {
+        return -1;
+    }
+    else
+    {
+       return 0;
+    }
+}

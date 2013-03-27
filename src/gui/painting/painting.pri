@@ -147,7 +147,8 @@ emscripten: {
         painting/qgraphicssystem_runtime_p.h \
         painting/qgraphicssystemfactory_p.h \
         painting/qgraphicssystemplugin_p.h \
-        painting/qwindowsurface_raster_p.h
+        painting/qwindowsurface_raster_p.h \
+        painting/html5canvasinterface.h
 
     SOURCES += \
         painting/qgraphicssystem_raster.cpp \

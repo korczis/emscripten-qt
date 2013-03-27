@@ -50,6 +50,7 @@ void CommandListener::newCommandIncoming()
             break;
         }
         case Command::GetCanvasPixels:
+        {
             const qint64 bytesToWrite = sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT;
             qDebug() << "About to write " << bytesToWrite;
             Rgba* fakeRgba = static_cast<Rgba*>(malloc(bytesToWrite));
@@ -67,6 +68,25 @@ void CommandListener::newCommandIncoming()
             }
             qDebug() << "Wrote " << bytesToWrite;
             break;
+        }
+        case Command::GetHandleForMainCanvas:
+        {
+            const QVariant result = m_canvasPageFrame->evaluateJavaScript("(function() { return EMSCRIPTENQT_handleForMainCanvas(); })()");
+            qint32 handle = -1;
+            if (result.canConvert<qint32>())
+            {
+                handle = result.toInt();
+            }
+            const qint64 bytesToWrite = sizeof(qint32);
+            const qint64 bytesWritten = m_commandSource->write((char*)&handle, bytesToWrite);
+            if (bytesWritten != bytesToWrite)
+            {
+                const bool succeeded = m_commandSource->waitForBytesWritten(-1); 
+                Q_ASSERT(succeeded);
+            }
+            qDebug() << "Wrote " << bytesToWrite;
+            break;
+        }
     }
     if (m_commandSource->bytesAvailable() > 0)
     {

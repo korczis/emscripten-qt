@@ -1,6 +1,7 @@
 #include "qscreenemscriptencanvas_qws.h"
 #include <painting/qwindowsurface_qws_p.h>
 #include <kernel/qapplication_p.h>
+#include <painting/html5canvasinterface.h>
 #include <painting/qgraphicssystemfactory_p.h>
 #include <painting/qgraphicssystem_html5canvas_p.h>
 #include <qdebug.h>
@@ -21,6 +22,9 @@ QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
     setGraphicsSystem(graphics_system);
     m_useRaster = (dynamic_cast<QHtml5CanvasGraphicsSystem*>(graphics_system) == NULL);
     qDebug() << "Raster " << m_useRaster;
+    m_mainCanvasHandle = Html5CanvasInterface::handleForMainCanvas();
+    qDebug() << "Main canvas handle: " << m_mainCanvasHandle;
+    Q_ASSERT(m_mainCanvasHandle != -1);
 }
 QEmscriptenCanvasScreen::~QEmscriptenCanvasScreen()
 {

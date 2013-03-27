@@ -31,6 +31,7 @@ public:
     static void setBrightness(int b);
 private:
     bool m_useRaster;
+    int m_mainCanvasHandle;
 };
 
 

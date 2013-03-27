@@ -7,28 +7,36 @@
 #include <QtCore/QBuffer>
 #include <QtCore/QDebug>
 #include <QtGui/QColor>
+#include <QtGui/html5canvasinterface.h>
 
 namespace 
 {
-    CommandSender *commandSender = NULL;
+    CommandSender* commandSender()
+    {
+        static CommandSender *commandSender = NULL;
+        if (!commandSender)
+        {
+            commandSender = new CommandSender;
+        }
+        return commandSender;
+    }
 }
 void CanvasTestInterface::init()
 {
-    commandSender = new CommandSender;
 }
 
 void CanvasTestInterface::clearCanvas(Rgba colour)
 {
     Command clearCanvasCommand(Command::ClearCanvas);
     clearCanvasCommand.commandData() << colour;
-    commandSender->sendCommand(clearCanvasCommand);
+    commandSender()->sendCommand(clearCanvasCommand);
 }
 
 QImage CanvasTestInterface::canvasContents()
 {
     Command getCanvasPixelsCommand(Command::GetCanvasPixels);
-    commandSender->sendCommand(getCanvasPixelsCommand);
-    Rgba* rbga = static_cast<Rgba*>(commandSender->readCommandResponse(sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT));
+    commandSender()->sendCommand(getCanvasPixelsCommand);
+    Rgba* rbga = static_cast<Rgba*>(commandSender()->readCommandResponse(sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT));
     
     QImage canvasContentsImage(CANVAS_WIDTH, CANVAS_HEIGHT, QImage::Format_ARGB32);
     for (int y = 0; y < CANVAS_HEIGHT; y++)
@@ -44,6 +52,14 @@ QImage CanvasTestInterface::canvasContents()
 
 void CanvasTestInterface::deInit()
 {
-    delete commandSender;
-    commandSender = NULL;
+}
+
+qint32 Html5CanvasInterface::handleForMainCanvas()
+{
+    Command getHandleForMainCanvas(Command::GetHandleForMainCanvas);
+    commandSender()->sendCommand(getHandleForMainCanvas);
+    qint32 *handlePtr = static_cast<qint32*>(commandSender()->readCommandResponse(sizeof(qint32)));
+    const qint32 handle = *handlePtr;
+    free(handlePtr);
+    return handle;
 }

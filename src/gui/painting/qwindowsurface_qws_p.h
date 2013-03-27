@@ -350,6 +350,34 @@ private:
 
 #endif // QT_NO_DIRECTPAINTER
 
+class Q_GUI_EXPORT QWSHtml5CanvasSurface : public QWSWindowSurface
+{
+public:
+    QWSHtml5CanvasSurface();
+    QWSHtml5CanvasSurface(QWidget *widget);
+    ~QWSHtml5CanvasSurface();
+
+    bool isValid() const;
+
+    QPaintDevice *paintDevice() { return &pixmap; }
+    bool scroll(const QRegion &area, int dx, int dy);
+
+    QImage image() const;
+protected:
+    QImage::Format preferredImageFormat(const QWidget *widget) const;
+
+#ifndef QT_NO_QWS_MULTIPROCESS
+    void setLock(int lockId);
+    QWSLock *memlock;
+#endif
+#ifndef QT_NO_THREAD
+    QMutex threadLock;
+#endif
+
+    QPixmap pixmap;
+    QImage img;
+};
+
 QT_END_NAMESPACE
 
 #endif // QWINDOWSURFACE_QWS_P_H

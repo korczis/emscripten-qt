@@ -1444,4 +1444,39 @@ void QWSDirectPainterSurface::unlock()
 
 #endif // QT_NO_DIRECTPAINTER
 
+QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()
+    : QWSWindowSurface()
+{
+    qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()";
+}
+
+QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)
+    : QWSWindowSurface(widget)
+{
+    qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)";
+}
+
+QWSHtml5CanvasSurface::~QWSHtml5CanvasSurface()
+{
+    qDebug() << "QWSHtml5CanvasSurface::~QWSHtml5CanvasSurface";
+}
+
+bool QWSHtml5CanvasSurface::isValid() const
+{
+    qDebug() << "QWSHtml5CanvasSurface::isValid()";
+    return true;
+}
+
+bool QWSHtml5CanvasSurface::scroll(const QRegion &area, int dx, int dy)
+{
+    qDebug() << "QWSHtml5CanvasSurface::scroll()";
+    return true;
+}
+
+QImage QWSHtml5CanvasSurface::image() const
+{
+    qDebug() << "Warning: request for QWSHtml5CanvasSurface::image";
+    return img;
+}
+
 QT_END_NAMESPACE

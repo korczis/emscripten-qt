@@ -148,6 +148,7 @@ emscripten: {
         painting/qgraphicssystemfactory_p.h \
         painting/qgraphicssystemplugin_p.h \
         painting/qwindowsurface_raster_p.h \
+        painting/qpaintengine_html5canvas_p.h \
         painting/html5canvasinterface.h
 
     SOURCES += \
@@ -156,6 +157,7 @@ emscripten: {
         painting/qgraphicssystem_runtime.cpp \
         painting/qgraphicssystemfactory.cpp \
         painting/qgraphicssystemplugin.cpp \
+        painting/qpaintengine_html5canvas.cpp \
         painting/qwindowsurface_raster.cpp
 }
 

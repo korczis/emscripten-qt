@@ -1,4 +1,5 @@
 #include "qscreenemscriptencanvas_qws.h"
+#include <painting/qwindowsurface_qws_p.h>
 #include <kernel/qapplication_p.h>
 #include <painting/qgraphicssystemfactory_p.h>
 #include <painting/qgraphicssystem_html5canvas_p.h>
@@ -90,12 +91,30 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
 
 QWSWindowSurface* QEmscriptenCanvasScreen::createSurface(const QString& key) const
 {
-    return QScreen::createSurface(key);
+    qDebug() << "QEmscriptenCanvasScreen::createSurface(const QString& key) key:" << key << " m_useRaster: " << m_useRaster;
+    if (m_useRaster)
+    {
+        return QScreen::createSurface(key);
+    }
+    else
+    {
+        if (QApplication::type() == QApplication::GuiServer)
+            return new QWSHtml5CanvasSurface();
+    }
+    return 0;
 }
 
 QWSWindowSurface* QEmscriptenCanvasScreen::createSurface(QWidget* widget) const
 {
-    return QScreen::createSurface(widget);
+    qDebug() << "QEmscriptenCanvasScreen::createSurface(const QWidget *widget) m_useRaster: " << m_useRaster;
+    if (m_useRaster)
+    {
+        return QScreen::createSurface(widget);
+    }
+    else
+    {
+        return new QWSHtml5CanvasSurface(widget);
+    }
 }
 
 static void setBrightness(int b)

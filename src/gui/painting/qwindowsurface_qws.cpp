@@ -1448,12 +1448,17 @@ QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()
     : QWSWindowSurface()
 {
     qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()";
+    setSurfaceFlags(Buffered);
 }
 
 QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)
     : QWSWindowSurface(widget)
 {
     qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)";
+    SurfaceFlags flags = Buffered;
+    if (isWidgetOpaque(widget))
+        flags |= Opaque;
+    setSurfaceFlags(flags);
 }
 
 QWSHtml5CanvasSurface::~QWSHtml5CanvasSurface()
@@ -1467,6 +1472,19 @@ bool QWSHtml5CanvasSurface::isValid() const
     return true;
 }
 
+void QWSHtml5CanvasSurface::setGeometry(const QRect &rect)
+{
+    qDebug() << "QWSHtml5CanvasSurface::setGeometry():" << rect;
+    img = QImage(rect.width(), rect.height(), QImage::Format_RGB32);
+    pixmap = QPixmap(rect.width(), rect.height());
+    QWSWindowSurface::setGeometry(rect);
+}
+
+QPaintDevice *QWSHtml5CanvasSurface::paintDevice() {
+    return &pixmap;
+    //return &img;
+}
+
 bool QWSHtml5CanvasSurface::scroll(const QRegion &area, int dx, int dy)
 {
     qDebug() << "QWSHtml5CanvasSurface::scroll()";
@@ -1477,6 +1495,12 @@ QImage QWSHtml5CanvasSurface::image() const
 {
     qDebug() << "Warning: request for QWSHtml5CanvasSurface::image";
     return img;
+}
+
+QString QWSHtml5CanvasSurface::key() const
+{
+    qDebug() << "QWSHtml5CanvasSurface::key()";
+    return "html5canvas";
 }
 
 QT_END_NAMESPACE

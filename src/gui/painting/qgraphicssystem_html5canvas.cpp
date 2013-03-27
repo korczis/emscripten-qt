@@ -9,9 +9,15 @@ QPixmapData *QHtml5CanvasGraphicsSystem::createPixmapData(QPixmapData::PixelType
 {
     qDebug() << "QHtml5CanvasGraphicsSystem::createPixmapData: " << type;
     if (QScreen::instance()->pixmapDataFactory())
+    {
+        qDebug() << "Using pixmap factory";
         return QScreen::instance()->pixmapDataFactory()->create(type); //### For 4.4 compatibility
+    }
     else
+    {
+        qDebug() << "Using raster pixmap";
         return new QRasterPixmapData(type);
+    }
 }
 
 QWindowSurface *QHtml5CanvasGraphicsSystem::createWindowSurface(QWidget *widget) const

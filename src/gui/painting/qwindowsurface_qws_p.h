@@ -358,11 +358,13 @@ public:
     ~QWSHtml5CanvasSurface();
 
     bool isValid() const;
+    virtual void setGeometry(const QRect &rect);
 
-    QPaintDevice *paintDevice() { return &pixmap; }
+    QPaintDevice *paintDevice();
     bool scroll(const QRegion &area, int dx, int dy);
 
     QImage image() const;
+    QString key() const;
 protected:
     QImage::Format preferredImageFormat(const QWidget *widget) const;
 

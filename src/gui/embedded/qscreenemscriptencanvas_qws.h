@@ -26,7 +26,11 @@ public:
     virtual void setDirty(const QRect& r);
     virtual void blank(bool);
     virtual void exposeRegion(QRegion r, int changing);
+    virtual QWSWindowSurface* createSurface(QWidget *widget) const;
+    virtual QWSWindowSurface* createSurface(const QString &key) const;
     static void setBrightness(int b);
+private:
+    bool m_useRaster;
 };
 
 

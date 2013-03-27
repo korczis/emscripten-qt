@@ -18,6 +18,8 @@ QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
     qDebug() << "Initialising graphics system";
     QGraphicsSystem *graphics_system = QGraphicsSystemFactory::create(QApplicationPrivate::graphics_system_name);
     setGraphicsSystem(graphics_system);
+    m_useRaster = (dynamic_cast<QHtml5CanvasGraphicsSystem*>(graphics_system) == NULL);
+    qDebug() << "Raster " << m_useRaster;
 }
 QEmscriptenCanvasScreen::~QEmscriptenCanvasScreen()
 {
@@ -86,6 +88,15 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
     EMSCRIPTENQT_flush_pixels(data, r.boundingRect().left(), r.boundingRect().top(), r.boundingRect().width(), r.boundingRect().height());
 }
 
+QWSWindowSurface* QEmscriptenCanvasScreen::createSurface(const QString& key) const
+{
+    return QScreen::createSurface(key);
+}
+
+QWSWindowSurface* QEmscriptenCanvasScreen::createSurface(QWidget* widget) const
+{
+    return QScreen::createSurface(widget);
+}
 
 static void setBrightness(int b)
 {

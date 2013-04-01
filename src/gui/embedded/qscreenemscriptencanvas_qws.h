@@ -2,6 +2,7 @@
 #define QSCREENEMSCRIPTENFB_QWS_H
 
 #include <QtGui/qscreen_qws.h>
+#include <painting/html5canvasinterface.h>
 
 QT_BEGIN_HEADER
 
@@ -31,7 +32,7 @@ public:
     static void setBrightness(int b);
 private:
     bool m_useRaster;
-    int m_mainCanvasHandle;
+    CanvasHandle m_mainCanvasHandle;
 };
 
 

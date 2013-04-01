@@ -22,6 +22,7 @@
 #include "private/qpainter_p.h"
 #include "private/qtextureglyphcache_p.h"
 #include "private/qoutlinemapper_p.h"
+#include <painting/html5canvasinterface.h>
 
 #include <stdlib.h>
 
@@ -168,7 +169,7 @@ public:
           canvasHandle(-1)
     {};
     QPaintDevice* device;
-    qint32 canvasHandle;
+    CanvasHandle canvasHandle;
 };
 
 QT_END_NAMESPACE

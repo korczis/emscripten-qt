@@ -149,7 +149,7 @@ int QHtml5CanvasPixmapData::metric(QPaintDevice::PaintDeviceMetric metric) const
     return 0;
 }
 
-qint32 QHtml5CanvasPixmapData::canvasHandle() const
+CanvasHandle QHtml5CanvasPixmapData::canvasHandle() const
 {
     return m_canvasHandle;
 }

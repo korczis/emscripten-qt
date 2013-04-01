@@ -54,28 +54,28 @@ void CanvasTestInterface::deInit()
 {
 }
 
-qint32 Html5CanvasInterface::handleForMainCanvas()
+CanvasHandle Html5CanvasInterface::handleForMainCanvas()
 {
     Command getHandleForMainCanvas(Command::GetHandleForMainCanvas);
     commandSender()->sendCommand(getHandleForMainCanvas);
-    qint32 *handlePtr = static_cast<qint32*>(commandSender()->readCommandResponse(sizeof(qint32)));
-    const qint32 handle = *handlePtr;
+    CanvasHandle *handlePtr = static_cast<CanvasHandle*>(commandSender()->readCommandResponse(sizeof(CanvasHandle)));
+    const CanvasHandle handle = *handlePtr;
     free(handlePtr);
     return handle;
 }
 
-qint32 Html5CanvasInterface::createCanvas(int width, int height)
+CanvasHandle Html5CanvasInterface::createCanvas(int width, int height)
 {
     Command createCanvasCommand(Command::CreateCanvas);
     createCanvasCommand.commandData() << width << height;
     commandSender()->sendCommand(createCanvasCommand);
-    qint32 *handlePtr = static_cast<qint32*>(commandSender()->readCommandResponse(sizeof(qint32)));
-    const qint32 handle = *handlePtr;
+    CanvasHandle *handlePtr = static_cast<CanvasHandle*>(commandSender()->readCommandResponse(sizeof(CanvasHandle)));
+    const CanvasHandle handle = *handlePtr;
     free(handlePtr);
     return handle;
 }
 
-void Html5CanvasInterface::fillSolidRect(qint32 canvasHandle, int r, int g, int b, double x, double y, double width, double height)
+void Html5CanvasInterface::fillSolidRect(CanvasHandle canvasHandle, int r, int g, int b, double x, double y, double width, double height)
 {
     Command fillSolidRectCommand(Command::FillSolidRect);
     fillSolidRectCommand.commandData() << canvasHandle << r << g << b << x << y << width << height;

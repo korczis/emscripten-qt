@@ -14,6 +14,7 @@
 
 #include <QtGui/private/qpixmapdata_p.h>
 #include <QtGui/private/qpixmapdatafactory_p.h>
+#include <painting/html5canvasinterface.h>
 
 class QHtml5CanvasPaintEngine;
 
@@ -44,11 +45,11 @@ public:
     QPaintEngine* paintEngine() const;
     int metric(QPaintDevice::PaintDeviceMetric metric) const;
 
-    qint32 canvasHandle() const ;
+    CanvasHandle canvasHandle() const ;
 private:
     void createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace);
     mutable QHtml5CanvasPaintEngine *pengine;
-    qint32 m_canvasHandle;
+    CanvasHandle m_canvasHandle;
 
 };
 

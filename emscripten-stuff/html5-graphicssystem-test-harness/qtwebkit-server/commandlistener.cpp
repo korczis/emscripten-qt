@@ -7,6 +7,8 @@
 #include <QtWebKit/QWebFrame>
 #include <QtCore/QTimer>
 
+typedef qint32 CanvasHandle;
+
 CommandListener::CommandListener(QWebFrame *canvasPageFrame)
     : m_server(new QTcpServer), m_commandSource(NULL), m_canvasPageFrame(canvasPageFrame)
 {
@@ -72,12 +74,12 @@ void CommandListener::newCommandIncoming()
         case Command::GetHandleForMainCanvas:
         {
             const QVariant result = m_canvasPageFrame->evaluateJavaScript("(function() { return EMSCRIPTENQT_handleForMainCanvas(); })()");
-            qint32 handle = -1;
-            if (result.canConvert<qint32>())
+            CanvasHandle handle = -1;
+            if (result.canConvert<CanvasHandle>())
             {
                 handle = result.toInt();
             }
-            const qint64 bytesToWrite = sizeof(qint32);
+            const qint64 bytesToWrite = sizeof(CanvasHandle);
             const qint64 bytesWritten = m_commandSource->write((char*)&handle, bytesToWrite);
             if (bytesWritten != bytesToWrite)
             {
@@ -92,12 +94,12 @@ void CommandListener::newCommandIncoming()
             int width, height;
             command.commandData() >> width >> height;
             const QVariant result = m_canvasPageFrame->evaluateJavaScript(QString("(function() { return EMSCRIPTENQT_createCanvas(%1, %2); })()").arg(width).arg(height));
-            qint32 handle = -1;
-            if (result.canConvert<qint32>())
+            CanvasHandle handle = -1;
+            if (result.canConvert<CanvasHandle>())
             {
                 handle = result.toInt();
             }
-            const qint64 bytesToWrite = sizeof(qint32);
+            const qint64 bytesToWrite = sizeof(CanvasHandle);
             const qint64 bytesWritten = m_commandSource->write((char*)&handle, bytesToWrite);
             if (bytesWritten != bytesToWrite)
             {
@@ -108,7 +110,7 @@ void CommandListener::newCommandIncoming()
             break;
         }
         case Command::FillSolidRect:
-            qint32 canvasHandle;
+            CanvasHandle canvasHandle;
             int r, g, b;
             double x, y, width, height;
             command.commandData() >> canvasHandle >> r >> g >> b >> x >> y >> width >> height;

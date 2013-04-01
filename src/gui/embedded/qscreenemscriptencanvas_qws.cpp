@@ -1,7 +1,6 @@
 #include "qscreenemscriptencanvas_qws.h"
 #include <painting/qwindowsurface_qws_p.h>
 #include <kernel/qapplication_p.h>
-#include <painting/html5canvasinterface.h>
 #include <painting/qgraphicssystemfactory_p.h>
 #include <painting/qgraphicssystem_html5canvas_p.h>
 #include <qdebug.h>

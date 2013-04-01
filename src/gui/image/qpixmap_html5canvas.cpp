@@ -23,6 +23,7 @@ QHtml5CanvasPixmapData::QHtml5CanvasPixmapData(PixelType type)
     : QPixmapData(type, Html5CanvasClass),
       pengine(NULL)
 {
+    is_null = true;
 }
 
 QHtml5CanvasPixmapData::~QHtml5CanvasPixmapData()
@@ -37,6 +38,14 @@ QPixmapData *QHtml5CanvasPixmapData::createCompatiblePixmapData() const
 void QHtml5CanvasPixmapData::resize(int width, int height)
 {
     qDebug() << "QHtml5CanvasPixmapData::resize(int width, int height)";
+    if (width <= 0 || height <= 0)
+    {
+        is_null = true;
+    }
+    else
+    {
+        is_null = false;
+    }
 }
 
 bool QHtml5CanvasPixmapData::fromData(const uchar *buffer, uint len, const char *format,

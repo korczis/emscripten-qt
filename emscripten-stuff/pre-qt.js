@@ -537,3 +537,31 @@ function EMSCRIPTENQT_handleForMainCanvas()
        return 0;
     }
 }
+
+var emscriptenqt_handle_to_canvas;
+function EMSCRIPTENQT_createCanvas(width, height)
+{
+    try
+    {
+        // handle 0 is always reserved for the main canvas.
+        var handle = 1;
+        if (!emscriptenqt_handle_to_canvas)
+        {
+            emscriptenqt_handle_to_canvas = new Object;
+        }
+        while (emscriptenqt_handle_to_canvas[handle] != null)
+        {
+            handle = handle + 1;
+        }
+        var canvas = document.createElement("canvas");      
+        canvas.width = width;
+        canvas.height = height; 
+        emscriptenqt_handle_to_canvas[handle] = canvas;
+        return handle;
+    }
+    catch (e)
+    {
+        Module.print("Creating canvas of size: " + width + "," + height + " failed: " + e);
+        return -1;
+    }
+}

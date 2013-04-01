@@ -17,8 +17,15 @@ class Q_GUI_EXPORT Html5CanvasInterface
 public:
     /**
      * Get the handle for the Canvas element in the DOM that everything ends up being rendered to.
+     * Returns -1 if no such Canvas element cannot be found.
      */
     static qint32 handleForMainCanvas();
+
+    /**
+     * Create a Canvas (offscreen) off the given \a width and \a height, and return a handle to it,
+     * or -1 if it could not be created.
+     */
+    static qint32 createCanvas(int width, int height);
 };
 
 QT_END_NAMESPACE

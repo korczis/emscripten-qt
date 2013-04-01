@@ -46,6 +46,7 @@ public:
 private:
     void createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace);
     mutable QHtml5CanvasPaintEngine *pengine;
+    qint32 m_canvasHandle;
 
 };
 

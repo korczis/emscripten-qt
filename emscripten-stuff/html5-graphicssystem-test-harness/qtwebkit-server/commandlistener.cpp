@@ -87,6 +87,26 @@ void CommandListener::newCommandIncoming()
             qDebug() << "Wrote " << bytesToWrite;
             break;
         }
+        case Command::CreateCanvas:
+        {
+            int width, height;
+            command.commandData() >> width >> height;
+            const QVariant result = m_canvasPageFrame->evaluateJavaScript(QString("(function() { return EMSCRIPTENQT_createCanvas(%1, %2); })()").arg(width).arg(height));
+            qint32 handle = -1;
+            if (result.canConvert<qint32>())
+            {
+                handle = result.toInt();
+            }
+            const qint64 bytesToWrite = sizeof(qint32);
+            const qint64 bytesWritten = m_commandSource->write((char*)&handle, bytesToWrite);
+            if (bytesWritten != bytesToWrite)
+            {
+                const bool succeeded = m_commandSource->waitForBytesWritten(-1); 
+                Q_ASSERT(succeeded);
+            }
+            qDebug() << "Wrote " << bytesToWrite;
+            break;
+        }
     }
     if (m_commandSource->bytesAvailable() > 0)
     {

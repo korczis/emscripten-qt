@@ -63,3 +63,14 @@ qint32 Html5CanvasInterface::handleForMainCanvas()
     free(handlePtr);
     return handle;
 }
+
+qint32 Html5CanvasInterface::createCanvas(int width, int height)
+{
+    Command createCanvasCommand(Command::CreateCanvas);
+    createCanvasCommand.commandData() << width << height;
+    commandSender()->sendCommand(createCanvasCommand);
+    qint32 *handlePtr = static_cast<qint32*>(commandSender()->readCommandResponse(sizeof(qint32)));
+    const qint32 handle = *handlePtr;
+    free(handlePtr);
+    return handle;
+}

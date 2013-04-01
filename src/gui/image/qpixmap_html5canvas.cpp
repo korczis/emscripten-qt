@@ -12,6 +12,7 @@
 #include <QImageReader>
 #include "qpixmap_html5canvas_p.h"
 #include "painting/qpaintengine_html5canvas_p.h"
+#include <html5canvasinterface.h>
 #include <private/qimage_p.h>
 #include <private/qwidget_p.h>
 #include <private/qdrawhelper_p.h>
@@ -21,7 +22,8 @@ QT_BEGIN_NAMESPACE
 
 QHtml5CanvasPixmapData::QHtml5CanvasPixmapData(PixelType type)
     : QPixmapData(type, Html5CanvasClass),
-      pengine(NULL)
+      pengine(NULL),
+      m_canvasHandle(-1)
 {
     is_null = true;
 }
@@ -40,11 +42,14 @@ void QHtml5CanvasPixmapData::resize(int width, int height)
     qDebug() << "QHtml5CanvasPixmapData::resize(int width, int height)";
     if (width <= 0 || height <= 0)
     {
+        // TODO - destroy canvas.
         is_null = true;
     }
     else
     {
-        is_null = false;
+        m_canvasHandle = Html5CanvasInterface::createCanvas(width, height);
+        qDebug() << "Create canvas: got handle: " << m_canvasHandle;
+        is_null = (m_canvasHandle != -1);
     }
 }
 

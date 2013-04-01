@@ -568,22 +568,11 @@ function EMSCRIPTENQT_createCanvas(width, height)
 
 function EMSCRIPTENQT_fillSolidRect(canvasHandle, r, g, b, x, y, width, height)
 {
-    try
-    {
-    
-    window.alert("canvashandle: " + canvasHandle);
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
-    window.alert("canvas : " + canvas);
     var ctx = canvas.getContext("2d");
-    window.alert("canvas context: " + ctx);
     ctx.beginPath();
     ctx.rect(x, y, width, height);
     ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ")";
     ctx.fill();
     ctx.closePath();
-    }
-    catch (e)
-    {
-    window.alert("exception: " + e);
-    }
 }

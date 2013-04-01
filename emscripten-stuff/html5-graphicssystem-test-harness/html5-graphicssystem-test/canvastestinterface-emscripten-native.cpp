@@ -74,3 +74,10 @@ qint32 Html5CanvasInterface::createCanvas(int width, int height)
     free(handlePtr);
     return handle;
 }
+
+void Html5CanvasInterface::fillSolidRect(qint32 canvasHandle, int r, int g, int b, double x, double y, double width, double height)
+{
+    Command fillSolidRectCommand(Command::FillSolidRect);
+    fillSolidRectCommand.commandData() << canvasHandle << r << g << b << x << y << width << height;
+    commandSender()->sendCommand(fillSolidRectCommand);
+}

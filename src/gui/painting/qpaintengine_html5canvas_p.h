@@ -163,7 +163,12 @@ QHtml5CanvasPaintEnginePrivate : public QPaintEngineExPrivate
 {
     Q_DECLARE_PUBLIC(QHtml5CanvasPaintEngine)
 public:
-    QHtml5CanvasPaintEnginePrivate() {};
+    QHtml5CanvasPaintEnginePrivate()
+        : device(0),
+          canvasHandle(-1)
+    {};
+    QPaintDevice* device;
+    qint32 canvasHandle;
 };
 
 QT_END_NAMESPACE

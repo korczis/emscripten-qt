@@ -10,7 +10,9 @@
 #include <qhash.h>
 #include <qlabel.h>
 #include <qbitmap.h>
+#include <qbrush.h>
 #include <qmath.h>
+#include <html5canvasinterface.h>
 
 #include <private/qmath_p.h>
 #include <private/qtextengine_p.h>
@@ -22,6 +24,7 @@
 
 #include "qoutlinemapper_p.h"
 #include "qpaintengine.h"
+#include "../image/qpixmap_html5canvas_p.h"
 
 #if !defined(QT_NO_FREETYPE)
 #  include <private/qfontengine_ft_p.h>
@@ -60,8 +63,14 @@ QHtml5CanvasPaintEngine::~QHtml5CanvasPaintEngine()
 */
 bool QHtml5CanvasPaintEngine::begin(QPaintDevice *device)
 {
+    Q_D(QHtml5CanvasPaintEngine);
     qDebug() << "QHtml5CanvasPaintEngine::begin(QPaintDevice *device)";
     Q_ASSERT(device->devType() == QInternal::Pixmap);
+    d->device = device;
+    QPixmap *pixmap = static_cast<QPixmap *>(device);
+    QPixmapData *pd = pixmap->pixmapData();
+    QHtml5CanvasPixmapData *html5CanvasPixmap = static_cast<QHtml5CanvasPixmapData*>(pd);
+    d->canvasHandle = html5CanvasPixmap->canvasHandle();
     return true;
 }
 
@@ -379,9 +388,16 @@ void QHtml5CanvasPaintEngine::fill(const QVectorPath &path, const QBrush &brush)
 */
 void QHtml5CanvasPaintEngine::fillRect(const QRectF &r, const QBrush &brush)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::fillRecct(): " << r << brush;
 #endif
+    if (brush.style() != Qt::SolidPattern)
+    {
+        qDebug() << "fillRect with non SolidPattern QBrush not yet supported!";
+        return;
+    }
+    Html5CanvasInterface::fillSolidRect(d->canvasHandle, brush.color().red(), brush.color().green(), brush.color().blue(), r.left(), r.top(), r.width(), r.height());
 }
 
 /*!

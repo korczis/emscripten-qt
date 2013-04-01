@@ -43,6 +43,8 @@ public:
     QImage toImage(const QRect &rect) const;
     QPaintEngine* paintEngine() const;
     int metric(QPaintDevice::PaintDeviceMetric metric) const;
+
+    qint32 canvasHandle() const ;
 private:
     void createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace);
     mutable QHtml5CanvasPaintEngine *pengine;

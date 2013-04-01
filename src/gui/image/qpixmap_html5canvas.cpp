@@ -149,6 +149,11 @@ int QHtml5CanvasPixmapData::metric(QPaintDevice::PaintDeviceMetric metric) const
     return 0;
 }
 
+qint32 QHtml5CanvasPixmapData::canvasHandle() const
+{
+    return m_canvasHandle;
+}
+
 void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace)
 {
     qDebug() << "QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace)";

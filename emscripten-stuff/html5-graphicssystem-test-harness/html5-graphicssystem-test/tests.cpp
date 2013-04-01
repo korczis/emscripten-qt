@@ -11,7 +11,6 @@ Html5GraphicsSystemTests::Html5GraphicsSystemTests(int widgetWidth, int widgetHe
 
 void Html5GraphicsSystemTests::testSanityTest()
 {
-    painter()->setBrush(QColor(255, 255, 255));
     painter()->fillRect(QRect(0, 0, widgetWidth(), widgetHeight()), QColor(255, 255, 255));
 }
 

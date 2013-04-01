@@ -107,6 +107,13 @@ void CommandListener::newCommandIncoming()
             qDebug() << "Wrote " << bytesToWrite;
             break;
         }
+        case Command::FillSolidRect:
+            qint32 canvasHandle;
+            int r, g, b;
+            double x, y, width, height;
+            command.commandData() >> canvasHandle >> r >> g >> b >> x >> y >> width >> height;
+            m_canvasPageFrame->evaluateJavaScript(QString("(function() { return EMSCRIPTENQT_fillSolidRect(%1, %2, %3, %4, %5, %6, %7, %8); })()").arg(canvasHandle).arg(r).arg(g).arg(b).arg(x).arg(y).arg(width).arg(height));
+            break;
     }
     if (m_commandSource->bytesAvailable() > 0)
     {

@@ -7,7 +7,7 @@ class CommandSender;
 class Command
 {
 public:
-    enum CommandType { ClearCanvas, GetCanvasPixels, GetHandleForMainCanvas, CreateCanvas};
+    enum CommandType { ClearCanvas, GetCanvasPixels, GetHandleForMainCanvas, CreateCanvas, FillSolidRect};
     Command(CommandType commandType);
     Command(const Command& other);
     ~Command();

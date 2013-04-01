@@ -81,6 +81,11 @@ else:symbian {
     SOURCES += image/qpixmap_raster_symbian.cpp
 }
 
+emscripten {
+    HEADERS += image/qpixmap_html5canvas_p.h
+    SOURCES += image/qpixmap_html5canvas.cpp
+}
+
 !symbian|contains(S60_VERSION, 3.1)|contains(S60_VERSION, 3.2) {
     SOURCES += image/qvolatileimagedata.cpp
 }

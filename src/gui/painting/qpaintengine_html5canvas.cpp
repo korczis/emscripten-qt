@@ -136,7 +136,10 @@ QHtml5CanvasPaintEngineState::QHtml5CanvasPaintEngineState(QHtml5CanvasPaintEngi
 QPainterState *QHtml5CanvasPaintEngine::createState(QPainterState *orig) const
 {
     qDebug() << "QHtml5CanvasPaintEngine::createState(QPainterState *orig)";
-    return NULL;
+    if (!orig)
+        return new QHtml5CanvasPaintEngineState();
+    else
+        return new QHtml5CanvasPaintEngineState(*static_cast<QHtml5CanvasPaintEngineState *>(orig));
 }
 
 /*!

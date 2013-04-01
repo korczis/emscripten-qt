@@ -49,7 +49,7 @@ void QHtml5CanvasPixmapData::resize(int width, int height)
     {
         m_canvasHandle = Html5CanvasInterface::createCanvas(width, height);
         qDebug() << "Create canvas: got handle: " << m_canvasHandle;
-        is_null = (m_canvasHandle != -1);
+        is_null = (m_canvasHandle == -1);
     }
 }
 
@@ -125,6 +125,7 @@ QImage QHtml5CanvasPixmapData::toImage() const
 QImage QHtml5CanvasPixmapData::toImage(const QRect &rect) const
 {
     qDebug() << "QHtml5CanvasPixmapData::toImage(const QRect &rect)";
+    return QImage();
 }
 
 void QHtml5CanvasPixmapData::setAlphaChannel(const QPixmap &alphaChannel)

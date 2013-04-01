@@ -9,10 +9,11 @@
 #include <QtCore/QMetaMethod>
 
 TestDriver::TestDriver()
-    : QObject(), m_testIndex(0), m_tests(new Html5GraphicsSystemTests)
+    : QObject(), m_testIndex(0) 
 {
     m_testWidget = new TestWidget(this);
     m_testWidget->showFullScreen();
+    m_tests = new Html5GraphicsSystemTests(m_testWidget->width(), m_testWidget->height());
 }
 
 void TestDriver::beginRunAllTestsAsync()

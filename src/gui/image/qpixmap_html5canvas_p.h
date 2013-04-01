@@ -15,6 +15,8 @@
 #include <QtGui/private/qpixmapdata_p.h>
 #include <QtGui/private/qpixmapdatafactory_p.h>
 
+class QHtml5CanvasPaintEngine;
+
 QT_BEGIN_NAMESPACE
 
 class Q_GUI_EXPORT QHtml5CanvasPixmapData : public QPixmapData
@@ -43,6 +45,8 @@ public:
     int metric(QPaintDevice::PaintDeviceMetric metric) const;
 private:
     void createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace);
+    mutable QHtml5CanvasPaintEngine *pengine;
+
 };
 
 QT_END_NAMESPACE

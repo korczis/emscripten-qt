@@ -56,12 +56,12 @@ QHtml5CanvasPaintEngine : public QPaintEngineEx
     Q_DECLARE_PRIVATE(QHtml5CanvasPaintEngine)
 public:
 
-    QHtml5CanvasPaintEngine(QPaintDevice *device);
+    QHtml5CanvasPaintEngine();
     ~QHtml5CanvasPaintEngine();
     bool begin(QPaintDevice *device);
     bool end();
 
-    virtual void updateState(const QPaintEngineState &state) = 0;
+    virtual void updateState(const QPaintEngineState &state);
 
     void penChanged();
     void brushChanged();
@@ -163,7 +163,7 @@ QHtml5CanvasPaintEnginePrivate : public QPaintEngineExPrivate
 {
     Q_DECLARE_PUBLIC(QHtml5CanvasPaintEngine)
 public:
-    QHtml5CanvasPaintEnginePrivate();
+    QHtml5CanvasPaintEnginePrivate() {};
 };
 
 QT_END_NAMESPACE

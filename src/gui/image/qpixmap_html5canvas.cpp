@@ -11,6 +11,7 @@
 #include <QBuffer>
 #include <QImageReader>
 #include "qpixmap_html5canvas_p.h"
+#include "painting/qpaintengine_html5canvas_p.h"
 #include <private/qimage_p.h>
 #include <private/qwidget_p.h>
 #include <private/qdrawhelper_p.h>
@@ -19,7 +20,8 @@
 QT_BEGIN_NAMESPACE
 
 QHtml5CanvasPixmapData::QHtml5CanvasPixmapData(PixelType type)
-    : QPixmapData(type, RasterClass)
+    : QPixmapData(type, Html5CanvasClass),
+      pengine(NULL)
 {
 }
 
@@ -119,7 +121,11 @@ void QHtml5CanvasPixmapData::setAlphaChannel(const QPixmap &alphaChannel)
 QPaintEngine* QHtml5CanvasPixmapData::paintEngine() const
 {
     qDebug() << "QHtml5CanvasPixmapData::paintEngine()";
-    return NULL;
+    if (!pengine)
+    {
+        pengine = new QHtml5CanvasPaintEngine;
+    }
+    return pengine;
 }
 
 int QHtml5CanvasPixmapData::metric(QPaintDevice::PaintDeviceMetric metric) const

@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QHtml5CanvasPaintEngine::QHtml5CanvasPaintEngine(QPaintDevice *device)
+QHtml5CanvasPaintEngine::QHtml5CanvasPaintEngine()
     : QPaintEngineEx(*(new QHtml5CanvasPaintEnginePrivate))
 {
 }

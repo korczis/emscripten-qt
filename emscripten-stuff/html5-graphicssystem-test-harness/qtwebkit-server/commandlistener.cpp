@@ -45,10 +45,8 @@ void CommandListener::newCommandIncoming()
         {
             Rgba newCanvasColour;
             command.commandData() >> newCanvasColour;
-            const QString clearCanvasJS = QString("(function() { return EMSCRIPTENNATIVEHELPER_clearCanvas(%1); })();").arg(newCanvasColour);
-            qDebug() << "Evaluating JS:" << clearCanvasJS;
-            const QVariant result = m_canvasPageFrame->evaluateJavaScript(clearCanvasJS);
-            qDebug() << "Result: " << result;
+            const QString clearCanvasJs = QString("return EMSCRIPTENNATIVEHELPER_clearCanvas(%1);").arg(newCanvasColour);
+            const QVariant result = evaluateJsStatements(clearCanvasJs);
             break;
         }
         case Command::GetCanvasPixels:
@@ -56,7 +54,7 @@ void CommandListener::newCommandIncoming()
             const qint64 bytesToWrite = sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT;
             qDebug() << "About to write " << bytesToWrite;
             Rgba* fakeRgba = static_cast<Rgba*>(malloc(bytesToWrite));
-            const QVariant result = m_canvasPageFrame->evaluateJavaScript("(function() { return EMSCRIPTENNATIVEHELPER_canvasPixelsAsRGBAString(); })()");
+            const QVariant result = evaluateJsStatements("return EMSCRIPTENNATIVEHELPER_canvasPixelsAsRGBAString();");
             const QString rgbaHexString = result.toString();
             for (int i = 0; i < bytesToWrite; i++)
             {
@@ -73,7 +71,7 @@ void CommandListener::newCommandIncoming()
         }
         case Command::GetHandleForMainCanvas:
         {
-            const QVariant result = m_canvasPageFrame->evaluateJavaScript("(function() { return EMSCRIPTENQT_handleForMainCanvas(); })()");
+            const QVariant result = evaluateJsStatements("return EMSCRIPTENQT_handleForMainCanvas();");
             CanvasHandle handle = -1;
             if (result.canConvert<CanvasHandle>())
             {
@@ -93,7 +91,7 @@ void CommandListener::newCommandIncoming()
         {
             int width, height;
             command.commandData() >> width >> height;
-            const QVariant result = m_canvasPageFrame->evaluateJavaScript(QString("(function() { return EMSCRIPTENQT_createCanvas(%1, %2); })()").arg(width).arg(height));
+            const QVariant result = evaluateJsStatements(QString("return EMSCRIPTENQT_createCanvas(%1, %2);").arg(width).arg(height));
             CanvasHandle handle = -1;
             if (result.canConvert<CanvasHandle>())
             {
@@ -114,14 +112,14 @@ void CommandListener::newCommandIncoming()
             int r, g, b;
             double x, y, width, height;
             command.commandData() >> canvasHandle >> r >> g >> b >> x >> y >> width >> height;
-            m_canvasPageFrame->evaluateJavaScript(QString("(function() { return EMSCRIPTENQT_fillSolidRect(%1, %2, %3, %4, %5, %6, %7, %8); })()").arg(canvasHandle).arg(r).arg(g).arg(b).arg(x).arg(y).arg(width).arg(height));
+            evaluateJsStatements(QString("return EMSCRIPTENQT_fillSolidRect(%1, %2, %3, %4, %5, %6, %7, %8); ").arg(canvasHandle).arg(r).arg(g).arg(b).arg(x).arg(y).arg(width).arg(height));
             break;
-        case Command::DrawCanvaOnMainCanvas:
+        case Command::DrawCanvasOnMainCanvas:
         {
             CanvasHandle canvasHandle;
             int x, y;
             command.commandData() >> canvasHandle >> x >> y;
-            m_canvasPageFrame->evaluateJavaScript(QString("(function() { return EMSCRIPTENQT_drawCanvasOnMainCanvas(%1, %2, %3); })()").arg(canvasHandle).arg(x).arg(y));
+            evaluateJsStatements(QString("return EMSCRIPTENQT_drawCanvasOnMainCanvas(%1, %2, %3); ").arg(canvasHandle).arg(x).arg(y));
         }
     }
     if (m_commandSource->bytesAvailable() > 0)
@@ -129,4 +127,12 @@ void CommandListener::newCommandIncoming()
         // Call ourselves again - we can't depend on readyRead callinng us.
         QTimer::singleShot(0, this, SLOT(newCommandIncoming()));
     }
+}
+
+QVariant CommandListener::evaluateJsStatements(const QString& jsStatements)
+{
+    qDebug() << "Evaluating js: " + jsStatements;
+    const QVariant result = m_canvasPageFrame->evaluateJavaScript(QString("(function() {" + jsStatements + "})();"));
+    qDebug() << "result: " << result;
+    return result;
 }

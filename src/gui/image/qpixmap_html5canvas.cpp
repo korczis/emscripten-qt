@@ -26,10 +26,12 @@ QHtml5CanvasPixmapData::QHtml5CanvasPixmapData(PixelType type)
       m_canvasHandle(-1)
 {
     is_null = true;
+    qDebug() << "Created QHtml5CanvasPixmapData : " << (void*)this;
 }
 
 QHtml5CanvasPixmapData::~QHtml5CanvasPixmapData()
 {
+    qDebug() << "Destroyed QHtml5CanvasPixmapData : " << (void*)this;
 }
 
 QPixmapData *QHtml5CanvasPixmapData::createCompatiblePixmapData() const

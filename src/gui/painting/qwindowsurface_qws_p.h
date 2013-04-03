@@ -373,7 +373,7 @@ public:
     QImage image() const;
     QString key() const;
 
-    QHtml5CanvasPixmapData *backingPixmapData();
+    CanvasHandle backingCanvasHandle();
 protected:
     QImage::Format preferredImageFormat(const QWidget *widget) const;
 
@@ -385,8 +385,11 @@ protected:
     QMutex threadLock;
 #endif
 
-    QPixmap pixmap;
+    mutable QPixmap pixmap;
     QImage img;
+private:
+    bool m_isServerSide;
+    CanvasHandle m_backingCanvasHandle; // Should only be accessed when m_isServerSide.
 };
 
 QT_END_NAMESPACE

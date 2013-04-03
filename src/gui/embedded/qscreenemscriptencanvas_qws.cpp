@@ -110,7 +110,7 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
            qDebug() << "blah: " << win->requestedRegion().boundingRect();
            qDebug() << "surface: " << windowSurface;
 
-           const int winBackingCanvasHandle = windowSurface->backingPixmapData()->canvasHandle();
+           const CanvasHandle winBackingCanvasHandle = windowSurface->backingCanvasHandle();
 
            Html5CanvasInterface::drawCanvasOnMainCanvas(winBackingCanvasHandle, winX, winY);
        }

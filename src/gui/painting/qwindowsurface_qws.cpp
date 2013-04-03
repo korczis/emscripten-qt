@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qwindowsurface_qws_p.h"
+#include "html5canvasinterface.h"
 #include <qwidget.h>
 #include <qscreen_qws.h>
 #include <qwsmanager_qws.h>
@@ -1445,14 +1446,14 @@ void QWSDirectPainterSurface::unlock()
 #endif // QT_NO_DIRECTPAINTER
 
 QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()
-    : QWSWindowSurface()
+    : QWSWindowSurface(), m_isServerSide(false), m_backingCanvasHandle(-1)
 {
     qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()" << "(" << (void*)this << ")";
     setSurfaceFlags(Buffered);
 }
 
 QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)
-    : QWSWindowSurface(widget)
+    : QWSWindowSurface(widget), m_isServerSide(false), m_backingCanvasHandle(-1)
 {
     qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)" << "(" << (void*)this << ")";
     SurfaceFlags flags = Buffered;
@@ -1475,26 +1476,55 @@ bool QWSHtml5CanvasSurface::isValid() const
 QByteArray QWSHtml5CanvasSurface::permanentState() const
 {
     qDebug() << "QWSHtml5CanvasSurface::permanentState()"<< "(" << (void*)this << ")";
-    QByteArray array(2 * sizeof(int), Qt::Uninitialized);
+    Q_ASSERT(!m_isServerSide);
+    QByteArray array(sizeof(CanvasHandle) + 3 * sizeof(int) + sizeof(SurfaceFlags), Qt::Uninitialized);
 
-    int *ptr = reinterpret_cast<int*>(array.data());
-    ptr[0] = pixmap.width();
-    ptr[1] = pixmap.height();
-    qDebug() << "pixmap width: " << pixmap.width();
-    qDebug() << "pixmap height: " << pixmap.height();
+    char *ptr = array.data();
+
+    CanvasHandle backingCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(pixmap.data_ptr().data())->canvasHandle();
+    reinterpret_cast<CanvasHandle*>(ptr)[0] = backingCanvasHandle;
+    ptr += sizeof(CanvasHandle);
+
+    reinterpret_cast<int*>(ptr)[0] = img.width();
+    reinterpret_cast<int*>(ptr)[1] = img.height();
+    ptr += 2 * sizeof(int);
+
+    *reinterpret_cast<int *>(ptr) = img.format();
+    ptr += sizeof(int);
+
+    *reinterpret_cast<SurfaceFlags*>(ptr) = surfaceFlags();
 
     return array;
 }
 void QWSHtml5CanvasSurface::setPermanentState(const QByteArray &data)
 {
     qDebug() << "QWSHtml5CanvasSurface::setPermanentState()"<< "(" << (void*)this << ")";
-    const int *ptr = reinterpret_cast<const int*>(data.constData());
+    int width;
+    int height;
+    QImage::Format format;
+    SurfaceFlags flags;
 
-    const int width = ptr[0];
-    const int height = ptr[1];
-    qDebug() << "Width: " << width << " height: " << height;
+    const char *ptr = data.constData();
 
-    pixmap = QPixmap(width, height);
+    m_backingCanvasHandle = reinterpret_cast<const CanvasHandle*>(ptr)[0];
+    ptr += sizeof(CanvasHandle);
+
+    width = reinterpret_cast<const int*>(ptr)[0];
+    height = reinterpret_cast<const int*>(ptr)[1];
+    ptr += 2 * sizeof(int);
+
+    format = QImage::Format(*reinterpret_cast<const int*>(ptr));
+    ptr += sizeof(int);
+
+    flags = *reinterpret_cast<const SurfaceFlags*>(ptr);
+
+    setSurfaceFlags(flags);
+
+    //pixmap = QPixmap(pixmapData);
+    //qDebug() << "pixmapWidth: " << pixmap.width();
+    //qDebug() << "pixmapHeight: " << pixmap.height();
+    //qDebug() << "pixmap null?: " << pixmap.isNull();
+    m_isServerSide = true;
 }
 
 void QWSHtml5CanvasSurface::setGeometry(const QRect &rect)
@@ -1517,6 +1547,7 @@ void QWSHtml5CanvasSurface::setGeometry(const QRect &rect)
 // }
 
 QPaintDevice *QWSHtml5CanvasSurface::paintDevice() {
+    Q_ASSERT(!m_isServerSide);
     qDebug() << "QWSHtml5CanvasSurface::paintDevice():  (" << (void*)this << ")";
     return &pixmap;
     //return &img;
@@ -1541,11 +1572,11 @@ QString QWSHtml5CanvasSurface::key() const
 }
 
 
-QHtml5CanvasPixmapData *QWSHtml5CanvasSurface::backingPixmapData()
+CanvasHandle QWSHtml5CanvasSurface::backingCanvasHandle()
 {
-    QPixmapData *pixmapData = pixmap.data_ptr().data();
-    Q_ASSERT(dynamic_cast<QHtml5CanvasPixmapData*>(pixmapData));
-    return static_cast<QHtml5CanvasPixmapData*>(pixmapData);
+    Q_ASSERT(m_isServerSide && m_backingCanvasHandle != -1);
+    qDebug() << "QWSHtml5CanvasSurface::backingCanvasHandle(): " << (void*)this;
+    return m_backingCanvasHandle;
 }
 
 QT_END_NAMESPACE

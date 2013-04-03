@@ -405,9 +405,11 @@ void QHtml5CanvasPaintEngine::fillRect(const QRectF &r, const QBrush &brush)
 */
 void QHtml5CanvasPaintEngine::fillRect(const QRectF &r, const QColor &color)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::fillRect(): " << r << color;
 #endif
+    Html5CanvasInterface::fillSolidRect(d->canvasHandle, color.red(), color.green(), color.blue(), r.left(), r.top(), r.width(), r.height());
 }
 
 /*!

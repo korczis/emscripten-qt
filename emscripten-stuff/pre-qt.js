@@ -526,7 +526,7 @@ Module['preRun'].push(function() {
 	}
 });
 
-function EMSCRIPTENQT_handleForMainCanvas()
+function _EMSCRIPTENQT_handleForMainCanvas()
 {
     if (document.getElementById('canvas') == undefined)
     {
@@ -539,7 +539,7 @@ function EMSCRIPTENQT_handleForMainCanvas()
 }
 
 var emscriptenqt_handle_to_canvas;
-function EMSCRIPTENQT_createCanvas(width, height)
+function _EMSCRIPTENQT_createCanvas(width, height)
 {
     try
     {
@@ -566,7 +566,7 @@ function EMSCRIPTENQT_createCanvas(width, height)
     }
 }
 
-function EMSCRIPTENQT_fillSolidRect(canvasHandle, r, g, b, x, y, width, height)
+function _EMSCRIPTENQT_fillSolidRect(canvasHandle, r, g, b, x, y, width, height)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
@@ -578,7 +578,7 @@ function EMSCRIPTENQT_fillSolidRect(canvasHandle, r, g, b, x, y, width, height)
     return true;
 }
 
-function EMSCRIPTENQT_drawCanvasOnMainCanvas(canvasHandle, x, y)
+function _EMSCRIPTENQT_drawCanvasOnMainCanvas(canvasHandle, x, y)
 {
 try
 {

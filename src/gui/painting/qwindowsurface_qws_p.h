@@ -54,6 +54,7 @@
 //
 
 #include "qwindowsurface_p.h"
+#include "../image/qpixmap_html5canvas_p.h"
 #include <qregion.h>
 #include <qimage.h>
 #include <qdirectpainter_qws.h>
@@ -350,6 +351,7 @@ private:
 
 #endif // QT_NO_DIRECTPAINTER
 
+class QHtml5CanvasPixmapData;
 class Q_GUI_EXPORT QWSHtml5CanvasSurface : public QWSWindowSurface
 {
 public:
@@ -358,13 +360,20 @@ public:
     ~QWSHtml5CanvasSurface();
 
     bool isValid() const;
+
+    QByteArray permanentState() const;
+    void setPermanentState(const QByteArray &);
+
     virtual void setGeometry(const QRect &rect);
+    //virtual void setGeometry(const QRect &rect, const QRegion &mask);
 
     QPaintDevice *paintDevice();
     bool scroll(const QRegion &area, int dx, int dy);
 
     QImage image() const;
     QString key() const;
+
+    QHtml5CanvasPixmapData *backingPixmapData();
 protected:
     QImage::Format preferredImageFormat(const QWidget *widget) const;
 

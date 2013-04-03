@@ -1447,14 +1447,14 @@ void QWSDirectPainterSurface::unlock()
 QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()
     : QWSWindowSurface()
 {
-    qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()";
+    qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()" << "(" << (void*)this << ")";
     setSurfaceFlags(Buffered);
 }
 
 QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)
     : QWSWindowSurface(widget)
 {
-    qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)";
+    qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)" << "(" << (void*)this << ")";
     SurfaceFlags flags = Buffered;
     if (isWidgetOpaque(widget))
         flags |= Opaque;
@@ -1469,18 +1469,55 @@ QWSHtml5CanvasSurface::~QWSHtml5CanvasSurface()
 bool QWSHtml5CanvasSurface::isValid() const
 {
     qDebug() << "QWSHtml5CanvasSurface::isValid()";
-    return true;
+    return !pixmap.isNull();
+}
+
+QByteArray QWSHtml5CanvasSurface::permanentState() const
+{
+    qDebug() << "QWSHtml5CanvasSurface::permanentState()"<< "(" << (void*)this << ")";
+    QByteArray array(2 * sizeof(int), Qt::Uninitialized);
+
+    int *ptr = reinterpret_cast<int*>(array.data());
+    ptr[0] = pixmap.width();
+    ptr[1] = pixmap.height();
+    qDebug() << "pixmap width: " << pixmap.width();
+    qDebug() << "pixmap height: " << pixmap.height();
+
+    return array;
+}
+void QWSHtml5CanvasSurface::setPermanentState(const QByteArray &data)
+{
+    qDebug() << "QWSHtml5CanvasSurface::setPermanentState()"<< "(" << (void*)this << ")";
+    const int *ptr = reinterpret_cast<const int*>(data.constData());
+
+    const int width = ptr[0];
+    const int height = ptr[1];
+    qDebug() << "Width: " << width << " height: " << height;
+
+    pixmap = QPixmap(width, height);
 }
 
 void QWSHtml5CanvasSurface::setGeometry(const QRect &rect)
 {
-    qDebug() << "QWSHtml5CanvasSurface::setGeometry():" << rect;
+    qDebug() << "QWSHtml5CanvasSurface::setGeometry():" << rect << "(" << (void*)this << ")";
     img = QImage(rect.width(), rect.height(), QImage::Format_RGB32);
     pixmap = QPixmap(rect.width(), rect.height());
+    qDebug() << "Pixmap width: " << pixmap.width();
+    qDebug() << "Pixmap height: " << pixmap.height();
     QWSWindowSurface::setGeometry(rect);
 }
 
+
+// void QWSHtml5CanvasSurface::setGeometry(const QRect &rect, const QRegion &mask)
+// {
+//     qDebug() << "QWSHtml5CanvasSurface::setGeometry() with mask:" << rect << "(" << (void*)this << ")";
+//     img = QImage(rect.width(), rect.height(), QImage::Format_RGB32);
+//     pixmap = QPixmap(rect.width(), rect.height());
+//     QWSWindowSurface::setGeometry(rect, mask);
+// }
+
 QPaintDevice *QWSHtml5CanvasSurface::paintDevice() {
+    qDebug() << "QWSHtml5CanvasSurface::paintDevice():  (" << (void*)this << ")";
     return &pixmap;
     //return &img;
 }
@@ -1501,6 +1538,14 @@ QString QWSHtml5CanvasSurface::key() const
 {
     qDebug() << "QWSHtml5CanvasSurface::key()";
     return "html5canvas";
+}
+
+
+QHtml5CanvasPixmapData *QWSHtml5CanvasSurface::backingPixmapData()
+{
+    QPixmapData *pixmapData = pixmap.data_ptr().data();
+    Q_ASSERT(dynamic_cast<QHtml5CanvasPixmapData*>(pixmapData));
+    return static_cast<QHtml5CanvasPixmapData*>(pixmapData);
 }
 
 QT_END_NAMESPACE

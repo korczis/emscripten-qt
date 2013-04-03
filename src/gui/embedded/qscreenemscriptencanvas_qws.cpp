@@ -1,4 +1,6 @@
 #include "qscreenemscriptencanvas_qws.h"
+#include "qwindowsystem_qws.h"
+#include <painting/html5canvasinterface.h>
 #include <painting/qwindowsurface_qws_p.h>
 #include <kernel/qapplication_p.h>
 #include <painting/qgraphicssystemfactory_p.h>
@@ -85,11 +87,34 @@ void QEmscriptenCanvasScreen::blank(bool something)
 
 void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
 {
-    // first, call the parent implementation. The parent implementation will update
-    // the region on our in-memory surface
-    QScreen::exposeRegion(r, changing);
-    r = r.intersected(QRect(0, 0, EMSCRIPTENQT_canvas_width_pixels(), EMSCRIPTENQT_canvas_height_pixels()));
-    EMSCRIPTENQT_flush_pixels(data, r.boundingRect().left(), r.boundingRect().top(), r.boundingRect().width(), r.boundingRect().height());
+    if (m_useRaster)
+    {
+        // first, call the parent implementation. The parent implementation will update
+        // the region on our in-memory surface
+        QScreen::exposeRegion(r, changing);
+        r = r.intersected(QRect(0, 0, EMSCRIPTENQT_canvas_width_pixels(), EMSCRIPTENQT_canvas_height_pixels()));
+        EMSCRIPTENQT_flush_pixels(data, r.boundingRect().left(), r.boundingRect().top(), r.boundingRect().width(), r.boundingRect().height());
+    }
+    else
+    {
+        // TODO - needs a lot of work, here.  Just "compose" the windows for now by just blitting their
+        // backing canvases to the main canvas: we ultimately need to deal with transparency, z-ordering, etc,
+        // but most of all will need to write directly to the canvas when we can, eliminating the need for a blit.
+       foreach(QWSWindow *win, qwsServer->clientWindows())
+       {
+           QWSHtml5CanvasSurface *windowSurface = dynamic_cast<QWSHtml5CanvasSurface*>(win->windowSurface());
+           Q_ASSERT(windowSurface);
+
+           const int winX = win->requestedRegion().boundingRect().left();
+           const int winY = win->requestedRegion().boundingRect().top();
+           qDebug() << "blah: " << win->requestedRegion().boundingRect();
+           qDebug() << "surface: " << windowSurface;
+
+           const int winBackingCanvasHandle = windowSurface->backingPixmapData()->canvasHandle();
+
+           Html5CanvasInterface::drawCanvasOnMainCanvas(winBackingCanvasHandle, winX, winY);
+       }
+    }
 }
 
 QWSWindowSurface* QEmscriptenCanvasScreen::createSurface(const QString& key) const

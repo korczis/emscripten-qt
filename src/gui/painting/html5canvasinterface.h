@@ -33,6 +33,10 @@ public:
      * The canvas state (in particular, the fillStyle) is not affected by this method.
      */
     static void fillSolidRect(CanvasHandle canvasHandle, int r, int g, int b, double x, double y, double width, double height);
+    /**
+     * Draw the canvas with the requested \a canvasHandle on the main canvas at \a x, \a y
+     */
+    static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
 };
 
 QT_END_NAMESPACE

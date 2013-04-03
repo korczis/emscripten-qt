@@ -81,3 +81,11 @@ void Html5CanvasInterface::fillSolidRect(CanvasHandle canvasHandle, int r, int g
     fillSolidRectCommand.commandData() << canvasHandle << r << g << b << x << y << width << height;
     commandSender()->sendCommand(fillSolidRectCommand);
 }
+
+void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)
+{
+    Command drawCanvasOnMainCanvasCommand(Command::DrawCanvasOnMainCanvas);
+    drawCanvasOnMainCanvasCommand.commandData() << canvasHandle << x << y;
+    commandSender()->sendCommand(drawCanvasOnMainCanvasCommand);
+}
+

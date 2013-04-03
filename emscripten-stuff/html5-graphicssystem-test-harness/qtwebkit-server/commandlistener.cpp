@@ -116,6 +116,13 @@ void CommandListener::newCommandIncoming()
             command.commandData() >> canvasHandle >> r >> g >> b >> x >> y >> width >> height;
             m_canvasPageFrame->evaluateJavaScript(QString("(function() { return EMSCRIPTENQT_fillSolidRect(%1, %2, %3, %4, %5, %6, %7, %8); })()").arg(canvasHandle).arg(r).arg(g).arg(b).arg(x).arg(y).arg(width).arg(height));
             break;
+        case Command::DrawCanvaOnMainCanvas:
+        {
+            CanvasHandle canvasHandle;
+            int x, y;
+            command.commandData() >> canvasHandle >> x >> y;
+            m_canvasPageFrame->evaluateJavaScript(QString("(function() { return EMSCRIPTENQT_drawCanvasOnMainCanvas(%1, %2, %3); })()").arg(canvasHandle).arg(x).arg(y));
+        }
     }
     if (m_commandSource->bytesAvailable() > 0)
     {

@@ -576,3 +576,18 @@ function EMSCRIPTENQT_fillSolidRect(canvasHandle, r, g, b, x, y, width, height)
     ctx.fill();
     ctx.closePath();
 }
+
+function EMSCRIPTENQT_drawCanvasOnMainCanvas(canvasHandle, x, y)
+{
+try
+{
+    var canvasToDraw = emscriptenqt_handle_to_canvas[canvasHandle];
+    var mainCanvas = document.getElementById('canvas');
+    var mainCanvasCtx = canvas.getContext("2d");
+    mainCanvasCtx.drawImage(canvasToDraw, x, y);
+}
+catch (e)
+{
+window.alert("exc: " + e);
+}
+}

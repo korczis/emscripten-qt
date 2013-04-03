@@ -572,9 +572,10 @@ function EMSCRIPTENQT_fillSolidRect(canvasHandle, r, g, b, x, y, width, height)
     var ctx = canvas.getContext("2d");
     ctx.beginPath();
     ctx.rect(x, y, width, height);
-    ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ")";
+    ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + 0xff + ")";
     ctx.fill();
     ctx.closePath();
+    return true;
 }
 
 function EMSCRIPTENQT_drawCanvasOnMainCanvas(canvasHandle, x, y)
@@ -585,6 +586,7 @@ try
     var mainCanvas = document.getElementById('canvas');
     var mainCanvasCtx = canvas.getContext("2d");
     mainCanvasCtx.drawImage(canvasToDraw, x, y);
+    return true;
 }
 catch (e)
 {

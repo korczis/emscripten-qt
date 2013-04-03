@@ -12,7 +12,7 @@
 #include <qbitmap.h>
 #include <qbrush.h>
 #include <qmath.h>
-#include <html5canvasinterface.h>
+#include "painting/html5canvasinterface.h"
 
 #include <private/qmath_p.h>
 #include <private/qtextengine_p.h>

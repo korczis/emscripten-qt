@@ -2,10 +2,6 @@
 #define HTML5CANVAS_INTERFACE_H
 
 #include <QtCore/qglobal.h>
-/**
- * The native implementation is in emscripten-stuff/html5-graphicssystem-test-harness/html5-graphicssystem-test/
- * for now.
- */
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE

@@ -196,7 +196,7 @@ unix:!mac:!symbian|qpa {
 
 emscripten {
         SOURCES += \
-                painting/qprinterinfo_emscripten.cpp
+                painting/qprinterinfo_emscripten.cpp \
                 painting/html5canvasinterface.cpp
 }
 

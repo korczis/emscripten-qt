@@ -12,7 +12,7 @@
 #include <QImageReader>
 #include "qpixmap_html5canvas_p.h"
 #include "painting/qpaintengine_html5canvas_p.h"
-#include <html5canvasinterface.h>
+#include "painting/html5canvasinterface.h"
 #include <private/qimage_p.h>
 #include <private/qwidget_p.h>
 #include <private/qdrawhelper_p.h>

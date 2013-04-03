@@ -40,6 +40,8 @@ QPixmapData *QHtml5CanvasPixmapData::createCompatiblePixmapData() const
 void QHtml5CanvasPixmapData::resize(int width, int height)
 {
     qDebug() << "QHtml5CanvasPixmapData::resize(int width, int height)";
+    w = width;
+    h = height;
     if (width <= 0 || height <= 0)
     {
         // TODO - destroy canvas.
@@ -47,8 +49,10 @@ void QHtml5CanvasPixmapData::resize(int width, int height)
     }
     else
     {
+        // TODO - check for existing canvas!
         m_canvasHandle = Html5CanvasInterface::createCanvas(width, height);
         qDebug() << "Create canvas: got handle: " << m_canvasHandle;
+        // TODO - width and height if failed?
         is_null = (m_canvasHandle == -1);
     }
 }

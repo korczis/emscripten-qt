@@ -25,27 +25,28 @@
 #include <cstring>
 extern "C"
 {
-    // Adapted from GNUlib.
-    // TODO - find properly-licensed version and upstream into Emscripten.
     int
-    __signbitd (double arg)
+    __signbitd (double arg);
+}
+// Adapted from GNUlib.
+// TODO - find properly-licensed version and upstream into Emscripten.
+int __signbitd (double arg)
+{
+    /* This does not do the right thing for NaN, but this is irrelevant for
+    *     most use cases.  */
+    if (isnan (arg))
+        return 0;
+    if (arg < 0.0)
+        return 1;
+    else if (arg == 0.0)
     {
-        /* This does not do the right thing for NaN, but this is irrelevant for
-        *     most use cases.  */
-        if (isnan (arg))
-            return 0;
-        if (arg < 0.0)
-            return 1;
-        else if (arg == 0.0)
-        {
-            /* Distinguish 0.0 and -0.0.  */
-            static double plus_zero = 0.0;
-            double arg_mem = arg;
-            return (memcmp (&plus_zero, &arg_mem, sizeof(double)) != 0);
-        }
-        else
-            return 0;
+        /* Distinguish 0.0 and -0.0.  */
+        static double plus_zero = 0.0;
+        double arg_mem = arg;
+        return (memcmp (&plus_zero, &arg_mem, sizeof(double)) != 0);
     }
+    else
+        return 0;
 }
 
 #endif

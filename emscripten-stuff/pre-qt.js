@@ -26,7 +26,7 @@ function _EMSCRIPTENQT_timerCallback_springboard()
 		//window.alert("Exception occurred in event handler: " + e);
 	}
 }
-function _EMSCRIPTENQT_resetTimerCallback(milliseconds)
+function _EMSCRIPTENQT_resetTimerCallback_internal(milliseconds)
 {
 	if (EMSCRIPTENQT_callbackTimer != null)
 	{
@@ -36,12 +36,12 @@ function _EMSCRIPTENQT_resetTimerCallback(milliseconds)
 	EMSCRIPTENQT_callbackTimer = setTimeout(_EMSCRIPTENQT_timerCallback_springboard, milliseconds);
 	//Module.print("callback requested in " + milliseconds + "ms");
 }
-function _EMSCRIPTENQT_canvas_width_pixels()
+function _EMSCRIPTENQT_canvas_width_pixels_internal()
 {
 	var canvas = document.getElementById('canvas');
 	return canvas.width;
 }
-function _EMSCRIPTENQT_canvas_height_pixels()
+function _EMSCRIPTENQT_canvas_height_pixels_internal()
 {
 	var canvas = document.getElementById('canvas');
 	return canvas.height;
@@ -127,7 +127,7 @@ function _EMSCRIPTENQT_flush_pixels_normal(data, regionX, regionY, regionW, regi
         }
         canvasContext.putImageData(imageData, regionX, regionY);
 }
-function _EMSCRIPTENQT_flush_pixels(data, regionX, regionY, regionW, regionH)
+function _EMSCRIPTENQT_flush_pixels_internal(data, regionX, regionY, regionW, regionH)
 {
         if (document.getElementById('experimental-renderer-checkbox').checked)
         {
@@ -141,7 +141,7 @@ function _EMSCRIPTENQT_flush_pixels(data, regionX, regionY, regionW, regionH)
 function _EMSCRIPTENQT_attemptedLocalEventLoop()
 {
 }
-function _EMSCRIPTENQT_launchWebBrowser(urlCString)
+function _EMSCRIPTENQT_launchWebBrowser_internal(urlCString)
 {
     window.open(Pointer_stringify(urlCString), '_blank');
 }
@@ -341,7 +341,7 @@ function EMSCRIPTENQT_keyPress(e)
 {
 	EMSCRIPTENQT_keyEvent(e, true, true);
 }
-function _EMSCRIPTENQT_cursorChanged(newCursorShape)
+function _EMSCRIPTENQT_cursorChanged_internal(newCursorShape)
 {
 	//Module.print("Qt cursor changed: " + newCursorShape);
         var cssCursorStyle;
@@ -518,6 +518,7 @@ Module['preRun'].push(function() {
 
 		canvas.tabIndex = 1;
 		// Data cache dir for QWS
+		Module['FS_createFolder']("/", 'tmp', true, true);
 		Module['FS_createFolder']("/tmp/", 'qtembedded-0', true, true);
 
 	} catch (e)

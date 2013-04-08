@@ -33,3 +33,29 @@ mergeInto(LibraryManager.library, {
             _EMSCRIPTENQT_flush_pixels_internal(data, regionX, regionY, regionW, regionH);
       }
     });
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_createCanvas: function(width, height) {
+          return _EMSCRIPTENQT_createCanvas_internal(width, height);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_fillSolidRect: function(canvasHandle, r, g, b, x, y, width, height) {
+          return _EMSCRIPTENQT_fillSolidRect_internal(canvasHandle, r, g, b, x, y, width, height);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_drawCanvasOnMainCanvas: function(canvasHandle, x, y) {
+          return _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_handleForMainCanvas: function() {
+          return _EMSCRIPTENQT_handleForMainCanvas_internal();
+      }
+    });
+
+

@@ -632,6 +632,10 @@ function _EMSCRIPTENQT_mainCanvasContentsRaw_internal(destPointer, heapArray8)
 {
     try
     {
+        if (heapArray8 == undefined)
+        {
+            heapArray8 = HEAP8;
+        }
         var destHeapArrayIndex = destPointer;
         var canvas = document.getElementById('canvas');
         var numPixels = canvas.width  * canvas.height;

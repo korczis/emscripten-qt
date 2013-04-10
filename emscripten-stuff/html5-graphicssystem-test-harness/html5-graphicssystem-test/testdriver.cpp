@@ -43,10 +43,8 @@ void TestDriver::runNextTest()
     Html5CanvasInterface::clearMainCanvas(0xFF0000FF);
     m_tests->setExpectedImage(QImage());
 
-    qDebug() << "Calling repaint()";
     m_testWidget->repaint();
 
-    qDebug() << "Requesting contents";
     // The redraw of the widget is instantaneous, but we need to process events so that it is flushed to the screen :/
     while (QApplication::hasPendingEvents())
     {

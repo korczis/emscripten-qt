@@ -69,12 +69,10 @@ QImage Html5CanvasInterface::mainCanvasContents()
         for (int x = 0; x < CANVAS_WIDTH; x++)
         {
             const Rgba pixelRgba = canvasContentsRaw[x + y * CANVAS_WIDTH];
-            qDebug() << "pixelRgba: " << pixelRgba;
             const int a = pixelRgba >> 24;
             const int b = (pixelRgba & 0xFF0000) >> 16;
             const int g =  (pixelRgba & 0xFF00) >> 8;
             const int r =   (pixelRgba & 0xFF) >> 0;
-            qDebug() << "r: " << r << " g: " << g << " b: " << b << " a: " << a;
             canvasContentsImage.setPixel(x, y, QColor(r, g, b, a).rgba());
         }
     }

@@ -28,7 +28,6 @@ void CanvasTestInterface::init()
 
 Rgba* Html5CanvasInterface::mainCanvasContentsRaw()
 {
-    qDebug() << "mainCanvasContentsRaw";
     Command getCanvasPixelsCommand(Command::GetCanvasPixels);
     commandSender()->sendCommand(getCanvasPixelsCommand);
     Rgba* rbga = static_cast<Rgba*>(commandSender()->readCommandResponse(sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT));

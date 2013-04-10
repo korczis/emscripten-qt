@@ -12,6 +12,7 @@ extern "C"
     CanvasHandle EMSCRIPTENQT_createCanvas(int width, int height);
     void EMSCRIPTENQT_fillSolidRect(CanvasHandle canvasHandle, int r, int g, int b, double x, double y, double width, double height);
     void EMSCRIPTENQT_drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
+    void EMSCRIPTENQT_clearMainCanvas(Rgba rgba);
 }
 
 CanvasHandle Html5CanvasInterface::handleForMainCanvas()
@@ -34,5 +35,9 @@ void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int
     EMSCRIPTENQT_drawCanvasOnMainCanvas(canvasHandle, x, y);
 }
 
+void Html5CanvasInterface::clearMainCanvas(Rgba rgba)
+{
+    EMSCRIPTENQT_clearMainCanvas(rgba);
+}
 
 #endif

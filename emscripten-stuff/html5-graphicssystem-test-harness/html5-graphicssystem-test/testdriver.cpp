@@ -7,6 +7,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
 #include <QtCore/QMetaMethod>
+#include <QtGui/html5canvasinterface.h>
 
 TestDriver::TestDriver()
     : QObject(), m_testIndex(0) 
@@ -38,7 +39,7 @@ void TestDriver::runNextTest()
     }
 
     m_currentTestMethod = m_tests->metaObject()->method(nextTestMethodIndex); 
-    CanvasTestInterface::clearCanvas(0xFF0000FF);
+    Html5CanvasInterface::clearMainCanvas(0xFF0000FF);
     m_tests->setExpectedImage(QImage());
 
     m_testWidget->repaint();

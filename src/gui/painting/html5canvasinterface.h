@@ -9,6 +9,7 @@ QT_BEGIN_NAMESPACE
 QT_MODULE(Gui)
 
 typedef qint32 CanvasHandle;
+typedef quint32 Rgba;
 
 class Q_GUI_EXPORT Html5CanvasInterface
 {
@@ -33,6 +34,10 @@ public:
      * Draw the canvas with the requested \a canvasHandle on the main canvas at \a x, \a y
      */
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
+    /**
+     * Fill the main canvas with the colour \a rgba.  Mainly used by the html5canvas test suite.
+     */
+    static void clearMainCanvas(Rgba rgba);
 };
 
 QT_END_NAMESPACE

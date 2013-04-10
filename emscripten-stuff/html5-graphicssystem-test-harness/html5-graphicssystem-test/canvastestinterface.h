@@ -7,8 +7,6 @@ class CanvasTestInterface
 public:
     static void init();
 
-    static void clearCanvas(Rgba rgba);
-    
     static QImage canvasContents();
 
     static void deInit();

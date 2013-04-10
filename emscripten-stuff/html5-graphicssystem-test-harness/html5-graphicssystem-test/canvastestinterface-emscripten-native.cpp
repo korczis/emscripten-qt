@@ -25,12 +25,6 @@ void CanvasTestInterface::init()
 {
 }
 
-void CanvasTestInterface::clearCanvas(Rgba colour)
-{
-    Command clearCanvasCommand(Command::ClearCanvas);
-    clearCanvasCommand.commandData() << colour;
-    commandSender()->sendCommand(clearCanvasCommand);
-}
 
 QImage CanvasTestInterface::canvasContents()
 {
@@ -52,6 +46,13 @@ QImage CanvasTestInterface::canvasContents()
 
 void CanvasTestInterface::deInit()
 {
+}
+
+void Html5CanvasInterface::clearMainCanvas(Rgba colour)
+{
+    Command clearCanvasCommand(Command::ClearCanvas);
+    clearCanvasCommand.commandData() << colour;
+    commandSender()->sendCommand(clearCanvasCommand);
 }
 
 CanvasHandle Html5CanvasInterface::handleForMainCanvas()

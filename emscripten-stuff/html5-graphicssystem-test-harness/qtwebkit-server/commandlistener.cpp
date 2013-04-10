@@ -170,6 +170,15 @@ QVariant CommandListener::evaluateJsStatements(const QString& jsStatements)
 {
     qDebug() << "Evaluating js: " + jsStatements;
     const QVariant result = m_canvasPageFrame->evaluateJavaScript(QString("(function() {" + jsStatements + "})();"));
-    qDebug() << "result: " << result;
+    //qDebug() << "result: " << result;
+    QString debugResult;
+    QDebug debugResultStream(&debugResult);
+    debugResultStream << result;
+    const int maxDebugChars = 500;
+    if (debugResult.length() > maxDebugChars)
+    {
+        debugResult = debugResult.mid(0, maxDebugChars) + " ...";
+    }
+    qDebug() << "result: " << debugResult;
     return result;
 }

@@ -634,7 +634,7 @@ void Generator::generateMetacall()
 {
     bool isQObject = (cdef->classname == "QObject");
 
-    fprintf(out, "\nint %s::qt_metacall(QMetaObject::Call _c, int _id, void **_a)\n{\n",
+    fprintf(out, "\nint %s::qt_metacall(QMetaObject::Call meta_c, int _id, void **_a)\n{\n",
              cdef->qualified.constData());
 
     if (!purestSuperClass.isEmpty() && !isQObject) {
@@ -644,7 +644,7 @@ void Generator::generateMetacall()
             fprintf(out, "    typedef %s QMocSuperClass;\n", superClass.constData());
             superClass = "QMocSuperClass";
         }
-        fprintf(out, "    _id = %s::qt_metacall(_c, _id, _a);\n", superClass.constData());
+        fprintf(out, "    _id = %s::qt_metacall(meta_c, _id, _a);\n", superClass.constData());
     }
 
     fprintf(out, "    if (_id < 0)\n        return _id;\n");
@@ -658,9 +658,9 @@ void Generator::generateMetacall()
 
     if (methodList.size()) {
         needElse = true;
-        fprintf(out, "if (_c == QMetaObject::InvokeMetaMethod) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::InvokeMetaMethod) {\n");
         fprintf(out, "        if (_id < %d)\n", methodList.size());
-        fprintf(out, "            qt_static_metacall(this, _c, _id, _a);\n");
+        fprintf(out, "            qt_static_metacall(this, meta_c, _id, _a);\n");
         fprintf(out, "        _id -= %d;\n    }", methodList.size());
     }
 
@@ -693,7 +693,7 @@ void Generator::generateMetacall()
 
         if (needElse)
             fprintf(out, " else ");
-        fprintf(out, "if (_c == QMetaObject::ReadProperty) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::ReadProperty) {\n");
         if (needGet) {
             if (needTempVarForGet)
                 fprintf(out, "        void *_v = _a[0];\n");
@@ -728,7 +728,7 @@ void Generator::generateMetacall()
                 "    }", cdef->propertyList.count());
 
         fprintf(out, " else ");
-        fprintf(out, "if (_c == QMetaObject::WriteProperty) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::WriteProperty) {\n");
 
         if (needSet) {
             fprintf(out, "        void *_v = _a[0];\n");
@@ -758,7 +758,7 @@ void Generator::generateMetacall()
                 "    }", cdef->propertyList.count());
 
         fprintf(out, " else ");
-        fprintf(out, "if (_c == QMetaObject::ResetProperty) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::ResetProperty) {\n");
         if (needReset) {
             fprintf(out, "        switch (_id) {\n");
             for (int propindex = 0; propindex < cdef->propertyList.size(); ++propindex) {
@@ -780,7 +780,7 @@ void Generator::generateMetacall()
                 "    }", cdef->propertyList.count());
 
         fprintf(out, " else ");
-        fprintf(out, "if (_c == QMetaObject::QueryPropertyDesignable) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::QueryPropertyDesignable) {\n");
         if (needDesignable) {
             fprintf(out, "        bool *_b = reinterpret_cast<bool*>(_a[0]);\n");
             fprintf(out, "        switch (_id) {\n");
@@ -798,7 +798,7 @@ void Generator::generateMetacall()
                 "    }", cdef->propertyList.count());
 
         fprintf(out, " else ");
-        fprintf(out, "if (_c == QMetaObject::QueryPropertyScriptable) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::QueryPropertyScriptable) {\n");
         if (needScriptable) {
             fprintf(out, "        bool *_b = reinterpret_cast<bool*>(_a[0]);\n");
             fprintf(out, "        switch (_id) {\n");
@@ -816,7 +816,7 @@ void Generator::generateMetacall()
                 "    }", cdef->propertyList.count());
 
         fprintf(out, " else ");
-        fprintf(out, "if (_c == QMetaObject::QueryPropertyStored) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::QueryPropertyStored) {\n");
         if (needStored) {
             fprintf(out, "        bool *_b = reinterpret_cast<bool*>(_a[0]);\n");
             fprintf(out, "        switch (_id) {\n");
@@ -834,7 +834,7 @@ void Generator::generateMetacall()
                 "    }", cdef->propertyList.count());
 
         fprintf(out, " else ");
-        fprintf(out, "if (_c == QMetaObject::QueryPropertyEditable) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::QueryPropertyEditable) {\n");
         if (needEditable) {
             fprintf(out, "        bool *_b = reinterpret_cast<bool*>(_a[0]);\n");
             fprintf(out, "        switch (_id) {\n");
@@ -853,7 +853,7 @@ void Generator::generateMetacall()
 
 
         fprintf(out, " else ");
-        fprintf(out, "if (_c == QMetaObject::QueryPropertyUser) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::QueryPropertyUser) {\n");
         if (needUser) {
             fprintf(out, "        bool *_b = reinterpret_cast<bool*>(_a[0]);\n");
             fprintf(out, "        switch (_id) {\n");
@@ -880,14 +880,14 @@ void Generator::generateMetacall()
 
 void Generator::generateStaticMetacall()
 {
-    fprintf(out, "void %s::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)\n{\n",
+    fprintf(out, "void %s::qt_static_metacall(QObject *_o, QMetaObject::Call meta_c, int _id, void **_a)\n{\n",
             cdef->qualified.constData());
 
     bool needElse = false;
     bool isUsed_a = false;
 
     if (!cdef->constructorList.isEmpty()) {
-        fprintf(out, "    if (_c == QMetaObject::CreateInstance) {\n");
+        fprintf(out, "    if (meta_c == QMetaObject::CreateInstance) {\n");
         fprintf(out, "        switch (_id) {\n");
         for (int ctorindex = 0; ctorindex < cdef->constructorList.count(); ++ctorindex) {
             fprintf(out, "        case %d: { %s *_r = new %s(", ctorindex,
@@ -919,7 +919,7 @@ void Generator::generateStaticMetacall()
             fprintf(out, " else ");
         else
             fprintf(out, "    ");
-        fprintf(out, "if (_c == QMetaObject::InvokeMetaMethod) {\n");
+        fprintf(out, "if (meta_c == QMetaObject::InvokeMetaMethod) {\n");
 #ifndef QT_NO_DEBUG
         fprintf(out, "        Q_ASSERT(staticMetaObject.cast(_o));\n");
 #endif
@@ -963,7 +963,7 @@ void Generator::generateStaticMetacall()
         fprintf(out, "    Q_UNUSED(_o);\n");
         if (cdef->constructorList.isEmpty()) {
             fprintf(out, "    Q_UNUSED(_id);\n");
-            fprintf(out, "    Q_UNUSED(_c);\n");
+            fprintf(out, "    Q_UNUSED(meta_c);\n");
         }
     }
     if (!isUsed_a)

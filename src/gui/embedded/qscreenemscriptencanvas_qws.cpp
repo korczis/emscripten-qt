@@ -20,11 +20,12 @@ QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
     qDebug() << "QEmscriptenCanvasScreen::QEmscriptenCanvasScreen: display_id: " << display_id;
     qDebug() << "Initialising graphics system";
     QGraphicsSystem *graphics_system = QGraphicsSystemFactory::create(QApplicationPrivate::graphics_system_name);
-    setGraphicsSystem(graphics_system);
     m_useRaster = (dynamic_cast<QHtml5CanvasGraphicsSystem*>(graphics_system) == NULL);
     qDebug() << "Raster " << m_useRaster;
     if (!m_useRaster)
     {
+        // Only setGraphicsSystem if we're using html5canvas - it won't behave well for anything else!
+        setGraphicsSystem(graphics_system);
         m_mainCanvasHandle = Html5CanvasInterface::handleForMainCanvas();
         qDebug() << "Main canvas handle: " << m_mainCanvasHandle;
         Q_ASSERT(m_mainCanvasHandle != -1);

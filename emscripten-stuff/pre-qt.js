@@ -539,6 +539,32 @@ function _EMSCRIPTENQT_handleForMainCanvas_internal()
     }
 }
 
+function _EMSCRIPTENQT_mainCanvasWidth_internal()
+{
+    var mainCanvas = document.getElementById('canvas');
+    if (mainCanvas == undefined)
+    {
+        return -1;
+    }
+    else
+    {
+       return mainCanvas.width;
+    }
+}
+
+function _EMSCRIPTENQT_mainCanvasHeight_internal()
+{
+    var mainCanvas = document.getElementById('canvas');
+    if (mainCanvas == undefined)
+    {
+        return -1;
+    }
+    else
+    {
+       return mainCanvas.height;
+    }
+}
+
 var emscriptenqt_handle_to_canvas;
 function _EMSCRIPTENQT_createCanvas_internal(width, height)
 {

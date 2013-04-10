@@ -65,6 +65,26 @@ CanvasHandle Html5CanvasInterface::handleForMainCanvas()
     return handle;
 }
 
+int Html5CanvasInterface::mainCanvasWidth()
+{
+    Command getWidthOfMainCanvas(Command::GetMainCanvasWidth);
+    commandSender()->sendCommand(getWidthOfMainCanvas);
+    CanvasHandle *widthPtr = static_cast<int*>(commandSender()->readCommandResponse(sizeof(int)));
+    const int width = *widthPtr;
+    free(widthPtr);
+    return width;
+}
+
+int Html5CanvasInterface::mainCanvasHeight()
+{
+    Command getHeightOfMainCanvas(Command::GetMainCanvasHeight);
+    commandSender()->sendCommand(getHeightOfMainCanvas);
+    CanvasHandle *heightPtr = static_cast<int*>(commandSender()->readCommandResponse(sizeof(int)));
+    const int height = *heightPtr;
+    free(heightPtr);
+    return height;
+}
+
 CanvasHandle Html5CanvasInterface::createCanvas(int width, int height)
 {
     Command createCanvasCommand(Command::CreateCanvas);

@@ -87,6 +87,42 @@ void CommandListener::newCommandIncoming()
             qDebug() << "Wrote " << bytesToWrite;
             break;
         }
+        case Command::GetMainCanvasWidth:
+        {
+            const QVariant result = evaluateJsStatements("return _EMSCRIPTENQT_mainCanvasWidth_internal();");
+            int width = -1;
+            if (result.canConvert<CanvasHandle>())
+            {
+                width = result.toInt();
+            }
+            const qint64 bytesToWrite = sizeof(int);
+            const qint64 bytesWritten = m_commandSource->write((char*)&width, bytesToWrite);
+            if (bytesWritten != bytesToWrite)
+            {
+                const bool succeeded = m_commandSource->waitForBytesWritten(-1); 
+                Q_ASSERT(succeeded);
+            }
+            qDebug() << "Wrote " << bytesToWrite;
+            break;
+        }
+        case Command::GetMainCanvasHeight:
+        {
+            const QVariant result = evaluateJsStatements("return _EMSCRIPTENQT_mainCanvasHeight_internal();");
+            int height = -1;
+            if (result.canConvert<CanvasHandle>())
+            {
+                height = result.toInt();
+            }
+            const qint64 bytesToWrite = sizeof(int);
+            const qint64 bytesWritten = m_commandSource->write((char*)&height, bytesToWrite);
+            if (bytesWritten != bytesToWrite)
+            {
+                const bool succeeded = m_commandSource->waitForBytesWritten(-1); 
+                Q_ASSERT(succeeded);
+            }
+            qDebug() << "Wrote " << bytesToWrite;
+            break;
+        }
         case Command::CreateCanvas:
         {
             int width, height;

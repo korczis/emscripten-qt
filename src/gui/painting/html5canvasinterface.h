@@ -20,6 +20,10 @@ public:
      */
     static CanvasHandle handleForMainCanvas();
 
+    static int mainCanvasWidth();
+
+    static int mainCanvasHeight();
+
     /**
      * Create a Canvas (offscreen) off the given \a width and \a height, and return a handle to it,
      * or -1 if it could not be created.

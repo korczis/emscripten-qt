@@ -23,9 +23,12 @@ QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
     setGraphicsSystem(graphics_system);
     m_useRaster = (dynamic_cast<QHtml5CanvasGraphicsSystem*>(graphics_system) == NULL);
     qDebug() << "Raster " << m_useRaster;
-    m_mainCanvasHandle = Html5CanvasInterface::handleForMainCanvas();
-    qDebug() << "Main canvas handle: " << m_mainCanvasHandle;
-    Q_ASSERT(m_mainCanvasHandle != -1);
+    if (!m_useRaster)
+    {
+        m_mainCanvasHandle = Html5CanvasInterface::handleForMainCanvas();
+        qDebug() << "Main canvas handle: " << m_mainCanvasHandle;
+        Q_ASSERT(m_mainCanvasHandle != -1);
+    }
 }
 QEmscriptenCanvasScreen::~QEmscriptenCanvasScreen()
 {

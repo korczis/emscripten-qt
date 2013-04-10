@@ -13,6 +13,11 @@ catch (e)
 }
 
 var EMSCRIPTENQT_callbackTimer = null;
+var EMSCRIPTENQT_mainLoopHasBeenInitialised = false;
+function _EMSCRIPTENQT_mainLoopInitialised_internal()
+{
+    EMSCRIPTENQT_mainLoopHasBeenInitialised = true;
+}
 function _EMSCRIPTENQT_timerCallback_springboard()
 {
 	try
@@ -149,6 +154,10 @@ var ignoreMouseMovement = false;
 var clearIgnoreMouseMovementTimerSet = false;
 function EMSCRIPTENQT_mouseMoved(e)
 {
+    if (!EMSCRIPTENQT_mainLoopHasBeenInitialised)
+    {
+        return;
+    }
 	// Workaround for annoying bug in Firefox, where a flurry of mousemove events seems to starve other
 	// events (timeouts, redrawing the canvas, etc).
 	// Refuse to process subsequent mousemove events until a timeout has been successfully processed.
@@ -168,6 +177,10 @@ function EMSCRIPTENQT_mouseMoved(e)
 }
 function EMSCRIPTENQT_mouseButtonEvent(e, isButtonDown)
 {
+    if (!EMSCRIPTENQT_mainLoopHasBeenInitialised)
+    {
+        return;
+    }
         var canvas = document.getElementById('canvas');
         var qtMouseButton = -1; // See  Qt::MouseButton
         switch (e.which) {
@@ -203,6 +216,10 @@ var lastKeyDownCharCode = null;
 var waitingForkeyPress = false;
 function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 {
+    if (!EMSCRIPTENQT_mainLoopHasBeenInitialised)
+    {
+        return;
+    }
     var wasWaitingForKeyPress = waitingForkeyPress;
     waitingForkeyPress = false;
     if (e.ctrlKey )

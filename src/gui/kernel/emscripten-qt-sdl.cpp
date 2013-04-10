@@ -40,9 +40,9 @@ namespace
     } watchdogThread;
 }
 
-extern "C" 
+extern "C"
 {
-	void EMSCRIPTENQT_mouseCanvasPosChanged(int x, int y); 
+	void EMSCRIPTENQT_mouseCanvasPosChanged(int x, int y);
 	void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state);
 	void EMSCRIPTENQT_canvasKeyChanged(int unicode, int keycode, int modifiers, int isPress, int autoRepeat);
 
@@ -76,7 +76,7 @@ extern "C"
 	void EMSCRIPTENQT_resetTimerCallback(long milliseconds)
 	{
 		if (!sdlInited)
-		{	
+		{
 			// Can't set SDL timers before SDL is inited; ignore.
 			return;
 		}
@@ -111,7 +111,7 @@ extern "C"
 		int x, y, ytimesw;
 		const int BPP = 4;
 
-		if(SDL_MUSTLOCK(sdlCanvas)) 
+		if(SDL_MUSTLOCK(sdlCanvas))
 		{
 			if(SDL_LockSurface(sdlCanvas) < 0) return -1;
 		}
@@ -136,7 +136,7 @@ extern "C"
 
 		if(SDL_MUSTLOCK(sdlCanvas)) SDL_UnlockSurface(sdlCanvas);
 
-		SDL_Flip(sdlCanvas); 
+		SDL_Flip(sdlCanvas);
 		return 0;
 	}
 	void EMSCRIPTENQT_cursorChanged(int cursor)
@@ -150,6 +150,10 @@ extern "C"
         {
             attemptedLocalEventCallback();
         }
+    }
+
+    void EMSCRIPTENQT_mainLoopInitialised()
+    {
     }
 
     bool EMSCRIPTENQT_launchWebBrowser(const char* url)
@@ -360,7 +364,7 @@ int EmscriptenQtSDL::exec()
 		{
 			qDebug() << "Quitting";
             quit = true;
-		}    
+		}
 		else if (event.type == SDL_USEREVENT)
 		{
 			// Qt timer.

@@ -1,7 +1,6 @@
 #include "qkbdemscriptencanvas_qws.h"
 #include <qdebug.h>
 
-extern bool mainEventLoopStarted;
 extern "C"
 {
     void EMSCRIPTENQT_canvasKeyChanged(int unicode, int keycode, int modifiers,
@@ -9,8 +8,6 @@ extern "C"
     void EMSCRIPTENQT_canvasKeyChanged(int unicode, int keycode, int modifiers,
                                  int isPress, int autoRepeat)
     {
-        if (!mainEventLoopStarted)
-            return;
         if (keycode == 0)
         {
             // Try to reconstruct the keycode from the unicode.

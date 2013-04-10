@@ -1,4 +1,11 @@
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_mainLoopInitialised: function() {
+          return _EMSCRIPTENQT_mainLoopInitialised_internal();
+      }
+    });
+
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_resetTimerCallback: function(ms) {
             _EMSCRIPTENQT_resetTimerCallback_internal(ms);
       }

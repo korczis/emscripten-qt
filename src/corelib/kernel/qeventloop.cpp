@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
 #ifdef EMSCRIPTEN
 extern "C"
 {
+    void EMSCRIPTENQT_mainLoopInitialised();
     void EMSCRIPTENQT_attemptedLocalEventLoop();
 }
 #endif
@@ -189,6 +190,9 @@ int QEventLoop::exec(ProcessEventsFlags flags)
     {
         qDebug() << "Starting single main event loop and returning immediately";
         mainEventLoopStarted = true;
+#ifdef EMSCRIPTEN
+        EMSCRIPTENQT_mainLoopInitialised();
+#endif
         return 0;
     }
     else

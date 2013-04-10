@@ -47,7 +47,7 @@ void Html5CanvasInterface::clearMainCanvas(Rgba rgba)
 Rgba* Html5CanvasInterface::mainCanvasContentsRaw()
 {
     const int numPixels = mainCanvasWidth() * mainCanvasHeight();
-    void *destPointer = malloc(numPixels * sizeof(Rgba);
+    void *destPointer = malloc(numPixels * sizeof(Rgba));
     EMSCRIPTENQT_mainCanvasContentsRaw_internal(destPointer);
     return static_cast<Rgba*>(destPointer);
 }

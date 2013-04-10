@@ -9,7 +9,6 @@ namespace
     int mouseButtonsDown = 0;
 }
 
-extern bool mainEventLoopStarted;
 
 extern "C"
 {
@@ -17,16 +16,12 @@ extern "C"
     void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state) __attribute__((used))  ;
     void EMSCRIPTENQT_mouseCanvasPosChanged(int x, int y)
     {
-        if (!mainEventLoopStarted)
-            return;
         currentMouseX = x;
         currentMouseY = y;
         QEmscriptenCanvasMouseHandler::canvasMouseChanged(x, y, mouseButtonsDown);
     }
     void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state)
     {
-        if (!mainEventLoopStarted)
-            return;
         if (state)
         {
            mouseButtonsDown |= button;

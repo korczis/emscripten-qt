@@ -45,7 +45,7 @@ void CommandListener::newCommandIncoming()
         {
             Rgba newCanvasColour;
             command.commandData() >> newCanvasColour;
-            const QString clearCanvasJs = QString("return _EMSCRIPTENNATIVEHELPER_clearCanvas(%1);").arg(newCanvasColour);
+            const QString clearCanvasJs = QString("return _EMSCRIPTENNATIVEHELPER_clearCanvas_internal(%1);").arg(newCanvasColour);
             const QVariant result = evaluateJsStatements(clearCanvasJs);
             break;
         }
@@ -54,7 +54,7 @@ void CommandListener::newCommandIncoming()
             const qint64 bytesToWrite = sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT;
             qDebug() << "About to write " << bytesToWrite;
             Rgba* fakeRgba = static_cast<Rgba*>(malloc(bytesToWrite));
-            const QVariant result = evaluateJsStatements("return _EMSCRIPTENNATIVEHELPER_canvasPixelsAsRGBAString();");
+            const QVariant result = evaluateJsStatements("return _EMSCRIPTENNATIVEHELPER_canvasPixelsAsRGBAString_internal();");
             const QString rgbaHexString = result.toString();
             for (int i = 0; i < bytesToWrite; i++)
             {
@@ -71,7 +71,7 @@ void CommandListener::newCommandIncoming()
         }
         case Command::GetHandleForMainCanvas:
         {
-            const QVariant result = evaluateJsStatements("return _EMSCRIPTENQT_handleForMainCanvas();");
+            const QVariant result = evaluateJsStatements("return _EMSCRIPTENQT_handleForMainCanvas_internal();");
             CanvasHandle handle = -1;
             if (result.canConvert<CanvasHandle>())
             {
@@ -91,7 +91,7 @@ void CommandListener::newCommandIncoming()
         {
             int width, height;
             command.commandData() >> width >> height;
-            const QVariant result = evaluateJsStatements(QString("return _EMSCRIPTENQT_createCanvas(%1, %2);").arg(width).arg(height));
+            const QVariant result = evaluateJsStatements(QString("return _EMSCRIPTENQT_createCanvas_internal(%1, %2);").arg(width).arg(height));
             CanvasHandle handle = -1;
             if (result.canConvert<CanvasHandle>())
             {
@@ -112,14 +112,14 @@ void CommandListener::newCommandIncoming()
             int r, g, b;
             double x, y, width, height;
             command.commandData() >> canvasHandle >> r >> g >> b >> x >> y >> width >> height;
-            evaluateJsStatements(QString("return _EMSCRIPTENQT_fillSolidRect(%1, %2, %3, %4, %5, %6, %7, %8); ").arg(canvasHandle).arg(r).arg(g).arg(b).arg(x).arg(y).arg(width).arg(height));
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_fillSolidRect_internal(%1, %2, %3, %4, %5, %6, %7, %8); ").arg(canvasHandle).arg(r).arg(g).arg(b).arg(x).arg(y).arg(width).arg(height));
             break;
         case Command::DrawCanvasOnMainCanvas:
         {
             CanvasHandle canvasHandle;
             int x, y;
             command.commandData() >> canvasHandle >> x >> y;
-            evaluateJsStatements(QString("return _EMSCRIPTENQT_drawCanvasOnMainCanvas(%1, %2, %3); ").arg(canvasHandle).arg(x).arg(y));
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(%1, %2, %3); ").arg(canvasHandle).arg(x).arg(y));
         }
     }
     if (m_commandSource->bytesAvailable() > 0)

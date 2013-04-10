@@ -2,6 +2,7 @@
 #define HTML5CANVAS_INTERFACE_H
 
 #include <QtCore/qglobal.h>
+#include <QtGui/qimage.h>
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -42,6 +43,12 @@ public:
      * Fill the main canvas with the colour \a rgba.  Mainly used by the html5canvas test suite.
      */
     static void clearMainCanvas(Rgba rgba);
+    /**
+     * Retrieve the contents of the main canvas as  a QImage. Mainly used by the html5canvas test suite.
+     */
+    static QImage mainCanvasContents();
+private:
+    static Rgba* mainCanvasContentsRaw();
 };
 
 QT_END_NAMESPACE

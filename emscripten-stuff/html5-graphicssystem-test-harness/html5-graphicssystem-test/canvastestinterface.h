@@ -7,7 +7,5 @@ class CanvasTestInterface
 public:
     static void init();
 
-    static QImage canvasContents();
-
     static void deInit();
 };

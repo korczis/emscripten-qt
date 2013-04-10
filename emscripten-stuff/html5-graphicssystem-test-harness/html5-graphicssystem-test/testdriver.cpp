@@ -8,6 +8,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QMetaMethod>
 #include <QtGui/html5canvasinterface.h>
+#include <QtGui/QApplication>
 
 TestDriver::TestDriver()
     : QObject(), m_testIndex(0) 
@@ -42,9 +43,16 @@ void TestDriver::runNextTest()
     Html5CanvasInterface::clearMainCanvas(0xFF0000FF);
     m_tests->setExpectedImage(QImage());
 
+    qDebug() << "Calling repaint()";
     m_testWidget->repaint();
 
-    QImage canvasContents = CanvasTestInterface::canvasContents();
+    qDebug() << "Requesting contents";
+    // The redraw of the widget is instantaneous, but we need to process events so that it is flushed to the screen :/
+    while (QApplication::hasPendingEvents())
+    {
+        QApplication::processEvents();
+    }
+    QImage canvasContents = Html5CanvasInterface::mainCanvasContents();
     canvasContents.save("flibble.png");
 
     m_testIndex++;

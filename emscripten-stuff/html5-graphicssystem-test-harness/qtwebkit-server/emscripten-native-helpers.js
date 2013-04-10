@@ -30,20 +30,33 @@ function EMSCRIPTENNATIVEHELPER_clearCanvas(rgba)
 }
 function EMSCRIPTENNATIVEHELPER_canvasPixelsAsRGBAString()
 {
+try
+{
     var canvas = EMSCRIPTENNATIVEHELPER_getCanvas();
     var numPixels = canvas.width  * canvas.height;
-    var pixels = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
-    
+
+    var fakeHeap = new ArrayBuffer(numPixels * 4);
+    var fakeHeap8 = new Int8Array(fakeHeap);
+    var destIndexInFakeHeap = 0;
+
+
+    _EMSCRIPTENQT_mainCanvasContentsRaw_internal(destIndexInFakeHeap, fakeHeap8);
+
     var pixelsAsHexArray = new Array(numPixels);
-    for (var pixelNum = 0; pixelNum < numPixels * 4; pixelNum++)
+    for (var rgbaComponentIndex = 0; rgbaComponentIndex < numPixels * 4; rgbaComponentIndex++)
     {
-        var value = pixels.data[pixelNum];
-        var hex = value.toString(16);
+        var componentValue = fakeHeap8[rgbaComponentIndex] & 0xFF;
+        var hex = componentValue.toString(16);
         if (hex.length < 2)
         {
             hex = "0" + hex;
         }
-        pixelsAsHexArray[pixelNum] = hex;
+        pixelsAsHexArray[rgbaComponentIndex] = hex;
     }
     return pixelsAsHexArray.join("");
+}
+catch(e)
+{
+window.alert("Exception: " + e);
+}
 }

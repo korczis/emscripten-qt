@@ -529,6 +529,8 @@ Module['preRun'].push(function() {
 
 function _EMSCRIPTENQT_handleForMainCanvas_internal()
 {
+try
+{
     if (document.getElementById('canvas') == undefined)
     {
         return -1;
@@ -537,6 +539,11 @@ function _EMSCRIPTENQT_handleForMainCanvas_internal()
     {
        return 0;
     }
+}
+catch (e)
+{
+window.alert("Exception: " + e);
+}
 }
 
 function _EMSCRIPTENQT_mainCanvasWidth_internal()
@@ -619,4 +626,28 @@ catch (e)
 {
 window.alert("exc: " + e);
 }
+}
+
+function _EMSCRIPTENQT_mainCanvasContentsRaw_internal(destPointer, heapArray8)
+{
+    try
+    {
+        var destHeapArrayIndex = destPointer;
+        var canvas = document.getElementById('canvas');
+        var numPixels = canvas.width  * canvas.height;
+        var pixelData = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+        var componentIndex = 0;
+        for (var componentIndex = 0; componentIndex < 4 * numPixels; componentIndex++)
+        {
+            var componentValue = pixelData[componentIndex];
+            heapArray8[destHeapArrayIndex] = componentValue;
+            //window.alert("heapArray32: " + destHeapArrayIndex + " = " + heapArray8[destHeapArrayIndex]);
+            destHeapArrayIndex++;
+        }
+        return true;
+    }
+    catch (e)
+    {
+        window.alert("Exception (_EMSCRIPTENQT_mainCanvasContentsRaw_internal): " + e);
+    }
 }

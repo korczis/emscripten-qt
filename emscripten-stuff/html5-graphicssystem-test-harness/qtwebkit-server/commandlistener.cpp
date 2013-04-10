@@ -54,7 +54,7 @@ void CommandListener::newCommandIncoming()
             const qint64 bytesToWrite = sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT;
             qDebug() << "About to write " << bytesToWrite;
             Rgba* fakeRgba = static_cast<Rgba*>(malloc(bytesToWrite));
-            const QVariant result = evaluateJsStatements("return _EMSCRIPTENNATIVEHELPER_canvasPixelsAsRGBAString_internal();");
+            const QVariant result = evaluateJsStatements("return EMSCRIPTENNATIVEHELPER_canvasPixelsAsRGBAString();");
             const QString rgbaHexString = result.toString();
             for (int i = 0; i < bytesToWrite; i++)
             {
@@ -66,6 +66,7 @@ void CommandListener::newCommandIncoming()
                 const bool succeeded = m_commandSource->waitForBytesWritten(-1); 
                 Q_ASSERT(succeeded);
             }
+            free(fakeRgba);
             qDebug() << "Wrote " << bytesToWrite;
             break;
         }

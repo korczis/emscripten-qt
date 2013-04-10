@@ -30,6 +30,7 @@ void CommandSender::sendCommand(const Command& command)
 
 void *CommandSender::readCommandResponse(const quint32 numBytes)
 {
+    qDebug() << "readCommandResponse: " << numBytes;
     void* destBuffer = malloc(numBytes);
     // *sigh* the docs for SDLNet_TCP_Recv are wrong: see http://comments.gmane.org/gmane.comp.lib.sdl/357
     int bytesRemaining = numBytes;

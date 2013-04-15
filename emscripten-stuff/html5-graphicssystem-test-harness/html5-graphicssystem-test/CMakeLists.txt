@@ -11,6 +11,8 @@ qt4_wrap_cpp(SRC_MOC testwidget.h)
 
 include_directories(${QT_INCLUDES})
 
+add_definitions(-DEXPECTED_TEST_IMAGES_DIR="\\\"${CMAKE_SOURCE_DIR}/expected-test-images/\\\"")
+
 add_executable(html5renderertest ${SRC_MOC} ${SRC} )
 target_link_libraries(html5renderertest ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY})
 

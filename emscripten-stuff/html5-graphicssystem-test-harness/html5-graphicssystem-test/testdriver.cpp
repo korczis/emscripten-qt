@@ -49,7 +49,17 @@ void TestDriver::runNextTest()
         QApplication::processEvents();
     }
     QImage canvasContents = Html5CanvasInterface::mainCanvasContents();
-    canvasContents.save("flibble.png");
+
+    qDebug() << "Expected image size: " << m_tests->expectedImage().size();
+    
+    if (canvasContents == m_tests->expectedImage())
+    {
+        qDebug() << "Test passed";
+    }
+    else
+    {
+        qDebug() << "Test failed";
+    }
 
     m_testIndex++;
     QTimer::singleShot(0, this, SLOT(runNextTest()));

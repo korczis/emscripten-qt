@@ -1,4 +1,3 @@
-#include "canvastestinterface.h"
 #include "commandsender.h"
 #include "../shared/command.h"
 #include "../shared/canvasdimensions.h"
@@ -21,10 +20,6 @@ namespace
         return commandSender;
     }
 }
-void CanvasTestInterface::init()
-{
-}
-
 
 Rgba* Html5CanvasInterface::mainCanvasContentsRaw()
 {
@@ -32,10 +27,6 @@ Rgba* Html5CanvasInterface::mainCanvasContentsRaw()
     commandSender()->sendCommand(getCanvasPixelsCommand);
     Rgba* rbga = static_cast<Rgba*>(commandSender()->readCommandResponse(sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT));
     return rbga;
-}
-
-void CanvasTestInterface::deInit()
-{
 }
 
 void Html5CanvasInterface::clearMainCanvas(Rgba colour)

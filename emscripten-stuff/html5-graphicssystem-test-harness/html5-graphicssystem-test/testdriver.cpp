@@ -1,6 +1,5 @@
 #include "testdriver.h"
 #include "tests.h"
-#include "canvastestinterface.h"
 #include "testwidget.h"
 #include "../shared/canvasdimensions.h"
 
@@ -20,7 +19,6 @@ TestDriver::TestDriver()
 
 void TestDriver::beginRunAllTestsAsync()
 {
-    CanvasTestInterface::init();
     QTimer::singleShot(0, this, SLOT(runNextTest()));
 }
 

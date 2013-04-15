@@ -10,6 +10,7 @@ public:
     Html5GraphicsSystemTests(int widgetWidth, int widgetHeight);
 public slots:
     void testSanityTest();
+    void testTwoRectangles();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

@@ -3,7 +3,7 @@ find_package(Qt4)
 
 set(SRC main.cpp tests.cpp testdriver.cpp ../shared/command.cpp testwidget.cpp)
 if (EMSCRIPTEN_NATIVE)
-    set(SRC ${SRC} canvastestinterface-emscripten-native.cpp commandsender.cpp)
+    set(SRC ${SRC} html5canvasinterface-native.cpp commandsender.cpp)
 endif()
 qt4_wrap_cpp(SRC_MOC tests.h)
 qt4_wrap_cpp(SRC_MOC testdriver.h)

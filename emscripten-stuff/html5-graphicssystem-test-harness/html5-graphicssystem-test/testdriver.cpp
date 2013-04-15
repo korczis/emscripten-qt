@@ -57,7 +57,8 @@ void TestDriver::runNextTest()
 
     qDebug() << "Expected image size: " << m_tests->expectedImage().size();
     
-    if (canvasContents == m_tests->expectedImage())
+    // We're not interested in the alpha component, so remove it when comparing the images - it can cause false negatives.
+    if (canvasContents.convertToFormat(QImage::Format_RGB32) == m_tests->expectedImage().convertToFormat(QImage::Format_RGB32) )
     {
         qDebug() << "Test passed";
     }

@@ -36,6 +36,10 @@ public:
      */
     static void fillSolidRect(CanvasHandle canvasHandle, int r, int g, int b, double x, double y, double width, double height);
     /**
+     * Draw (but don't fill) the given rect with the current pen. TODO - explain (after figuring out!) how pen thickness is handled, etc.
+     */
+    static void strokeRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
+    /**
      * Draw the canvas with the requested \a canvasHandle on the main canvas at \a x, \a y
      */
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);

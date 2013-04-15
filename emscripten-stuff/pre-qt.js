@@ -629,6 +629,16 @@ function _EMSCRIPTENQT_fillSolidRect_internal(canvasHandle, r, g, b, x, y, width
     return true;
 }
 
+function _EMSCRIPTENQT_strokeRect_internal(canvasHandle, x, y, width, height)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "#ff0000";
+    ctx.lineWidth = 0;
+    ctx.strokeRect(x + 0.5, y + 0.5,  width, height);
+}
+
+
 function _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y)
 {
 try

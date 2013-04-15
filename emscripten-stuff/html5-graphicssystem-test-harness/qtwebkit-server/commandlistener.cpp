@@ -151,6 +151,14 @@ void CommandListener::newCommandIncoming()
             command.commandData() >> canvasHandle >> r >> g >> b >> x >> y >> width >> height;
             evaluateJsStatements(QString("return _EMSCRIPTENQT_fillSolidRect_internal(%1, %2, %3, %4, %5, %6, %7, %8); ").arg(canvasHandle).arg(r).arg(g).arg(b).arg(x).arg(y).arg(width).arg(height));
             break;
+        case Command::StrokeRect:
+        {
+            CanvasHandle canvasHandle;
+            double x, y, width, height;
+            command.commandData() >> canvasHandle >> x >> y >> width >> height;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_strokeRect_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(x).arg(y).arg(width).arg(height));
+            break;
+        }
         case Command::DrawCanvasOnMainCanvas:
         {
             CanvasHandle canvasHandle;

@@ -343,9 +343,14 @@ void QHtml5CanvasPaintEngine::fillPath(const QPainterPath &path, QSpanData *fill
 */
 void QHtml5CanvasPaintEngine::drawRects(const QRect *rects, int rectCount)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug(" - QHtml5CanvasPaintEngine::drawRect(), rectCount=%d", rectCount);
 #endif
+    for (int i = 0; i < rectCount; i++)
+    {
+        Html5CanvasInterface::strokeRect(d->canvasHandle, rects[i].x(), rects[i].y(), rects[i].width(), rects[i].height());
+    }
 }
 
 /*!

@@ -54,6 +54,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_strokeRect: function(canvasHandle, x, y, width, height) {
+          return _EMSCRIPTENQT_strokeRect_internal(canvasHandle, x, y, width, height);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_drawCanvasOnMainCanvas: function(canvasHandle, x, y) {
           return _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y);
       }

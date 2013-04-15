@@ -23,13 +23,18 @@ void Html5GraphicsSystemTests::testSanityTest()
     setExpectedImage(QImage(expectedTestImagesPath + "sanityTestResult.png"));
 }
 
-void Html5GraphicsSystemTests::testTwoRectangles()
+void Html5GraphicsSystemTests::testTwoFilledRectangles()
 {
     painter()->fillRect(QRect(10, 10, 20, 30), QColor(0, 0, 255));
     painter()->fillRect(QRect(30, 10, 20, 30), QColor(0, 255, 0));
     setExpectedImage(QImage(expectedTestImagesPath + "twoRectangles.png"));
 }
 
+void Html5GraphicsSystemTests::testDrawRectangleDefaultPenAndBrush()
+{
+    painter()->drawRect(10, 10, widgetWidth() - 20, widgetHeight() - 20);
+    setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleDefaultPenAndBrush.png"));
+}
 
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {

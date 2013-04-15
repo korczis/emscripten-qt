@@ -39,6 +39,8 @@ void TestDriver::runNextTest()
     }
 
     m_currentTestMethod = m_tests->metaObject()->method(nextTestMethodIndex); 
+    const QString currentTestName = QString(m_currentTestMethod.signature()).left(QString(m_currentTestMethod.signature()).indexOf("("));
+    qDebug() << "Running test " << currentTestName << "...";
     Html5CanvasInterface::clearMainCanvas(0xFF0000FF);
     m_tests->setExpectedImage(QImage());
 
@@ -60,12 +62,12 @@ void TestDriver::runNextTest()
     // We're not interested in the alpha component, so remove it when comparing the images - it can cause false negatives.
     if (canvasContents.convertToFormat(QImage::Format_RGB32) == m_tests->expectedImage().convertToFormat(QImage::Format_RGB32) )
     {
-        qDebug() << "Test passed";
+        qDebug() << "Test " << currentTestName << " passed";
     }
     else
     {
-        qDebug() << "Test failed";
-        canvasContents.save("failedtest.png");
+        qDebug() << "Test " << currentTestName << " failed";
+        canvasContents.save(currentTestName + "-actual.png");
     }
 
     m_testIndex++;

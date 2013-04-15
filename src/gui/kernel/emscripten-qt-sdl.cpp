@@ -2,6 +2,8 @@
 #include "emscripten-qt-sdl.h"
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
+#include <QtGui/QImage>
+#include <QtGui/QColor>
 #include <SDL/SDL.h>
 #include <SDL/SDL_thread.h>
 #include <SDL/SDL_mutex.h>
@@ -15,6 +17,8 @@ namespace
 	SDL_Surface *sdlCanvas = NULL;
 	SDL_TimerID callbackTimer = NULL;
 	bool sdlInited = false;
+
+    uchar *qscreenMirror = NULL;
 
 
     void (*attemptedLocalEventCallback)() = NULL;
@@ -45,6 +49,7 @@ extern "C"
 	void EMSCRIPTENQT_mouseCanvasPosChanged(int x, int y);
 	void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state);
 	void EMSCRIPTENQT_canvasKeyChanged(int unicode, int keycode, int modifiers, int isPress, int autoRepeat);
+
 
 
 	void setpixel(SDL_Surface *screen, int x, int y, Uint8 r, Uint8 g, Uint8 b)
@@ -122,14 +127,21 @@ extern "C"
 			ytimesw = y*sdlCanvas->pitch/BPP;
 			for( x = regionX; x < regionX + regionW; x++ )
 			{
+
 				const int b = *pos;
+                qscreenMirror[pos - data] = *pos;
 				pos++;
 				const int g = *pos;
+                qscreenMirror[pos - data] = *pos;
 				pos++;
 				const int r = *pos;
+                qscreenMirror[pos - data] = *pos;
 				pos++;
+                qscreenMirror[pos - data] = *pos;
 				pos++;
 				setpixel(sdlCanvas, x, ytimesw, r, g, b);
+
+                
 			}
             pos += 4 * (canvasWidthPixels - regionW);
 		}
@@ -338,6 +350,7 @@ bool EmscriptenQtSDL::initScreen(int canvasWidthPixels, int canvasHeightPixels)
 		qDebug() << "Creation of " << canvasWidthPixels << "x" << canvasHeightPixels << " SDL surface failed!";
 		return false;
 	}
+    qscreenMirror = static_cast<uchar*>(malloc(4 * canvasWidthPixels * canvasHeightPixels));
 	sdlInited = true;
     // We also init the Watchdog, as we should expose any bits of code that take too long to
     // run as soon as possible.
@@ -438,6 +451,25 @@ void EmscriptenQtSDL::triggerAssert()
     Q_ASSERT(false && "Attempted to enter local event loop!");
 }
 
-
+QImage EmscriptenQtSDL::screenAsQImage()
+{
+    QImage screen(canvasWidthPixels, canvasHeightPixels, QImage::QImage::Format_RGB32);
+    uchar* pos = qscreenMirror;
+    for (int y = 0; y < canvasHeightPixels; y++)
+    {
+        for (int x = 0; x < canvasWidthPixels; x++)
+        {
+                const int b = *pos;
+                pos++;
+                const int g = *pos;
+                pos++;
+                const int r = *pos;
+                pos++;
+                pos++;
+                screen.setPixel(x, y, QColor(r, g, b).rgba());
+        }
+    }
+    return screen;
+}
 
 #endif

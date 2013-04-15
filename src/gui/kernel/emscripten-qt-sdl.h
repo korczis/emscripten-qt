@@ -2,6 +2,7 @@
 #define EMSCRIPTEN_QT_SDL_H
 
 #include <QtCore/qglobal.h>
+#include <QtGui/QImage>
 
 QT_BEGIN_HEADER
 
@@ -17,6 +18,7 @@ public:
     typedef void(*Callback)();
     static void setAttemptedLocalEventLoopCallback(Callback callback);
     static const Callback TRIGGER_ASSERT;
+    static QImage screenAsQImage();
 private:
     static bool initScreen(int canvasWidthPixels, int canvasHeightPixels);
     static int exec();

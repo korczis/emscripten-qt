@@ -1,7 +1,9 @@
 #include <QtGui/QWidget>
 #include <QtGui/QApplication>
+#include <QtCore/QDebug>
 
 #include "testdriver.h"
+#include "../shared/canvasdimensions.h"
 
 #ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
@@ -9,9 +11,23 @@ int main(int argc, char *argv[])
 int emscriptenQtSDLMain(int argc, char *argv[])
 #endif
 {
+#ifdef EMSCRIPTEN_NATIVE
+    // Slightly hackish way of determining if we are using the html5canvas.
+    bool usingHtml5Canvas = false;
+    for (int argIndex = 0; argIndex < argc; argIndex++)
+    {
+        if (QString(argv[argIndex]) == "html5canvas")
+        {
+            usingHtml5Canvas = true;
+        }
+    }
+#else
+    const bool usingHtml5Canvas = true;
+#endif
     QApplication *app = new QApplication(argc, argv);
 
-    TestDriver *testDriver = new TestDriver();
+
+    TestDriver *testDriver = new TestDriver(usingHtml5Canvas);
     testDriver->beginRunAllTestsAsync();
 
     return app->exec();
@@ -22,6 +38,6 @@ int emscriptenQtSDLMain(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
         EmscriptenQtSDL::setAttemptedLocalEventLoopCallback(EmscriptenQtSDL::TRIGGER_ASSERT);
-        return EmscriptenQtSDL::run(640, 480, argc, argv);
+        return EmscriptenQtSDL::run(CANVAS_WIDTH, CANVAS_HEIGHT, argc, argv);
 }
 #endif

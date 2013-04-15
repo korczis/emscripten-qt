@@ -9,7 +9,7 @@ class TestDriver : public QObject
 {
 Q_OBJECT
 public:
-    TestDriver();
+    TestDriver(bool usingHtml5Canvas);
     void beginRunAllTestsAsync();
     void runTestWithPainter(QPainter *painter);
 private slots:
@@ -19,5 +19,6 @@ private:
     QMetaMethod m_currentTestMethod;
     TestWidget *m_testWidget;
     Html5GraphicsSystemTests *m_tests;
+    bool m_usingHtml5Canvas;
     int findNextTestMethodIndex();
 };

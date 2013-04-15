@@ -8,9 +8,10 @@
 #include <QtCore/QMetaMethod>
 #include <QtGui/html5canvasinterface.h>
 #include <QtGui/QApplication>
+#include <QtGui/emscripten-qt-sdl.h>
 
-TestDriver::TestDriver()
-    : QObject(), m_testIndex(0) 
+TestDriver::TestDriver(bool usingHtml5Canvas)
+    : QObject(), m_testIndex(0), m_usingHtml5Canvas(usingHtml5Canvas)
 {
     m_testWidget = new TestWidget(this);
     m_testWidget->showFullScreen();
@@ -48,7 +49,11 @@ void TestDriver::runNextTest()
     {
         QApplication::processEvents();
     }
+#ifdef EMSCRIPTEN_NATIVE
+    QImage canvasContents = (m_usingHtml5Canvas ? Html5CanvasInterface::mainCanvasContents() : EmscriptenQtSDL::screenAsQImage());
+#else
     QImage canvasContents = Html5CanvasInterface::mainCanvasContents();
+#endif
 
     qDebug() << "Expected image size: " << m_tests->expectedImage().size();
     
@@ -59,6 +64,7 @@ void TestDriver::runNextTest()
     else
     {
         qDebug() << "Test failed";
+        canvasContents.save("failedtest.png");
     }
 
     m_testIndex++;

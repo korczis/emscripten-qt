@@ -119,6 +119,20 @@ void Html5CanvasInterface::changeBrushColor(CanvasHandle canvasHandle, int r, in
     commandSender()->sendCommand(changeBrushColorCommand);
 }
 
+void Html5CanvasInterface::savePaintState(CanvasHandle canvasHandle)
+{
+    Command savePaintStateCommand(Command::SavePaintState);
+    savePaintStateCommand.commandData() << canvasHandle;
+    commandSender()->sendCommand(savePaintStateCommand);
+}
+
+void Html5CanvasInterface::restorePaintState(CanvasHandle canvasHandle)
+{
+    Command restorePaintStateCommand(Command::RestorePaintState);
+    restorePaintStateCommand.commandData() << canvasHandle;
+    commandSender()->sendCommand(restorePaintStateCommand);
+}
+
 void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)
 {
     Command drawCanvasOnMainCanvasCommand(Command::DrawCanvasOnMainCanvas);

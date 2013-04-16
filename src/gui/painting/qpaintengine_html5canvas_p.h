@@ -24,6 +24,8 @@
 #include "private/qoutlinemapper_p.h"
 #include <painting/html5canvasinterface.h>
 
+#include <qstack.h>
+
 #include <stdlib.h>
 
 QT_BEGIN_NAMESPACE
@@ -40,6 +42,7 @@ public:
     QHtml5CanvasPaintEngineState(QHtml5CanvasPaintEngineState &other);
     QHtml5CanvasPaintEngineState();
     ~QHtml5CanvasPaintEngineState();
+
 };
 
 
@@ -170,6 +173,7 @@ public:
     {};
     QPaintDevice* device;
     CanvasHandle canvasHandle;
+    QStack<QPainterState*> savedStateHistory;
 };
 
 QT_END_NAMESPACE

@@ -50,6 +50,8 @@ public:
     static void changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b);
     static void changePenThickness(CanvasHandle canvasHandle, double thickness);
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
+    static void savePaintState(CanvasHandle canvasHandle);
+    static void restorePaintState(CanvasHandle canvasHandle);
     /**
      * Fill the main canvas with the colour \a rgba.  Mainly used by the html5canvas test suite.
      */

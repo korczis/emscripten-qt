@@ -64,13 +64,23 @@ QHtml5CanvasPaintEngine::~QHtml5CanvasPaintEngine()
 bool QHtml5CanvasPaintEngine::begin(QPaintDevice *device)
 {
     Q_D(QHtml5CanvasPaintEngine);
-    qDebug() << "QHtml5CanvasPaintEngine::begin(QPaintDevice *device)";
+    printf("QHtml5CanvasPaintEngine::begin(QPaintDevice *device)\n");
     Q_ASSERT(device->devType() == QInternal::Pixmap);
     d->device = device;
     QPixmap *pixmap = static_cast<QPixmap *>(device);
     QPixmapData *pd = pixmap->pixmapData();
     QHtml5CanvasPixmapData *html5CanvasPixmap = static_cast<QHtml5CanvasPixmapData*>(pd);
     d->canvasHandle = html5CanvasPixmap->canvasHandle();
+    printf("Restoring to (almost) empty paint stack\n");
+    // Keep the first entry, as that represents the default state. TODO - check this;
+    // it might be instead that we have to remember the top(), then restore to empty stack,
+    // then push the old top() back on again.
+    while (!d->savedStateHistory.size() > 1)
+    {
+        printf(" popped\n");
+        Html5CanvasInterface::restorePaintState(d->canvasHandle);
+        d->savedStateHistory.pop();
+    }
     return true;
 }
 
@@ -157,8 +167,25 @@ QPainterState *QHtml5CanvasPaintEngine::createState(QPainterState *orig) const
 void QHtml5CanvasPaintEngine::setState(QPainterState *s)
 {
     Q_D(QHtml5CanvasPaintEngine);
-    qDebug() << "QHtml5CanvasPaintEngine::setState(QPainterState *s)";
+    printf("QHtml5CanvasPaintEngine::setState(QPainterState *s): %x %d\n", (void*)s, d->canvasHandle);
+    // I think setState should only be called at paint begin, or when save()ing or restore()ing a QPainter.
     QPaintEngineEx::setState(s);
+    if (d->savedStateHistory.contains(s))
+    {
+        printf("Restoring\n");
+        while (d->savedStateHistory.top() != s)
+        {
+            printf(" popped\n");
+            d->savedStateHistory.pop();
+            Html5CanvasInterface::restorePaintState(d->canvasHandle);
+        }
+    }
+    else
+    {
+        printf("Saving\n");
+        d->savedStateHistory.push(s);
+        Html5CanvasInterface::savePaintState(d->canvasHandle);
+    }
 }
 
 /*!

@@ -191,6 +191,20 @@ void CommandListener::newCommandIncoming()
             evaluateJsStatements(QString("return _EMSCRIPTENQT_changeBrushColor_internal(%1, %2, %3, %4); ").arg(canvasHandle).arg(r).arg(g).arg(b));
             break;
         }
+        case Command::SavePaintState:
+        {
+            CanvasHandle canvasHandle;
+            command.commandData() >> canvasHandle;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_savePaintState_internal(%1); ").arg(canvasHandle));
+            break;
+        }
+        case Command::RestorePaintState:
+        {
+            CanvasHandle canvasHandle;
+            command.commandData() >> canvasHandle;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_restorePaintState_internal(%1); ").arg(canvasHandle));
+            break;
+        }
         case Command::DrawCanvasOnMainCanvas:
         {
             CanvasHandle canvasHandle;

@@ -102,6 +102,49 @@ void Html5GraphicsSystemTests::testDrawRectangleWithThickLine()
     }
 }
 
+void Html5GraphicsSystemTests::testSaveAndRestoreDrawingState()
+{
+    int x = 5;
+    const int numRects = 7;
+    const int y = 10;
+    const int interRectXPad = 5;
+    const int width = (widgetWidth() - numRects * interRectXPad) / numRects;
+    const int height = (widgetHeight() - y) / 2;
+
+    painter()->save();
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->setPen(QPen(Qt::red, 3));
+    painter()->setBrush(Qt::blue);
+    painter()->save();
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->setPen(QPen(Qt::green, 3));
+    painter()->setBrush(Qt::yellow);
+    painter()->save();
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->setPen(QPen(Qt::gray, 3));
+    painter()->setBrush(Qt::white);
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->restore();
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->restore();
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->restore();
+    painter()->drawRect(x, y, width, height);
+
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

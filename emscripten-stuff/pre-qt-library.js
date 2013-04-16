@@ -60,8 +60,20 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_fillRect: function(canvasHandle, x, y, width, height) {
+          return _EMSCRIPTENQT_fillRect_internal(canvasHandle, x, y, width, height);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_changePenColor: function(canvasHandle, r, g, b) {
           return _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_changeBrushColor: function(canvasHandle, r, g, b) {
+          return _EMSCRIPTENQT_changeBrushColor_internal(canvasHandle, r, g, b);
       }
     });
 

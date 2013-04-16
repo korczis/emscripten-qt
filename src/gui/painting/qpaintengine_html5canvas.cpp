@@ -208,7 +208,10 @@ void QHtml5CanvasPaintEngine::brushOriginChanged()
 */
 void QHtml5CanvasPaintEngine::brushChanged()
 {
-    qDebug() << "QHtml5CanvasPaintEngine::brushChanged()";
+    Q_D(QHtml5CanvasPaintEngine);
+    const QColor brushColor = state()->brush.color();
+    qDebug() << "QHtml5CanvasPaintEngine::brushChanged(): " << state()->brush;
+    Html5CanvasInterface::changeBrushColor(d->canvasHandle, brushColor.red(), brushColor.green(), brushColor.blue());
 }
 
 
@@ -352,6 +355,7 @@ void QHtml5CanvasPaintEngine::drawRects(const QRect *rects, int rectCount)
 #endif
     for (int i = 0; i < rectCount; i++)
     {
+        Html5CanvasInterface::fillRect(d->canvasHandle, rects[i].x(), rects[i].y(), rects[i].width(), rects[i].height());
         Html5CanvasInterface::strokeRect(d->canvasHandle, rects[i].x(), rects[i].y(), rects[i].width(), rects[i].height());
     }
 }

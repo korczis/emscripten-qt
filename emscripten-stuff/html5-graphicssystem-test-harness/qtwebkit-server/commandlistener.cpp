@@ -159,12 +159,28 @@ void CommandListener::newCommandIncoming()
             evaluateJsStatements(QString("return _EMSCRIPTENQT_strokeRect_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(x).arg(y).arg(width).arg(height));
             break;
         }
+        case Command::FillRect:
+        {
+            CanvasHandle canvasHandle;
+            double x, y, width, height;
+            command.commandData() >> canvasHandle >> x >> y >> width >> height;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_fillRect_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(x).arg(y).arg(width).arg(height));
+            break;
+        }
         case Command::ChangePenColor:
         {
             CanvasHandle canvasHandle;
             int r, g, b;
             command.commandData() >> canvasHandle >> r >> g >> b;
             evaluateJsStatements(QString("return _EMSCRIPTENQT_changePenColor_internal(%1, %2, %3, %4); ").arg(canvasHandle).arg(r).arg(g).arg(b));
+            break;
+        }
+        case Command::ChangeBrushColor:
+        {
+            CanvasHandle canvasHandle;
+            int r, g, b;
+            command.commandData() >> canvasHandle >> r >> g >> b;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_changeBrushColor_internal(%1, %2, %3, %4); ").arg(canvasHandle).arg(r).arg(g).arg(b));
             break;
         }
         case Command::DrawCanvasOnMainCanvas:

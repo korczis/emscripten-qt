@@ -637,6 +637,13 @@ function _EMSCRIPTENQT_strokeRect_internal(canvasHandle, x, y, width, height)
     ctx.strokeRect(x + 0.5, y + 0.5,  width, height);
 }
 
+function _EMSCRIPTENQT_fillRect_internal(canvasHandle, x, y, width, height)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.fillRect(x + 0.5, y + 0.5,  width, height);
+}
+
 function _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
@@ -644,6 +651,12 @@ function _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b)
     ctx.strokeStyle = "rgba(" + r + "," + g + "," + b + "," + 0xFF + ")";
 }
 
+function _EMSCRIPTENQT_changeBrushColor_internal(canvasHandle, r, g, b)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + 0xFF + ")";
+}
 
 function _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y)
 {

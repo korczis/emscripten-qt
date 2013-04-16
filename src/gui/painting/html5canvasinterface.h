@@ -40,9 +40,14 @@ public:
      */
     static void strokeRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
     /**
+     * Fill (without outline) the given rect with the current brush.
+     */
+    static void fillRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
+    /**
      * Draw the canvas with the requested \a canvasHandle on the main canvas at \a x, \a y
      */
     static void changePenColor(CanvasHandle canvasHandle, int r, int g, int b);
+    static void changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b);
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
     /**
      * Fill the main canvas with the colour \a rgba.  Mainly used by the html5canvas test suite.

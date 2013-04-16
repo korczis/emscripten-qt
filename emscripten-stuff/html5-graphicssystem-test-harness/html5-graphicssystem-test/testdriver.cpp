@@ -12,6 +12,10 @@
 
 double percentagePixelsDifferent(const QImage& image1, const QImage& image2)
 {
+    if (image1.isNull() != image2.isNull())
+    {
+        return 100.0;
+    }
     Q_ASSERT(image1.size() == image2.size());
     const int totalPixels = image1.width() * image1.height();
     int numDifferentPixels = 0;

@@ -20,56 +20,6 @@
  *
  */
 
-#if (defined(EMSCRIPTEN)) && !(defined(EMSCRIPTEN_NATIVE))
-#include <cmath>
-#include <cstring>
-extern "C"
-{
-    // Adapted from GNUlib.
-    // TODO - find properly-licensed version and upstream into Emscripten.
-    // TODO - there seems to be some confusion with asm.js - the version of _signbitd
-    // with the single leading underscore is required.
-    int
-    _signbitd (double arg)
-    {
-        /* This does not do the right thing for NaN, but this is irrelevant for
-         *     most use cases.  */
-        if (isnan (arg))
-            return 0;
-        if (arg < 0.0)
-            return 1;
-        else if (arg == 0.0)
-        {
-            /* Distinguish 0.0 and -0.0.  */
-            static double plus_zero = 0.0;
-            double arg_mem = arg;
-            return (memcmp (&plus_zero, &arg_mem, sizeof(double)) != 0);
-        }
-        else
-            return 0;
-    }
-    int
-    __signbitd (double arg)
-    {
-        /* This does not do the right thing for NaN, but this is irrelevant for
-         *     most use cases.  */
-        if (isnan (arg))
-            return 0;
-        if (arg < 0.0)
-            return 1;
-        else if (arg == 0.0)
-        {
-            /* Distinguish 0.0 and -0.0.  */
-            static double plus_zero = 0.0;
-            double arg_mem = arg;
-            return (memcmp (&plus_zero, &arg_mem, sizeof(double)) != 0);
-        }
-        else
-            return 0;
-    }
-}
-
-#endif
 #include "config.h"
 #include "JSNumberCell.h"
 

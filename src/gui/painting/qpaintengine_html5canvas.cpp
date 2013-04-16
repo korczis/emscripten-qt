@@ -167,7 +167,7 @@ QPainterState *QHtml5CanvasPaintEngine::createState(QPainterState *orig) const
 void QHtml5CanvasPaintEngine::setState(QPainterState *s)
 {
     Q_D(QHtml5CanvasPaintEngine);
-    printf("QHtml5CanvasPaintEngine::setState(QPainterState *s): %x %d\n", (void*)s, d->canvasHandle);
+    printf("QHtml5CanvasPaintEngine::setState(QPainterState *s): %p %d\n", (void*)s, d->canvasHandle);
     // I think setState should only be called at paint begin, or when save()ing or restore()ing a QPainter.
     QPaintEngineEx::setState(s);
     if (d->savedStateHistory.contains(s))
@@ -350,7 +350,7 @@ void QHtml5CanvasPaintEngine::clip(const QRect &rect, Qt::ClipOperation op)
 {
     Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
-    qDebug() << "QHtml5CanvasPaintEngine::clip(): " << rect << op;
+    printf("QHtml5CanvasPaintEngine::clip(): rect (%d, %d, %d, %d) , %d \n", rect.x(), rect.y(), rect.width(), rect.height(), op);
 #endif
     Html5CanvasInterface::setClipRect(d->canvasHandle, rect.x(), rect.y(), rect.width(), rect.height());
 }
@@ -362,7 +362,7 @@ void QHtml5CanvasPaintEngine::clip(const QRect &rect, Qt::ClipOperation op)
 void QHtml5CanvasPaintEngine::clip(const QRegion &region, Qt::ClipOperation op)
 {
 #ifdef QT_DEBUG_DRAW
-    qDebug() << "QHtml5CanvasPaintEngine::clip(): " << region << op;
+    printf("QHtml5CanvasPaintEngine::clip(): region bounding rect (%d, %d, %d, %d) , %d \n", region.boundingRect().x(), region.boundingRect().y(), region.boundingRect().width(), region.boundingRect().height(), op);
 #endif
 }
 
@@ -383,7 +383,7 @@ void QHtml5CanvasPaintEngine::drawRects(const QRect *rects, int rectCount)
 {
     Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
-    qDebug(" - QHtml5CanvasPaintEngine::drawRect(), rectCount=%d", rectCount);
+    printf("QHtml5CanvasPaintEngine::drawRect(), rectCount=%d\n", rectCount);
 #endif
     const bool fillRect = state()->brush.style() != Qt::NoBrush;
     for (int i = 0; i < rectCount; i++)

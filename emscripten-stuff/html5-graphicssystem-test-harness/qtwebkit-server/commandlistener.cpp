@@ -29,13 +29,13 @@ void CommandListener::newConnection()
 
 void CommandListener::disconnected()
 {
+    qDebug() << "Disconnected";
     m_commandSource->deleteLater();
     m_commandSource = 0;
 }
 
 void CommandListener::newCommandIncoming()
 {
-    Q_ASSERT(m_commandSource->bytesAvailable() > 0);
     qDebug() << "newCommandIncoming";
     Command command = Command::createFrom(m_commandSource);
     qDebug() << "Fully read command: " << command.commandType();
@@ -170,7 +170,12 @@ void CommandListener::newCommandIncoming()
     if (m_commandSource->bytesAvailable() > 0)
     {
         // Call ourselves again - we can't depend on readyRead callinng us.
-        QTimer::singleShot(0, this, SLOT(newCommandIncoming()));
+        qDebug() << "There's another command incoming.";
+        newCommandIncoming();
+    }
+    else
+    {
+        qDebug() << "Command queue cleared";
     }
 }
 

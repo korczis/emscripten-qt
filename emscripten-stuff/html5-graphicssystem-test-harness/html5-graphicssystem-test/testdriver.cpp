@@ -10,6 +10,27 @@
 #include <QtGui/QApplication>
 #include <QtGui/emscripten-qt-sdl.h>
 
+double percentagePixelsDifferent(const QImage& image1, const QImage& image2)
+{
+    Q_ASSERT(image1.size() == image2.size());
+    const int totalPixels = image1.width() * image1.height();
+    int numDifferentPixels = 0;
+    for (int y = 0; y < image1.height(); y++)
+    {
+        for (int x = 0; x < image1.width(); x++)
+        {
+            const QColor pixel1 = image1.pixel(x, y);
+            const QColor pixel2 = image2.pixel(x, y);
+            // We don't care about the alpha channel - it leads to false negatives.
+            if (pixel1.rgb() != pixel2.rgb())
+            {
+                numDifferentPixels++;
+            }
+        }
+    }
+    return static_cast<double>(numDifferentPixels) * 100.0 / totalPixels;
+}
+
 TestDriver::TestDriver(bool usingHtml5Canvas)
     : QObject(), m_testIndex(0), m_usingHtml5Canvas(usingHtml5Canvas)
 {
@@ -60,13 +81,14 @@ void TestDriver::runNextTest()
     qDebug() << "Expected image size: " << m_tests->expectedImage().size();
     
     // We're not interested in the alpha component, so remove it when comparing the images - it can cause false negatives.
-    if (canvasContents.convertToFormat(QImage::Format_RGB32) == m_tests->expectedImage().convertToFormat(QImage::Format_RGB32) )
+    const double percentageDifference = percentagePixelsDifferent(canvasContents, m_tests->expectedImage());
+    if (qAbs(percentageDifference) < 0.1)
     {
         qDebug() << "Test " << currentTestName << " passed";
     }
     else
     {
-        qDebug() << "Test " << currentTestName << " failed";
+        qDebug() << "Test " << currentTestName << " failed: " << percentageDifference << " pixels were different";
         canvasContents.save(currentTestName + "-actual.png");
     }
 

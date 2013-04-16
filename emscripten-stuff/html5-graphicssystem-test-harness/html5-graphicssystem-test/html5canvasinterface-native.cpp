@@ -133,6 +133,14 @@ void Html5CanvasInterface::restorePaintState(CanvasHandle canvasHandle)
     commandSender()->sendCommand(restorePaintStateCommand);
 }
 
+void Html5CanvasInterface::setClipRect(CanvasHandle canvasHandle, double x, double y, double width, double height)
+{
+    Command setClipRectCommand(Command::SetClipRect);
+    setClipRectCommand.commandData() << canvasHandle << x << y << width << height;
+    commandSender()->sendCommand(setClipRectCommand);
+}
+
+
 void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)
 {
     Command drawCanvasOnMainCanvasCommand(Command::DrawCanvasOnMainCanvas);

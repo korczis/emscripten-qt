@@ -348,9 +348,11 @@ void QHtml5CanvasPaintEngine::clip(const QVectorPath &path, Qt::ClipOperation op
 */
 void QHtml5CanvasPaintEngine::clip(const QRect &rect, Qt::ClipOperation op)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::clip(): " << rect << op;
 #endif
+    Html5CanvasInterface::setClipRect(d->canvasHandle, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
 

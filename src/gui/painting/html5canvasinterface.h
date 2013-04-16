@@ -52,6 +52,7 @@ public:
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
     static void savePaintState(CanvasHandle canvasHandle);
     static void restorePaintState(CanvasHandle canvasHandle);
+    static void setClipRect(CanvasHandle canvasHandle, double x, double y, double w, double h);
     /**
      * Fill the main canvas with the colour \a rgba.  Mainly used by the html5canvas test suite.
      */

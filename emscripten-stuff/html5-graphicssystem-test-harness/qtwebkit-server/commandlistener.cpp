@@ -205,6 +205,14 @@ void CommandListener::newCommandIncoming()
             evaluateJsStatements(QString("return _EMSCRIPTENQT_restorePaintState_internal(%1); ").arg(canvasHandle));
             break;
         }
+        case Command::SetClipRect:
+        {
+            CanvasHandle canvasHandle;
+            double x, y, width, height;
+            command.commandData() >> canvasHandle >> x >> y >> width >> height;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_setClipRect_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(x).arg(y).arg(width).arg(height));
+            break;
+        }
         case Command::DrawCanvasOnMainCanvas:
         {
             CanvasHandle canvasHandle;

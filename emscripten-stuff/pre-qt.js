@@ -678,6 +678,15 @@ function _EMSCRIPTENQT_restorePaintState_internal(canvasHandle)
     ctx.restore();
 }
 
+function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.rect(x , y,  width, height);
+    ctx.clip();
+}
+
 function _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y)
 {
 try

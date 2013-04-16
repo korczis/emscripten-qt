@@ -18,6 +18,7 @@ extern "C"
     void EMSCRIPTENQT_changePenThickness(CanvasHandle canvasHandle, double thickness);
     void EMSCRIPTENQT_savePaintState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_restorePaintState(CanvasHandle canvasHandle);
+    void EMSCRIPTENQT_setClipRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
     void EMSCRIPTENQT_drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
     void EMSCRIPTENQT_clearMainCanvas(Rgba rgba);
     void EMSCRIPTENQT_mainCanvasContentsRaw_internal(void* destPtr);
@@ -68,6 +69,11 @@ void Html5CanvasInterface::savePaintState(CanvasHandle canvasHandle)
 void Html5CanvasInterface::restorePaintState(CanvasHandle canvasHandle)
 {
     EMSCRIPTENQT_restorePaintState(canvasHandle);
+}
+
+void Html5CanvasInterface::setClipRect(CanvasHandle canvasHandle, double x, double y, double w, double h)
+{
+    EMSCRIPTENQT_setClipRect(canvasHandle, x, y, w, h);
 }
 
 void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)

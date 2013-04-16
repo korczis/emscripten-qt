@@ -353,9 +353,13 @@ void QHtml5CanvasPaintEngine::drawRects(const QRect *rects, int rectCount)
 #ifdef QT_DEBUG_DRAW
     qDebug(" - QHtml5CanvasPaintEngine::drawRect(), rectCount=%d", rectCount);
 #endif
+    const bool fillRect = state()->brush.style() != Qt::NoBrush;
     for (int i = 0; i < rectCount; i++)
     {
-        Html5CanvasInterface::fillRect(d->canvasHandle, rects[i].x(), rects[i].y(), rects[i].width(), rects[i].height());
+        if (fillRect)
+        {
+            Html5CanvasInterface::fillRect(d->canvasHandle, rects[i].x(), rects[i].y(), rects[i].width(), rects[i].height());
+        }
         Html5CanvasInterface::strokeRect(d->canvasHandle, rects[i].x(), rects[i].y(), rects[i].width(), rects[i].height());
     }
 }

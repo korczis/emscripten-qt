@@ -17,6 +17,7 @@ Html5GraphicsSystemTests::Html5GraphicsSystemTests(int widgetWidth, int widgetHe
 
 void Html5GraphicsSystemTests::testSanityTest()
 {
+    qDebug() << "Default brush: " << painter()->brush();
     qDebug() << "testSanityTest";
     painter()->fillRect(QRect(0, 0, widgetWidth(), widgetHeight()), QColor(0, 0, 255));
     qDebug() << "testSanityTest complete";

@@ -36,6 +36,22 @@ void Html5GraphicsSystemTests::testDrawRectangleDefaultPenAndBrush()
     setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleDefaultPenAndBrush.png"));
 }
 
+void Html5GraphicsSystemTests::testDrawRectangleDefaultPenAndBrush2()
+{
+    int squareLength = 3;
+    while (true)
+    {
+       const QRect square = QRect(widgetWidth() / 2 - squareLength / 2, widgetHeight() / 2 - squareLength / 2, squareLength, squareLength);
+       if (square.intersected(QRect(0, 0, widgetWidth(), widgetHeight())) != square)
+       {
+           break;
+       }
+       squareLength += 4; 
+       painter()->drawRect(square);
+    }
+    setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleDefaultPenAndBrush2.png"));
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

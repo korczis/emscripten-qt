@@ -92,7 +92,7 @@ void TestDriver::runNextTest()
     }
     else
     {
-        qDebug() << "Test " << currentTestName << " failed: " << percentageDifference << " pixels were different";
+        qDebug() << "Test " << currentTestName << " failed: " << percentageDifference << "% of pixels were different";
         canvasContents.save(currentTestName + "-actual.png");
     }
 

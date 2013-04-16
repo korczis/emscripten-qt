@@ -666,30 +666,16 @@ function _EMSCRIPTENQT_changeBrushColor_internal(canvasHandle, r, g, b)
 
 function _EMSCRIPTENQT_savePaintState_internal(canvasHandle)
 {
-    try
-    {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
     ctx.save();
-    }
-    catch (e)
-    {
-        window.alert("save e: " + e + "," + canvasHandle);
-    }
 }
 
 function _EMSCRIPTENQT_restorePaintState_internal(canvasHandle)
 {
-    try
-    {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
     ctx.restore();
-    }
-    catch (e)
-    {
-        window.alert("restore e: " + e + "," + canvasHandle);
-    }
 }
 
 function _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y)

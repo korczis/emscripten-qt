@@ -105,6 +105,13 @@ void Html5CanvasInterface::changePenColor(CanvasHandle canvasHandle, int r, int 
     commandSender()->sendCommand(changePenColorCommand);
 }
 
+void Html5CanvasInterface::changePenThickness(CanvasHandle canvasHandle, double thickness)
+{
+    Command changePenThicknessCommand(Command::ChangePenThickness);
+    changePenThicknessCommand.commandData() << canvasHandle << thickness;
+    commandSender()->sendCommand(changePenThicknessCommand);
+}
+
 void Html5CanvasInterface::changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b)
 {
     Command changeBrushColorCommand(Command::ChangeBrushColor);

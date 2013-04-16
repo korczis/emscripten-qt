@@ -175,6 +175,14 @@ void CommandListener::newCommandIncoming()
             evaluateJsStatements(QString("return _EMSCRIPTENQT_changePenColor_internal(%1, %2, %3, %4); ").arg(canvasHandle).arg(r).arg(g).arg(b));
             break;
         }
+        case Command::ChangePenThickness:
+        {
+            CanvasHandle canvasHandle;
+            double thickness;
+            command.commandData() >> canvasHandle >> thickness;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_changePenThickness_internal(%1, %2); ").arg(canvasHandle).arg(thickness));
+            break;
+        }
         case Command::ChangeBrushColor:
         {
             CanvasHandle canvasHandle;

@@ -86,6 +86,29 @@ void Html5GraphicsSystemTests::testDrawRectangleRedPenAndBlueBrush()
     }
     setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleRedPenAndBlueBrush.png"));
 }
+void Html5GraphicsSystemTests::testDrawRectangleWithThickLine()
+{
+    const int thickness = 5;
+    int squareLength = 11;
+    while (true)
+    {
+        const QRect square(widgetWidth() / 2 - (squareLength / 2), widgetHeight() / 2 - (squareLength / 2), squareLength, squareLength);
+        // +/-2 due to thickness of outerSquare itself, plus the white boundary separating square from outer square.
+        const QRect outerSquare = square.adjusted(-thickness / 2 - 2, -thickness / 2 - 2, thickness / 2 + 2, thickness / 2 + 2);
+        if (outerSquare.intersected(QRect(0, 0, widgetWidth(), widgetHeight())) != outerSquare)
+        {
+            break;
+        }
+        painter()->setPen(QPen(Qt::red, 0));
+        painter()->drawRect(outerSquare);
+
+        painter()->setPen(QPen(Qt::black, thickness));
+        painter()->drawRect(square);
+        squareLength += 2 * (2 /* outerSquare, plus white boundary */ + thickness);
+    }
+    setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleWithThickLine.png"));
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

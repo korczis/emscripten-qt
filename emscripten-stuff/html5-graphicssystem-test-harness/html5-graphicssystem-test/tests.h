@@ -15,6 +15,7 @@ public slots:
     void testDrawRectangleDefaultPenAndBrush2();
     void testDrawRectangleRedPenAndDefaultBrush();
     void testDrawRectangleRedPenAndBlueBrush();
+    void testDrawRectangleWithThickLine();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

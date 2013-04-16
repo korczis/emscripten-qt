@@ -72,6 +72,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_changePenThickness: function(canvasHandle, thickness) {
+          return _EMSCRIPTENQT_changePenThickness_internal(canvasHandle, thickness);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_changeBrushColor: function(canvasHandle, r, g, b) {
           return _EMSCRIPTENQT_changeBrushColor_internal(canvasHandle, r, g, b);
       }

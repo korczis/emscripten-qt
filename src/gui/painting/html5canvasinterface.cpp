@@ -15,6 +15,7 @@ extern "C"
     void EMSCRIPTENQT_strokeRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
     void EMSCRIPTENQT_changePenColor(CanvasHandle canvasHandle, int r, int g, int b);
     void EMSCRIPTENQT_changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b);
+    void EMSCRIPTENQT_changePenThickness(CanvasHandle canvasHandle, double thickness);
     void EMSCRIPTENQT_drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
     void EMSCRIPTENQT_clearMainCanvas(Rgba rgba);
     void EMSCRIPTENQT_mainCanvasContentsRaw_internal(void* destPtr);
@@ -51,6 +52,12 @@ void Html5CanvasInterface::changeBrushColor(CanvasHandle canvasHandle, int r, in
 {
     EMSCRIPTENQT_changeBrushColor(canvasHandle, r, g, b);
 }
+
+void Html5CanvasInterface::changePenThickness(CanvasHandle canvasHandle, double thickness)
+{
+    EMSCRIPTENQT_changePenThickness(canvasHandle, thickness);
+}
+
 
 void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)
 {

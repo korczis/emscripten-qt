@@ -182,6 +182,9 @@ void QHtml5CanvasPaintEngine::penChanged()
 #endif
     const QColor penColor = state()->pen.color();
     Html5CanvasInterface::changePenColor(d->canvasHandle, penColor.red(), penColor.green(), penColor.blue());
+    const qreal qtPenThickness = state()->pen.widthF();
+    const qreal html5thickness = (qtPenThickness < 0.1) ? 1.0 : qtPenThickness;
+    Html5CanvasInterface::changePenThickness(d->canvasHandle, html5thickness);
 }
 
 /*!

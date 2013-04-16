@@ -21,20 +21,17 @@ void Html5GraphicsSystemTests::testSanityTest()
     qDebug() << "testSanityTest";
     painter()->fillRect(QRect(0, 0, widgetWidth(), widgetHeight()), QColor(0, 0, 255));
     qDebug() << "testSanityTest complete";
-    setExpectedImage(QImage(expectedTestImagesPath + "sanityTestResult.png"));
 }
 
 void Html5GraphicsSystemTests::testTwoFilledRectangles()
 {
     painter()->fillRect(QRect(10, 10, 20, 30), QColor(0, 0, 255));
     painter()->fillRect(QRect(30, 10, 20, 30), QColor(0, 255, 0));
-    setExpectedImage(QImage(expectedTestImagesPath + "twoRectangles.png"));
 }
 
 void Html5GraphicsSystemTests::testDrawRectangleDefaultPenAndBrush()
 {
     painter()->drawRect(10, 10, widgetWidth() - 20, widgetHeight() - 20);
-    setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleDefaultPenAndBrush.png"));
 }
 
 void Html5GraphicsSystemTests::testDrawRectangleDefaultPenAndBrush2()
@@ -50,7 +47,6 @@ void Html5GraphicsSystemTests::testDrawRectangleDefaultPenAndBrush2()
        squareLength += 4; 
        painter()->drawRect(square);
     }
-    setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleDefaultPenAndBrush2.png"));
 }
 
 void Html5GraphicsSystemTests::testDrawRectangleRedPenAndDefaultBrush()
@@ -67,7 +63,6 @@ void Html5GraphicsSystemTests::testDrawRectangleRedPenAndDefaultBrush()
        squareLength += 4; 
        painter()->drawRect(square);
     }
-    setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleRedPenAndDefaultBrush.png"));
 }
 
 void Html5GraphicsSystemTests::testDrawRectangleRedPenAndBlueBrush()
@@ -84,7 +79,6 @@ void Html5GraphicsSystemTests::testDrawRectangleRedPenAndBlueBrush()
            painter()->drawRect(square);
         }
     }
-    setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleRedPenAndBlueBrush.png"));
 }
 void Html5GraphicsSystemTests::testDrawRectangleWithThickLine()
 {
@@ -106,7 +100,6 @@ void Html5GraphicsSystemTests::testDrawRectangleWithThickLine()
         painter()->drawRect(square);
         squareLength += 2 * (2 /* outerSquare, plus white boundary */ + thickness);
     }
-    setExpectedImage(QImage(expectedTestImagesPath + "drawRectangleWithThickLine.png"));
 }
 
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)

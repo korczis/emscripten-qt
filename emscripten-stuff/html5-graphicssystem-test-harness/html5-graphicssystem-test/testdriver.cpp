@@ -10,6 +10,26 @@
 #include <QtGui/QApplication>
 #include <QtGui/emscripten-qt-sdl.h>
 
+#ifdef EMSCRIPTEN_NATIVE
+const QString expectedTestImagesPath = EXPECTED_TEST_IMAGES_DIR "/";
+#else
+const QString expectedTestImagesPath = "/expected-test-images/";
+#endif
+
+QString expectedImageFilename(const QString& currentTestName)
+{
+    QString expectedImageBasename = currentTestName;
+    if (expectedImageBasename.startsWith("test"))
+    {
+        expectedImageBasename = expectedImageBasename.mid(QString("test").length());
+    }
+    if (expectedImageBasename[0].toLower() != expectedImageBasename[0])
+    {
+       expectedImageBasename[0] = expectedImageBasename[0].toLower();
+    }
+    return expectedTestImagesPath + expectedImageBasename + ".png";
+}
+
 double percentagePixelsDifferent(const QImage& image1, const QImage& image2)
 {
     if (image1.isNull() != image2.isNull())
@@ -67,7 +87,7 @@ void TestDriver::runNextTest()
     const QString currentTestName = QString(m_currentTestMethod.signature()).left(QString(m_currentTestMethod.signature()).indexOf("("));
     qDebug() << "Running test " << currentTestName << "...";
     Html5CanvasInterface::clearMainCanvas(0xFF0000FF);
-    m_tests->setExpectedImage(QImage());
+    m_tests->setExpectedImage(QImage(expectedImageFilename(currentTestName)));
 
     m_testWidget->repaint();
 

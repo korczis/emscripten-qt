@@ -18,6 +18,7 @@ public slots:
     void testDrawRectangleWithThickLine();
     void testSaveAndRestoreDrawingState();
     void testSingleClippedRectangle();
+    void testTwoClippedRectangles();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

@@ -147,9 +147,20 @@ void Html5GraphicsSystemTests::testSaveAndRestoreDrawingState()
 
 void Html5GraphicsSystemTests::testSingleClippedRectangle()
 {
-    const QRect clipRect(widgetWidth() / 4, widgetHeight() / 4, widgetWidth() / 2, widgetHeight() / 2);
+    const QRect clipRect(widgetWidth() / 4, widgetHeight() / 8, widgetWidth() / 2, 3 * widgetHeight() / 4);
     painter()->setClipRect(clipRect);
     painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), QColor(Qt::red));
+}
+
+void Html5GraphicsSystemTests::testTwoClippedRectangles()
+{
+    const QRect clipRect1(widgetWidth() / 8, widgetHeight() / 8, widgetWidth() / 4, 3 * widgetHeight() / 4);
+    const QRect clipRect2(5 * widgetWidth() / 8, widgetHeight() / 8, widgetWidth() / 4, 3 * widgetHeight() / 4);
+    painter()->setClipRect(clipRect1);
+    painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), QColor(Qt::red));
+
+    painter()->setClipRect(clipRect2);
+    painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), QColor(Qt::blue));
 }
 
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)

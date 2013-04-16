@@ -633,9 +633,15 @@ function _EMSCRIPTENQT_strokeRect_internal(canvasHandle, x, y, width, height)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
-    ctx.strokeStyle = "#000000";
     ctx.lineWidth = 0;
     ctx.strokeRect(x + 0.5, y + 0.5,  width, height);
+}
+
+function _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "rgba(" + r + "," + g + "," + b + "," + 0xFF + ")";
 }
 
 

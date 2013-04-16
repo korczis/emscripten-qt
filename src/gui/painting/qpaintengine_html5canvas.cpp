@@ -176,9 +176,12 @@ void QHtml5CanvasPaintEngine::setState(QPainterState *s)
 */
 void QHtml5CanvasPaintEngine::penChanged()
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::penChanged():" << state()->pen;
 #endif
+    const QColor penColor = state()->pen.color();
+    Html5CanvasInterface::changePenColor(d->canvasHandle, penColor.red(), penColor.green(), penColor.blue());
 }
 
 /*!

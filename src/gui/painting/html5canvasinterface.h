@@ -42,6 +42,7 @@ public:
     /**
      * Draw the canvas with the requested \a canvasHandle on the main canvas at \a x, \a y
      */
+    static void changePenColor(CanvasHandle canvasHandle, int r, int g, int b);
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
     /**
      * Fill the main canvas with the colour \a rgba.  Mainly used by the html5canvas test suite.

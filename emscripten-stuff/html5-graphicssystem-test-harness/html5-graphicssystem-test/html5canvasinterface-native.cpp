@@ -90,6 +90,12 @@ void Html5CanvasInterface::strokeRect(CanvasHandle canvasHandle, double x, doubl
     strokeRectCommand.commandData() << canvasHandle << x << y << width << height;
     commandSender()->sendCommand(strokeRectCommand);
 }
+void Html5CanvasInterface::changePenColor(CanvasHandle canvasHandle, int r, int g, int b)
+{
+    Command changePenColorCommand(Command::ChangePenColor);
+    changePenColorCommand.commandData() << canvasHandle << r << g << b;
+    commandSender()->sendCommand(changePenColorCommand);
+}
 
 void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)
 {

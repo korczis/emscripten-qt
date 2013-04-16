@@ -60,6 +60,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_changePenColor: function(canvasHandle, r, g, b) {
+          return _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_drawCanvasOnMainCanvas: function(canvasHandle, x, y) {
           return _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y);
       }

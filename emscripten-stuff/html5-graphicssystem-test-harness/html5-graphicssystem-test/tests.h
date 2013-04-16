@@ -13,6 +13,7 @@ public slots:
     void testTwoFilledRectangles();
     void testDrawRectangleDefaultPenAndBrush();
     void testDrawRectangleDefaultPenAndBrush2();
+    void testDrawRectangleRedPenAndDefaultBrush();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

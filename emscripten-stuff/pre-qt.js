@@ -614,6 +614,7 @@ function _EMSCRIPTENQT_createCanvas_internal(width, height)
         ctx.trackedSave = function() {canvas.savedStateCount++; ctx.save(); }
         ctx.trackedSave(); // Store the initial state. 
         //window.alert("default strokeStyle: " + ctx.strokeStyle);
+        
         return handle;
     }
     catch (e)
@@ -729,6 +730,47 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
         window.alert("e: " + e);
     }
 }
+function _EMSCRIPTENQT_setCanvasPixelsRaw_internal(canvasHandle, sourcePointer, heapArray8)
+{
+try
+{
+    // TODO - optimise - use a low-level copy, or something.
+    if (heapArray8 == undefined)
+    {
+        heapArray8 = HEAP8;
+    }
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    var canvasData = ctx.createImageData(canvas.width, canvas.height);
+    var canvasDataRaw = canvasData.data;
+    var numComponents = canvas.width * canvas.height * 4;
+    for (var i = 0; i < numComponents; i++)
+    {
+        canvasDataRaw[i] = heapArray8[sourcePointer] & 0xFF;
+        sourcePointer++;
+    } 
+    ctx.putImageData(canvasData, 0, 0);
+}
+catch (e)
+{
+    window.alert("setCanvasPixelsRaw e: " + e);
+}
+}
+function _EMSCRIPTENQT_drawCanvasOnCanvas_internal(canvasHandleToDraw, canvasHandleToDrawOn, x, y)
+{
+try
+{
+    var canvasToDraw = emscriptenqt_handle_to_canvas[canvasHandleToDraw];
+    var canvasToDrawOn = emscriptenqt_handle_to_canvas[canvasHandleToDrawOn];
+    var contextToDrawOn = canvasToDrawOn.getContext("2d");
+    contextToDrawOn.drawImage(canvasToDraw, x, y);
+    return true;
+}
+catch (e)
+{
+window.alert("drawCanvasOnCanvas e: " + e);
+}
+}
 
 function _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y)
 {
@@ -742,7 +784,7 @@ try
 }
 catch (e)
 {
-window.alert("exc: " + e);
+window.alert("drawCanvasOnMainCanvas (" + canvasHandle + "," + x + "," + y + ") e: " + e);
 }
 }
 

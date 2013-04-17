@@ -8,6 +8,11 @@ const QString expectedTestImagesPath = EXPECTED_TEST_IMAGES_DIR "/";
 #else
 const QString expectedTestImagesPath = "/expected-test-images/";
 #endif
+#ifdef EMSCRIPTEN_NATIVE
+const QString testDataPath = TEST_DATA_DIR "/";
+#else
+const QString testDataPath = "/testdata/";
+#endif
 
 Html5GraphicsSystemTests::Html5GraphicsSystemTests(int widgetWidth, int widgetHeight)
     : m_widgetWidth(widgetWidth),
@@ -191,6 +196,13 @@ void Html5GraphicsSystemTests::testChangingClipDoesntUndoSubsequentPenAndBrushCh
 
     painter()->setClipRect(clipRect2);
     painter()->drawRect(0, widgetHeight() / 4, widgetWidth(), widgetHeight() / 2);
+}
+
+void Html5GraphicsSystemTests::testDrawQPixmapWithVariableAlpha()
+{
+    const QPixmap pixmap(testDataPath + "qt-logo-variable-alpha.png");
+    painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), QColor(0, 0, 255));
+    painter()->drawPixmap(5, 5, pixmap);
 }
 
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)

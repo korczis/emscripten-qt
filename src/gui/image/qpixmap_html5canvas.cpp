@@ -41,7 +41,7 @@ QPixmapData *QHtml5CanvasPixmapData::createCompatiblePixmapData() const
 
 void QHtml5CanvasPixmapData::resize(int width, int height)
 {
-    qDebug() << "QHtml5CanvasPixmapData::resize(int width, int height)";
+    qDebug() << "QHtml5CanvasPixmapData::resize(int width, int height) width: " << width << " height: " << height;
     w = width;
     h = height;
     if (width <= 0 || height <= 0)
@@ -162,7 +162,36 @@ CanvasHandle QHtml5CanvasPixmapData::canvasHandle() const
 
 void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace)
 {
-    qDebug() << "QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace)";
+    qDebug() << "QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace) flags: " << flags << " inPlace: " << inPlace << " image size: " << sourceImage.size() << " image format: " << sourceImage.format();
+    Q_ASSERT(sourceImage.format() == QImage::Format_ARGB32);
+    resize(sourceImage.width(), sourceImage.height());
+    if (is_null)
+    {
+        // Failed to resize; abort.
+        return;
+    }
+    // Very crude initial stab - we can do better than this, I hope!
+    const int width = sourceImage.width();
+    const int height = sourceImage.height();
+    uchar* rgbaData = static_cast<uchar*>(malloc(sourceImage.width() * sourceImage.height() * 4));
+    uchar* rgbaDataWriter = rgbaData;
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            const QRgb rgba = sourceImage.pixel(x, y);
+            *rgbaDataWriter = (uchar)qRed(rgba);
+            rgbaDataWriter++;
+            *rgbaDataWriter = (uchar)qGreen(rgba);
+            rgbaDataWriter++;
+            *rgbaDataWriter = (uchar)qBlue(rgba);
+            rgbaDataWriter++;
+            *rgbaDataWriter = (uchar)qAlpha(rgba);
+            rgbaDataWriter++;
+        }
+    }
+    Html5CanvasInterface::setCanvasPixelsRaw(m_canvasHandle, rgbaData, width, height);
+    free(rgbaData);
 }
 
 QT_END_NAMESPACE

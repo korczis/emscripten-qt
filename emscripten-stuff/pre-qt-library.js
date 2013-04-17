@@ -108,6 +108,18 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_setCanvasPixelsRaw: function(canvasHandle, x, y, width, height) {
+          return _EMSCRIPTENQT_setCanvasPixelsRaw_internal(canvasHandle, sourcePointer, heapArray8);
+      }
+    });
+
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_drawCanvasOnCanvas: function(canvasHandleToDraw, canvasHandleToDrawOn, x, y) {
+          return _EMSCRIPTENQT_drawCanvasOnCanvas_internal(canvasHandleToDraw, canvasHandleToDrawOn, x, y);
+      }
+    });
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_drawCanvasOnMainCanvas: function(canvasHandle, x, y) {
           return _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y);
       }

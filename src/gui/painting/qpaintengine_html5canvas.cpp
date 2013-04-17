@@ -495,9 +495,12 @@ void QHtml5CanvasPaintEngine::drawPolygon(const QPoint *points, int pointCount, 
 */
 void QHtml5CanvasPaintEngine::drawPixmap(const QPointF &pos, const QPixmap &pixmap)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << " - QHtml5CanvasPaintEngine::drawPixmap(), pos=" << pos << " pixmap=" << pixmap.size() << "depth=" << pixmap.depth();
 #endif
+    CanvasHandle pixmapCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(pixmap.pixmapData())->canvasHandle();
+    Html5CanvasInterface::drawCanvasOnCanvas(pixmapCanvasHandle, d->canvasHandle, pos.x(), pos.y());
 }
 
 /*!

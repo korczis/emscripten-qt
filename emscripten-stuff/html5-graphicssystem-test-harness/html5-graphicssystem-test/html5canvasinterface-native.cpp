@@ -147,6 +147,29 @@ void Html5CanvasInterface::setClipRect(CanvasHandle canvasHandle, double x, doub
     commandSender()->sendCommand(setClipRectCommand);
 }
 
+void Html5CanvasInterface::setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height)
+{
+    Command setCanvasPixelsRawCommand(Command::SetCanvasPixelsRaw);
+    setCanvasPixelsRawCommand.commandData() << canvasHandle << width << height;
+    // Serialise as width * height * 4 2-digit hex numbers.
+    for (int i = 0; i < width * height * 4; i++)
+    {
+        QString hex = QString::number((int)(rgbaData[i]), 16);
+        if (hex.length() == 1)
+        {
+            hex = "0" + hex;
+        }
+        setCanvasPixelsRawCommand.commandData() << hex;
+    }
+    commandSender()->sendCommand(setCanvasPixelsRawCommand);
+}
+
+void Html5CanvasInterface::drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw, CanvasHandle canvasHandleToDrawOn, double x, double y)
+{
+    Command drawCanvasOnCanvasCommand(Command::DrawCanvasOnCanvas);
+    drawCanvasOnCanvasCommand.commandData() << canvasHandleToDraw << canvasHandleToDrawOn << x << y;
+    commandSender()->sendCommand(drawCanvasOnCanvasCommand);
+}
 
 void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)
 {

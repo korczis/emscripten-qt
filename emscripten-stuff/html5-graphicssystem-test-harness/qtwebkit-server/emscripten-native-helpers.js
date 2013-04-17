@@ -60,3 +60,21 @@ catch(e)
 window.alert("Exception: " + e);
 }
 }
+
+function EMSCRIPTENNATIVEHELPER_setCanvasPixelsRaw(canvasHandle, rgbaHexString, width, height)
+{
+    // Construct a byte-array containing the equivalent of the uchar* rgba data.
+    var numPixels = width * height;
+    var fakeHeap = new ArrayBuffer(numPixels * 4);
+    var fakeHeap8 = new Int8Array(fakeHeap);
+    var posInRgbaHexString = 0;
+    for (var i = 0; i < numPixels * 4; i++)
+    {
+        var asDec = parseInt(rgbaHexString.substring(posInRgbaHexString, posInRgbaHexString + 2), 16) & 0xFF;
+        fakeHeap8[i] = asDec;
+        
+        posInRgbaHexString += 2;
+    }
+    _EMSCRIPTENQT_setCanvasPixelsRaw_internal(canvasHandle, 0, fakeHeap8);
+    
+}

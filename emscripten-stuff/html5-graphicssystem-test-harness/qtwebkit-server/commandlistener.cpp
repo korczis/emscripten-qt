@@ -220,12 +220,37 @@ void CommandListener::newCommandIncoming()
             evaluateJsStatements(QString("return _EMSCRIPTENQT_setClipRect_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(x).arg(y).arg(width).arg(height));
             break;
         }
+        case Command::SetCanvasPixelsRaw:
+        {
+            CanvasHandle canvasHandle;
+            int width, height;
+            command.commandData() >> canvasHandle >>  width >> height;
+            // width * height * 4 2-digit hex numbers.
+            QString rgbaHexString;
+            for (int i = 0; i < width * height * 4; i++)
+            {
+               QString hex;
+               command.commandData() >> hex;
+               rgbaHexString += hex;
+            }
+            evaluateJsStatements(QString("return EMSCRIPTENNATIVEHELPER_setCanvasPixelsRaw(%1, \"%2\", %3, %4); ").arg(canvasHandle).arg(rgbaHexString).arg(width).arg(height));
+            break;
+        }
+        case Command::DrawCanvasOnCanvas:
+        {   
+            CanvasHandle canvasHandleToDraw, canvasHandleToDrawOn;
+            double x, y;
+            command.commandData() >> canvasHandleToDraw >> canvasHandleToDrawOn >> x >> y;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_drawCanvasOnCanvas_internal(%1, %2, %3, %4); ").arg(canvasHandleToDraw).arg(canvasHandleToDrawOn).arg(x).arg(y));
+            break;
+        }
         case Command::DrawCanvasOnMainCanvas:
         {
             CanvasHandle canvasHandle;
             int x, y;
             command.commandData() >> canvasHandle >> x >> y;
             evaluateJsStatements(QString("return _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(%1, %2, %3); ").arg(canvasHandle).arg(x).arg(y));
+            break;
         }
     }
     if (m_commandSource->bytesAvailable() > 0)

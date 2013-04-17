@@ -21,6 +21,7 @@ public slots:
     void testTwoClippedRectangles();
     void testChangingClipDoesntUndoPenAndBrush();
     void testChangingClipDoesntUndoSubsequentPenAndBrushChanges();
+    void testDrawQPixmapWithVariableAlpha();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

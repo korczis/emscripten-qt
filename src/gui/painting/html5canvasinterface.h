@@ -50,10 +50,16 @@ public:
     static void changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b);
     static void changePenThickness(CanvasHandle canvasHandle, double thickness);
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
+    static void drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw,CanvasHandle canvasHandleToDrawOn, double x, double y);
     static void savePaintState(CanvasHandle canvasHandle);
     static void restorePaintState(CanvasHandle canvasHandle);
     static void restoreToOriginalState(CanvasHandle canvasHandle);
     static void setClipRect(CanvasHandle canvasHandle, double x, double y, double w, double h);
+    /**
+     * width and height will always be the same as the canvas width and height; they're mainly there
+     * to aid the native version.  TODO - see if we can dispense with width and height.
+     */
+    static void setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height);
     /**
      * Fill the main canvas with the colour \a rgba.  Mainly used by the html5canvas test suite.
      */

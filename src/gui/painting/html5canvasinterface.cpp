@@ -20,7 +20,9 @@ extern "C"
     void EMSCRIPTENQT_restorePaintState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_restoreToOriginalState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_setClipRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
+    void EMSCRIPTENQT_setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height);
     void EMSCRIPTENQT_drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
+    void EMSCRIPTENQT_drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw,CanvasHandle canvasHandleToDrawOn, double x, double y);
     void EMSCRIPTENQT_clearMainCanvas(Rgba rgba);
     void EMSCRIPTENQT_mainCanvasContentsRaw_internal(void* destPtr);
     int EMSCRIPTENQT_canvas_width_pixels();
@@ -82,10 +84,21 @@ void Html5CanvasInterface::setClipRect(CanvasHandle canvasHandle, double x, doub
     EMSCRIPTENQT_setClipRect(canvasHandle, x, y, w, h);
 }
 
+void Html5CanvasInterface::setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height)
+{
+    EMSCRIPTENQT_setCanvasPixelsRaw(CanvasHandle, rgbaData, width, height);
+}
+
 void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)
 {
     EMSCRIPTENQT_drawCanvasOnMainCanvas(canvasHandle, x, y);
 }
+
+void Html5CanvasInterface::drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw, CanvasHandle canvasHandleToDrawOn, double x, double y)
+{
+    EMSCRIPTENQT_drawCanvasOnCanvas(canvasHandleToDraw, canvasHandleToDrawOn, x, y);
+}
+
 
 void Html5CanvasInterface::clearMainCanvas(Rgba rgba)
 {

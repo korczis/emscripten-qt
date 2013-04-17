@@ -116,6 +116,7 @@ void TestDriver::runNextTest()
         canvasContents.save(currentTestName + "-actual.png");
     }
 
+    qDebug() << "Finished test " << currentTestName;
     m_testIndex++;
     QTimer::singleShot(0, this, SLOT(runNextTest()));
 }

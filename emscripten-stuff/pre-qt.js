@@ -607,7 +607,13 @@ function _EMSCRIPTENQT_createCanvas_internal(width, height)
         var canvas = document.createElement("canvas");      
         canvas.width = width;
         canvas.height = height; 
+        canvas.savedStateCount = 0;
         emscriptenqt_handle_to_canvas[handle] = canvas;
+        var ctx = canvas.getContext("2d");
+        ctx.trackedRestore = function() { canvas.savedStateCount--; ctx.restore();}
+        ctx.trackedSave = function() {canvas.savedStateCount++; ctx.save(); }
+        ctx.trackedSave(); // Store the initial state. 
+        //window.alert("default strokeStyle: " + ctx.strokeStyle);
         return handle;
     }
     catch (e)
@@ -668,30 +674,54 @@ function _EMSCRIPTENQT_savePaintState_internal(canvasHandle)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
-    ctx.save();
+    ctx.trackedSave();
 }
 
 function _EMSCRIPTENQT_restorePaintState_internal(canvasHandle)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
-    ctx.restore();
+    if (canvas.hasClip)
+    {
+        ctx.trackedRestore();
+        canvas.hasClip = false;
+    }
+    ctx.trackedRestore();
 }
 
-function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
+function _EMSCRIPTENQT_restoreToOriginalState_internal(canvasHandle)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
-    if (ctx.hasClip)
+    while (canvas.savedStateCount > 1) // The initial state is always stored, so 1 instead of 0.
     {
-        ctx.restore();
-        ctx.hasClip = false;
+        ctx.trackedRestore();
     }
-    ctx.save();
+    canvas.hasClip = false;
+}
+
+
+function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
+{
+    try
+    {
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    if (canvas.hasClip)
+    {
+        ctx.trackedRestore();
+        canvas.hasClip = false;
+    }
+    ctx.trackedSave();
     ctx.beginPath();
     ctx.rect(x , y,  width, height);
     ctx.clip();
-    ctx.hasClip = true;
+    canvas.hasClip = true;
+    }
+    catch (e)
+    {
+        window.alert("e: " + e);
+    }
 }
 
 function _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y)

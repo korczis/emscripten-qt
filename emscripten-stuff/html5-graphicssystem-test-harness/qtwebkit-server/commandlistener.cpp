@@ -205,6 +205,13 @@ void CommandListener::newCommandIncoming()
             evaluateJsStatements(QString("return _EMSCRIPTENQT_restorePaintState_internal(%1); ").arg(canvasHandle));
             break;
         }
+        case Command::RestoreToOriginalState:
+        {
+            CanvasHandle canvasHandle;
+            command.commandData() >> canvasHandle;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_restoreToOriginalState_internal(%1); ").arg(canvasHandle));
+            break;
+        }
         case Command::SetClipRect:
         {
             CanvasHandle canvasHandle;

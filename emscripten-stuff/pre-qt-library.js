@@ -96,6 +96,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_restoreToOriginalState: function(canvasHandle) {
+          return _EMSCRIPTENQT_restoreToOriginalState_internal(canvasHandle);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_setClipRect: function(canvasHandle, x, y, width, height) {
           return _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height);
       }

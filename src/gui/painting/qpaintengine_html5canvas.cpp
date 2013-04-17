@@ -72,15 +72,12 @@ bool QHtml5CanvasPaintEngine::begin(QPaintDevice *device)
     QHtml5CanvasPixmapData *html5CanvasPixmap = static_cast<QHtml5CanvasPixmapData*>(pd);
     d->canvasHandle = html5CanvasPixmap->canvasHandle();
     printf("Restoring to (almost) empty paint stack\n");
-    // Keep the first entry, as that represents the default state. TODO - check this;
-    // it might be instead that we have to remember the top(), then restore to empty stack,
-    // then push the old top() back on again.
-    while (!d->savedStateHistory.size() > 1)
-    {
-        printf(" popped\n");
-        Html5CanvasInterface::restorePaintState(d->canvasHandle);
-        d->savedStateHistory.pop();
-    }
+    // oldInitialState would have been set by QPainter::begin, before QHtml5CanvasPaintEngine::begin() was called;
+    // so we need to hang onto it and re-add it to the saved states after wiping the old saved states.
+    QPainterState *oldInitialState = d->savedStateHistory.top();
+    d->savedStateHistory.clear();
+    d->savedStateHistory.push(oldInitialState);
+    Html5CanvasInterface::restoreToOriginalState(d->canvasHandle);
     return true;
 }
 
@@ -175,16 +172,17 @@ void QHtml5CanvasPaintEngine::setState(QPainterState *s)
         printf("Restoring\n");
         while (d->savedStateHistory.top() != s)
         {
-            printf(" popped\n");
             d->savedStateHistory.pop();
             Html5CanvasInterface::restorePaintState(d->canvasHandle);
+            printf(" popped; now %d elements, with %p at top\n", d->savedStateHistory.size(), d->savedStateHistory.top());
         }
     }
     else
     {
-        printf("Saving\n");
+        qDebug() << "Saving";
         d->savedStateHistory.push(s);
         Html5CanvasInterface::savePaintState(d->canvasHandle);
+        qDebug() << "Saved; now " << d->savedStateHistory.size() << " with " << (void*)d->savedStateHistory.top() << "at top";
     }
 }
 

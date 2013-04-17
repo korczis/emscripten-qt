@@ -19,6 +19,7 @@ public slots:
     void testSaveAndRestoreDrawingState();
     void testSingleClippedRectangle();
     void testTwoClippedRectangles();
+    void testChangingClipDoesntUndoPenAndBrush();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

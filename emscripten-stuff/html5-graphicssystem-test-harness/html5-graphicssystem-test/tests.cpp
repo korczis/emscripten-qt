@@ -149,7 +149,7 @@ void Html5GraphicsSystemTests::testSingleClippedRectangle()
 {
     const QRect clipRect(widgetWidth() / 4, widgetHeight() / 8, widgetWidth() / 2, 3 * widgetHeight() / 4);
     painter()->setClipRect(clipRect);
-    painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), QColor(Qt::red));
+    painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), QColor(Qt::green));
 }
 
 void Html5GraphicsSystemTests::testTwoClippedRectangles()
@@ -161,6 +161,21 @@ void Html5GraphicsSystemTests::testTwoClippedRectangles()
 
     painter()->setClipRect(clipRect2);
     painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), QColor(Qt::blue));
+}
+
+void Html5GraphicsSystemTests::testChangingClipDoesntUndoPenAndBrush()
+{
+    const QRect clipRect1(widgetWidth() / 8, widgetHeight() / 8, widgetWidth() / 4, 3 * widgetHeight() / 4);
+    const QRect clipRect2(5 * widgetWidth() / 8, widgetHeight() / 8, widgetWidth() / 4, 3 * widgetHeight() / 4);
+
+    painter()->setPen(QPen(Qt::gray, 10));
+    painter()->setBrush(QBrush(Qt::yellow));
+
+    painter()->setClipRect(clipRect1);
+    painter()->drawRect(0, widgetHeight() / 4, widgetWidth(), widgetHeight() / 2);
+
+    painter()->setClipRect(clipRect2);
+    painter()->drawRect(0, widgetHeight() / 4, widgetWidth(), widgetHeight() / 2);
 }
 
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)

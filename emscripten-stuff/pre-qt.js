@@ -682,9 +682,16 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
+    if (ctx.hasClip)
+    {
+        ctx.restore();
+        ctx.hasClip = false;
+    }
+    ctx.save();
     ctx.beginPath();
     ctx.rect(x , y,  width, height);
     ctx.clip();
+    ctx.hasClip = true;
 }
 
 function _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y)

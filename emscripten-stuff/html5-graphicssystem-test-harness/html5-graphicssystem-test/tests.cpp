@@ -178,6 +178,21 @@ void Html5GraphicsSystemTests::testChangingClipDoesntUndoPenAndBrush()
     painter()->drawRect(0, widgetHeight() / 4, widgetWidth(), widgetHeight() / 2);
 }
 
+void Html5GraphicsSystemTests::testChangingClipDoesntUndoSubsequentPenAndBrushChanges()
+{
+    const QRect clipRect1(widgetWidth() / 8, widgetHeight() / 8, widgetWidth() / 4, 3 * widgetHeight() / 4);
+    const QRect clipRect2(5 * widgetWidth() / 8, widgetHeight() / 8, widgetWidth() / 4, 3 * widgetHeight() / 4);
+
+
+    painter()->setClipRect(clipRect1);
+    painter()->setPen(QPen(Qt::gray, 10));
+    painter()->setBrush(QBrush(Qt::yellow));
+    painter()->drawRect(0, widgetHeight() / 4, widgetWidth(), widgetHeight() / 2);
+
+    painter()->setClipRect(clipRect2);
+    painter()->drawRect(0, widgetHeight() / 4, widgetWidth(), widgetHeight() / 2);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

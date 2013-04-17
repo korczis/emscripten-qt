@@ -709,8 +709,14 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
     var ctx = canvas.getContext("2d");
     if (canvas.hasClip)
     {
+        var oldFillStyle = ctx.fillStyle;
+        var oldLineWidth = ctx.lineWidth;
+        var oldStrokeStyle = ctx.strokeStyle;
         ctx.trackedRestore();
         canvas.hasClip = false;
+        ctx.fillStyle = oldFillStyle;
+        ctx.lineWidth = oldLineWidth;
+        ctx.strokeStyle = oldStrokeStyle;
     }
     ctx.trackedSave();
     ctx.beginPath();

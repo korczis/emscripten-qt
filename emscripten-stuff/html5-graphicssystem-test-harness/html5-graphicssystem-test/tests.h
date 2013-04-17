@@ -20,6 +20,7 @@ public slots:
     void testSingleClippedRectangle();
     void testTwoClippedRectangles();
     void testChangingClipDoesntUndoPenAndBrush();
+    void testChangingClipDoesntUndoSubsequentPenAndBrushChanges();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

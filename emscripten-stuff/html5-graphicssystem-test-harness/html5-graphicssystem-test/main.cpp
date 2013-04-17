@@ -5,6 +5,24 @@
 #include "testdriver.h"
 #include "../shared/canvasdimensions.h"
 
+void myMessageOutput(QtMsgType type, const char *msg)
+{
+ switch (type) {
+ case QtDebugMsg:
+     fprintf(stdout, "%s\n", msg);
+     break;
+ case QtWarningMsg:
+     fprintf(stderr, "Warning: %s\n", msg);
+     break;
+ case QtCriticalMsg:
+     fprintf(stderr, "Critical: %s\n", msg);
+     break;
+ case QtFatalMsg:
+     fprintf(stderr, "Fatal: %s\n", msg);
+     abort();
+ }
+}
+
 #ifndef EMSCRIPTEN_NATIVE
 int main(int argc, char *argv[])
 #else
@@ -24,6 +42,7 @@ int emscriptenQtSDLMain(int argc, char *argv[])
 #else
     const bool usingHtml5Canvas = true;
 #endif
+    qInstallMsgHandler(myMessageOutput);
     QApplication *app = new QApplication(argc, argv);
 
 

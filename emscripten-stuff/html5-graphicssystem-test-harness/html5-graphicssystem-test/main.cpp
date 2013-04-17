@@ -10,6 +10,7 @@ void myMessageOutput(QtMsgType type, const char *msg)
  switch (type) {
  case QtDebugMsg:
      fprintf(stdout, "%s\n", msg);
+     fflush(stdout);
      break;
  case QtWarningMsg:
      fprintf(stderr, "Warning: %s\n", msg);

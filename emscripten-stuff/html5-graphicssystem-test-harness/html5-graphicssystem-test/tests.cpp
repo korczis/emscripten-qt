@@ -267,6 +267,16 @@ void Html5GraphicsSystemTests::testSettingClipBeforeTranslateDoesNotAlterClip()
     painter()->drawRect(widgetWidth() / 2, widgetHeight() / 2, widgetWidth() / 2, widgetHeight() / 2);
 }
 
+void Html5GraphicsSystemTests::testClippingAfterTranslateGivesTranslatedClip()
+{
+    const int rectWidth = widgetWidth() / 2;
+    const int rectHeight = widgetHeight() / 2;
+    painter()->setBrush(Qt::red);
+    painter()->translate(-widgetWidth() / 3, widgetHeight() / 4);
+    painter()->setClipRect(widgetWidth() / 2, widgetHeight() / 2, rectWidth / 6, rectHeight / 6);
+    painter()->drawRect(widgetWidth() / 2, widgetHeight() / 2, rectWidth, rectHeight);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;
@@ -285,8 +295,7 @@ void Html5GraphicsSystemTests::setPainterForTest(QPainter *painter)
 QPainter *Html5GraphicsSystemTests::painter()
 {
     return m_painter;
-}
-
+} 
 int Html5GraphicsSystemTests::widgetWidth()
 {
     return m_widgetWidth;

@@ -25,6 +25,7 @@ public slots:
     void testSaveAndRestoreDrawingStateIncludesClip();
     void testCanTranslateQPainter();
     void testSettingClipBeforeTranslateDoesNotAlterClip();
+    void testClippingAfterTranslateGivesTranslatedClip();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

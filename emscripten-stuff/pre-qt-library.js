@@ -108,6 +108,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_translate: function(canvasHandle, dx, dy) {
+          return _EMSCRIPTENQT_translate_internal(canvasHandle, dx, dy);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_setCanvasPixelsRaw: function(canvasHandle, x, y, width, height) {
           return _EMSCRIPTENQT_setCanvasPixelsRaw_internal(canvasHandle, sourcePointer, heapArray8);
       }

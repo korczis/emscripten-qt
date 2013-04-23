@@ -23,6 +23,7 @@ public slots:
     void testChangingClipDoesntUndoSubsequentPenAndBrushChanges();
     void testDrawQPixmapWithVariableAlpha();
     void testSaveAndRestoreDrawingStateIncludesClip();
+    void testCanTranslateQPainter();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

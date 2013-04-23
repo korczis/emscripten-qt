@@ -252,6 +252,13 @@ void Html5GraphicsSystemTests::testSaveAndRestoreDrawingStateIncludesClip()
 
 }
 
+void Html5GraphicsSystemTests::testCanTranslateQPainter()
+{
+    painter()->translate(-widgetWidth() / 3, widgetHeight() / 4);
+    painter()->setBrush(Qt::yellow);
+    painter()->drawRect(widgetWidth() / 2, widgetHeight() / 2, widgetWidth() / 2, widgetHeight() / 2);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

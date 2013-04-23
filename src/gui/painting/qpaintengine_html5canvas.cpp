@@ -299,7 +299,12 @@ void QHtml5CanvasPaintEngine::renderHintsChanged()
 */
 void QHtml5CanvasPaintEngine::transformChanged()
 {
+    Q_D(QHtml5CanvasPaintEngine);
     qDebug() << "QHtml5CanvasPaintEngine::transformChanged()";
+    if (state()->transform().isTranslating())
+    {
+        Html5CanvasInterface::translate(d->canvasHandle, state()->transform().dx(),  state()->transform().dy());
+    }
 }
 
 /*!

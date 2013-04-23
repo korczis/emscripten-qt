@@ -781,6 +781,20 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
         window.alert("e: " + e);
     }
 }
+
+function _EMSCRIPTENQT_translate_internal(canvasHandle, dx, dy)
+{
+    try
+    {
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.translate(dx, dy);
+    }
+    catch (e)
+    {
+        window.alert("e: " + e);
+    }
+}
 function _EMSCRIPTENQT_setCanvasPixelsRaw_internal(canvasHandle, sourcePointer, heapArray8)
 {
 try

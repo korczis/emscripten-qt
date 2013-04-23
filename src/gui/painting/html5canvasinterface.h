@@ -55,6 +55,7 @@ public:
     static void restorePaintState(CanvasHandle canvasHandle);
     static void restoreToOriginalState(CanvasHandle canvasHandle);
     static void setClipRect(CanvasHandle canvasHandle, double x, double y, double w, double h);
+    static void translate(CanvasHandle canvasHandle, double dx, double dy);
     /**
      * width and height will always be the same as the canvas width and height; they're mainly there
      * to aid the native version.  TODO - see if we can dispense with width and height.

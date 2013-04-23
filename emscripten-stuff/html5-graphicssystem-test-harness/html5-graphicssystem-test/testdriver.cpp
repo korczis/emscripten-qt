@@ -56,10 +56,15 @@ double percentagePixelsDifferent(const QImage& image1, const QImage& image2)
 }
 
 TestDriver::TestDriver(bool usingHtml5Canvas)
-    : QObject(), m_testIndex(0), m_usingHtml5Canvas(usingHtml5Canvas)
+    : QObject(), m_testIndex(-1), m_usingHtml5Canvas(usingHtml5Canvas)
 {
     m_testWidget = new TestWidget(this);
     m_testWidget->showFullScreen();
+    // Wait for the initial redraw of the TestWidget.
+    while (QApplication::hasPendingEvents())
+    {
+        QApplication::processEvents();
+    }
     m_tests = new Html5GraphicsSystemTests(m_testWidget->width(), m_testWidget->height());
 }
 
@@ -70,8 +75,15 @@ void TestDriver::beginRunAllTestsAsync()
 
 void TestDriver::runTestWithPainter(QPainter *painter)
 {
-    m_tests->setPainterForTest(painter);
-    m_currentTestMethod.invoke(m_tests);
+    if (m_testIndex >= 0)
+    {
+        m_tests->setPainterForTest(painter);
+        m_currentTestMethod.invoke(m_tests);
+    }
+    else
+    {
+        qDebug() << "Skipping test.";
+    }
 }
 
 void TestDriver::runNextTest()
@@ -130,7 +142,7 @@ int TestDriver::findNextTestMethodIndex()
         QMetaMethod method = testsMetaObject->method(methodIndex); 
         if (QString(method.signature()).startsWith("test"))
         {
-            if (numTestMethodsFound == m_testIndex)
+            if (numTestMethodsFound == m_testIndex || m_testIndex == -1)
             {
                 return methodIndex;
             }

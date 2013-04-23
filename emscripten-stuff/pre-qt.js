@@ -701,8 +701,11 @@ try
         canvas.savedClips.push(null);
     }
     ctx.trackedSave();
-    // TODO - need to be able to save and restore more complex paths, too (i.e. resulting from a QPainterPainter instead of a rectangle).
-    _EMSCRIPTENQT_setClipRect_internal(canvasHandle, canvas.lastSetClip[0], canvas.lastSetClip[1], canvas.lastSetClip[2], canvas.lastSetClip[3]);
+    if (canvas.lastSetClip)
+    {
+        // TODO - need to be able to save and restore more complex paths, too (i.e. resulting from a QPainterPainter instead of a rectangle).
+        _EMSCRIPTENQT_setClipRect_internal(canvasHandle, canvas.lastSetClip[0], canvas.lastSetClip[1], canvas.lastSetClip[2], canvas.lastSetClip[3]);
+    }
 }
 catch(e)
 {

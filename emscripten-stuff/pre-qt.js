@@ -608,6 +608,7 @@ function _EMSCRIPTENQT_createCanvas_internal(width, height)
         canvas.width = width;
         canvas.height = height; 
         canvas.savedStateCount = 0;
+        canvas.savedClips = [];
         emscriptenqt_handle_to_canvas[handle] = canvas;
         var ctx = canvas.getContext("2d");
         ctx.trackedRestore = function() { canvas.savedStateCount--; ctx.restore();}
@@ -671,34 +672,86 @@ function _EMSCRIPTENQT_changeBrushColor_internal(canvasHandle, r, g, b)
     ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + 0xFF + ")";
 }
 
-function _EMSCRIPTENQT_savePaintState_internal(canvasHandle)
+function _EMSCRIPTENQT_removeClip_internal(canvasCtx, canvas)
 {
-    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
-    var ctx = canvas.getContext("2d");
-    ctx.trackedSave();
+    // Assumes that canvas has a clip.  Results are undefined otherwise!
+    var oldFillStyle = canvasCtx.fillStyle;
+    var oldLineWidth = canvasCtx.lineWidth;
+    var oldStrokeStyle = canvasCtx.strokeStyle;
+    canvasCtx.trackedRestore();
+    canvas.hasClip = false;
+    canvasCtx.fillStyle = oldFillStyle;
+    canvasCtx.lineWidth = oldLineWidth;
+    canvasCtx.strokeStyle = oldStrokeStyle;
 }
 
-function _EMSCRIPTENQT_restorePaintState_internal(canvasHandle)
+function _EMSCRIPTENQT_savePaintState_internal(canvasHandle)
+{
+try
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
     if (canvas.hasClip)
     {
-        ctx.trackedRestore();
-        canvas.hasClip = false;
+        canvas.savedClips.push(canvas.lastSetClip);
+        _EMSCRIPTENQT_removeClip_internal(ctx, canvas);
+    }
+    else
+    {
+        canvas.savedClips.push(null);
+    }
+    ctx.trackedSave();
+    // TODO - need to be able to save and restore more complex paths, too (i.e. resulting from a QPainterPainter instead of a rectangle).
+    _EMSCRIPTENQT_setClipRect_internal(canvasHandle, canvas.lastSetClip[0], canvas.lastSetClip[1], canvas.lastSetClip[2], canvas.lastSetClip[3]);
+}
+catch(e)
+{
+window.alert("_EMSCRIPTENQT_savePaintState_internal: " + canvasHandle + "  e: " + e);
+}
+}
+
+function _EMSCRIPTENQT_restorePaintState_internal(canvasHandle)
+{
+try
+{
+    //window.alert("restore");
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    if (canvas.hasClip)
+    {
+        _EMSCRIPTENQT_removeClip_internal(ctx, canvas);
     }
     ctx.trackedRestore();
+    var clipToRestore = canvas.savedClips.pop();
+    if (clipToRestore)
+    {
+        // TODO - need to be able to save and restore more complex paths, too (i.e. resulting from a QPainterPainter instead of a rectangle).
+        _EMSCRIPTENQT_setClipRect_internal(canvasHandle, clipToRestore[0], clipToRestore[1], clipToRestore[2], clipToRestore[3]);
+    }
+}
+catch(e)
+{
+window.alert("_EMSCRIPTENQT_restorePaintState_internal e: " + e);
+}
 }
 
 function _EMSCRIPTENQT_restoreToOriginalState_internal(canvasHandle)
 {
+try
+{
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
-    while (canvas.savedStateCount > 1) // The initial state is always stored, so 1 instead of 0.
+    while (canvas.savedStateCount > 0) 
     {
         ctx.trackedRestore();
     }
+    ctx.trackedSave();
     canvas.hasClip = false;
+}
+catch(e)
+{
+    window.alert("restoreToOriginal e: " + e);
+}
 }
 
 
@@ -710,20 +763,15 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
     var ctx = canvas.getContext("2d");
     if (canvas.hasClip)
     {
-        var oldFillStyle = ctx.fillStyle;
-        var oldLineWidth = ctx.lineWidth;
-        var oldStrokeStyle = ctx.strokeStyle;
-        ctx.trackedRestore();
-        canvas.hasClip = false;
-        ctx.fillStyle = oldFillStyle;
-        ctx.lineWidth = oldLineWidth;
-        ctx.strokeStyle = oldStrokeStyle;
+        _EMSCRIPTENQT_removeClip_internal(ctx, canvas);
     }
     ctx.trackedSave();
     ctx.beginPath();
     ctx.rect(x , y,  width, height);
     ctx.clip();
+    ctx.closePath();
     canvas.hasClip = true;
+    canvas.lastSetClip = [x, y, width, height]; 
     }
     catch (e)
     {

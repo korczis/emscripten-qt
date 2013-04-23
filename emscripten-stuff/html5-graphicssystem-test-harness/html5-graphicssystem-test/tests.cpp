@@ -205,6 +205,53 @@ void Html5GraphicsSystemTests::testDrawQPixmapWithVariableAlpha()
     painter()->drawPixmap(5, 5, pixmap);
 }
 
+void Html5GraphicsSystemTests::testSaveAndRestoreDrawingStateIncludesClip()
+{
+    int x = 5;
+    const int numRects = 7;
+    const int y = widgetHeight() / 6;
+    const int interRectXPad = 5;
+    const int width = (widgetWidth() - numRects * interRectXPad) / numRects;
+    const int height = (widgetHeight() - 2 * y);
+
+    painter()->setClipRect(0, widgetHeight() / 2 - widgetHeight() / 8, widgetWidth(), widgetHeight() / 4);
+    painter()->save();
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->setPen(QPen(Qt::red, 3));
+    painter()->setBrush(Qt::blue);
+    painter()->setClipRect(0, widgetHeight() / 2 - widgetHeight() / 6, widgetWidth(), widgetHeight() / 3);
+    painter()->drawRect(x, y, width, height);
+    painter()->save();
+
+    x += width + 5;
+    painter()->setClipRect(0, widgetHeight()  / 2 - widgetHeight() / 4, widgetWidth(), widgetHeight() / 2);
+    painter()->setPen(QPen(Qt::green, 3));
+    painter()->setBrush(Qt::yellow);
+    painter()->save();
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->setPen(QPen(Qt::gray, 3));
+    painter()->setClipRect(0, 0, widgetWidth(), widgetHeight());
+    painter()->setBrush(Qt::white);
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->restore();
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->restore();
+    painter()->drawRect(x, y, width, height);
+
+    x += width + 5;
+    painter()->restore();
+    painter()->drawRect(x, y, width, height);
+
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

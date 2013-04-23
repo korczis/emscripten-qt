@@ -22,6 +22,7 @@ public slots:
     void testChangingClipDoesntUndoPenAndBrush();
     void testChangingClipDoesntUndoSubsequentPenAndBrushChanges();
     void testDrawQPixmapWithVariableAlpha();
+    void testSaveAndRestoreDrawingStateIncludesClip();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

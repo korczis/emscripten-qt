@@ -71,13 +71,14 @@ bool QHtml5CanvasPaintEngine::begin(QPaintDevice *device)
     QPixmapData *pd = pixmap->pixmapData();
     QHtml5CanvasPixmapData *html5CanvasPixmap = static_cast<QHtml5CanvasPixmapData*>(pd);
     d->canvasHandle = html5CanvasPixmap->canvasHandle();
-    printf("Restoring to (almost) empty paint stack\n");
+    qDebug() << "Restoring to (almost) empty paint stack canvasHandle: " << d->canvasHandle;
     // oldInitialState would have been set by QPainter::begin, before QHtml5CanvasPaintEngine::begin() was called;
     // so we need to hang onto it and re-add it to the saved states after wiping the old saved states.
     QPainterState *oldInitialState = d->savedStateHistory.top();
     d->savedStateHistory.clear();
     d->savedStateHistory.push(oldInitialState);
     Html5CanvasInterface::restoreToOriginalState(d->canvasHandle);
+    d->isReallyActive = true;
     return true;
 }
 
@@ -86,7 +87,9 @@ bool QHtml5CanvasPaintEngine::begin(QPaintDevice *device)
 */
 bool QHtml5CanvasPaintEngine::end()
 {
+    Q_D(QHtml5CanvasPaintEngine);
     qDebug() << "QHtml5CanvasPaintEngine::end()";
+    d->isReallyActive = false;
     return true;
 }
 
@@ -173,7 +176,10 @@ void QHtml5CanvasPaintEngine::setState(QPainterState *s)
         while (d->savedStateHistory.top() != s)
         {
             d->savedStateHistory.pop();
-            Html5CanvasInterface::restorePaintState(d->canvasHandle);
+            if (d->isReallyActive)
+            {
+                Html5CanvasInterface::restorePaintState(d->canvasHandle);
+            }
             printf(" popped; now %d elements, with %p at top\n", d->savedStateHistory.size(), d->savedStateHistory.top());
         }
     }
@@ -181,7 +187,10 @@ void QHtml5CanvasPaintEngine::setState(QPainterState *s)
     {
         qDebug() << "Saving";
         d->savedStateHistory.push(s);
-        Html5CanvasInterface::savePaintState(d->canvasHandle);
+        if (d->isReallyActive)
+        {
+            Html5CanvasInterface::savePaintState(d->canvasHandle);
+        }
         qDebug() << "Saved; now " << d->savedStateHistory.size() << " with " << (void*)d->savedStateHistory.top() << "at top";
     }
 }
@@ -388,8 +397,14 @@ void QHtml5CanvasPaintEngine::drawRects(const QRect *rects, int rectCount)
     {
         if (fillRect)
         {
+#ifdef QT_DEBUG_DRAW
+            qDebug()<< "QHtml5CanvasPaintEngine:  filling Rect " << (i + 1) << " of " << rectCount << " :" << rects[i];
+#endif
             Html5CanvasInterface::fillRect(d->canvasHandle, rects[i].x(), rects[i].y(), rects[i].width(), rects[i].height());
         }
+#ifdef QT_DEBUG_DRAW
+            qDebug()<< "QHtml5CanvasPaintEngine:  drawing Rect " << (i + 1) << " of " << rectCount << " :" << rects[i];
+#endif
         Html5CanvasInterface::strokeRect(d->canvasHandle, rects[i].x(), rects[i].y(), rects[i].width(), rects[i].height());
     }
 }

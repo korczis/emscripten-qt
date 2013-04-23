@@ -169,10 +169,12 @@ QHtml5CanvasPaintEnginePrivate : public QPaintEngineExPrivate
 public:
     QHtml5CanvasPaintEnginePrivate()
         : device(0),
-          canvasHandle(-1)
+          canvasHandle(-1),
+          isReallyActive(false)
     {};
     QPaintDevice* device;
     CanvasHandle canvasHandle;
+    bool isReallyActive;
     QStack<QPainterState*> savedStateHistory;
 };
 

@@ -121,6 +121,7 @@ void Html5CanvasInterface::changeBrushColor(CanvasHandle canvasHandle, int r, in
 
 void Html5CanvasInterface::savePaintState(CanvasHandle canvasHandle)
 {
+    Q_ASSERT(canvasHandle != -1);
     Command savePaintStateCommand(Command::SavePaintState);
     savePaintStateCommand.commandData() << canvasHandle;
     commandSender()->sendCommand(savePaintStateCommand);

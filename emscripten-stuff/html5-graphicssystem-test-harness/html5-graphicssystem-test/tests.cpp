@@ -259,6 +259,14 @@ void Html5GraphicsSystemTests::testCanTranslateQPainter()
     painter()->drawRect(widgetWidth() / 2, widgetHeight() / 2, widgetWidth() / 2, widgetHeight() / 2);
 }
 
+void Html5GraphicsSystemTests::testSettingClipBeforeTranslateDoesNotAlterClip()
+{
+    painter()->setBrush(Qt::green);
+    painter()->setClipRect(widgetWidth() / 2 - widgetWidth() / 4, widgetHeight() * 6 / 8, widgetWidth() / 4, widgetHeight() / 8);
+    painter()->translate(-widgetWidth() / 3, widgetHeight() / 4);
+    painter()->drawRect(widgetWidth() / 2, widgetHeight() / 2, widgetWidth() / 2, widgetHeight() / 2);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

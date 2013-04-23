@@ -24,6 +24,7 @@ public slots:
     void testDrawQPixmapWithVariableAlpha();
     void testSaveAndRestoreDrawingStateIncludesClip();
     void testCanTranslateQPainter();
+    void testSettingClipBeforeTranslateDoesNotAlterClip();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

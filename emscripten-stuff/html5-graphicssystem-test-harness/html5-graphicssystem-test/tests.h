@@ -26,6 +26,7 @@ public slots:
     void testCanTranslateQPainter();
     void testSettingClipBeforeTranslateDoesNotAlterClip();
     void testClippingAfterTranslateGivesTranslatedClip();
+    void testDrawRectangleAfterRotateBySixtyDegreesOnUntranslatedCanvas();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

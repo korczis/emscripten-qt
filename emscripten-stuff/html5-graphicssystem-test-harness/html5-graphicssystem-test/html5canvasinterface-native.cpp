@@ -148,11 +148,11 @@ void Html5CanvasInterface::setClipRect(CanvasHandle canvasHandle, double x, doub
     commandSender()->sendCommand(setClipRectCommand);
 }
 
-void Html5CanvasInterface::translate(CanvasHandle canvasHandle, double dx, double dy)
+void Html5CanvasInterface::setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f)
 {
-    Command translateCommand(Command::Translate);
-    translateCommand.commandData() << canvasHandle << dx << dy;
-    commandSender()->sendCommand(translateCommand);
+    Command setTransformCommand(Command::SetTransform);
+    setTransformCommand.commandData() << canvasHandle << a << b << c << d << e << f;
+    commandSender()->sendCommand(setTransformCommand);
 }
 
 void Html5CanvasInterface::setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height)

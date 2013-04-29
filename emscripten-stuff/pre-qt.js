@@ -782,13 +782,13 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
     }
 }
 
-function _EMSCRIPTENQT_translate_internal(canvasHandle, dx, dy)
+function _EMSCRIPTENQT_setTransform_internal(canvasHandle, a, b, c, d, e, f)
 {
     try
     {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
     var ctx = canvas.getContext("2d");
-    ctx.translate(dx, dy);
+    ctx.setTransform(a, b, c, d, e, f);
     }
     catch (e)
     {

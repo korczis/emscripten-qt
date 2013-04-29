@@ -108,8 +108,8 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
-      EMSCRIPTENQT_translate: function(canvasHandle, dx, dy) {
-          return _EMSCRIPTENQT_translate_internal(canvasHandle, dx, dy);
+      EMSCRIPTENQT_setTransform: function(canvasHandle, a, b, c, d, e, f) {
+          return _EMSCRIPTENQT_setTransform_internal(canvasHandle, a, b, c, d, e, f);
       }
     });
 

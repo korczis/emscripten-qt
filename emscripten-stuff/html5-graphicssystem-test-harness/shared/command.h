@@ -7,7 +7,7 @@ class CommandSender;
 class Command
 {
 public:
-    enum CommandType { GetMainCanvasWidth, GetMainCanvasHeight, ClearCanvas, GetCanvasPixels, GetHandleForMainCanvas, CreateCanvas, FillSolidRect, StrokeRect, FillRect, ChangePenColor, ChangePenThickness, ChangeBrushColor, SavePaintState, RestorePaintState, RestoreToOriginalState, SetClipRect, Translate, SetCanvasPixelsRaw, DrawCanvasOnMainCanvas, DrawCanvasOnCanvas};
+    enum CommandType { GetMainCanvasWidth, GetMainCanvasHeight, ClearCanvas, GetCanvasPixels, GetHandleForMainCanvas, CreateCanvas, FillSolidRect, StrokeRect, FillRect, ChangePenColor, ChangePenThickness, ChangeBrushColor, SavePaintState, RestorePaintState, RestoreToOriginalState, SetClipRect, SetTransform, SetCanvasPixelsRaw, DrawCanvasOnMainCanvas, DrawCanvasOnCanvas};
     Command(CommandType commandType);
     Command(const Command& other);
     ~Command();

@@ -277,6 +277,19 @@ void Html5GraphicsSystemTests::testClippingAfterTranslateGivesTranslatedClip()
     painter()->drawRect(widgetWidth() / 2, widgetHeight() / 2, rectWidth, rectHeight);
 }
 
+void Html5GraphicsSystemTests::testDrawRectangleAfterRotateBySixtyDegreesOnUntranslatedCanvas()
+{
+    const int rectWidth = widgetWidth() / 2;
+    const int rectHeight = widgetHeight() / 2;
+
+    painter()->setBrush(Qt::red);
+    painter()->rotate(60.0);
+    painter()->drawRect(0, 0, rectWidth, rectHeight);
+    // Draw a little green sub-rectangle in the corner, to help us visualise the orientation.
+    painter()->setBrush(Qt::green);
+    painter()->drawRect(rectWidth - rectWidth / 4, rectHeight - rectHeight / 4, rectWidth / 4, rectHeight / 4);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

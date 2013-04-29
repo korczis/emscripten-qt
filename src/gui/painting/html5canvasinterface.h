@@ -55,10 +55,14 @@ public:
     static void restorePaintState(CanvasHandle canvasHandle);
     static void restoreToOriginalState(CanvasHandle canvasHandle);
     static void setClipRect(CanvasHandle canvasHandle, double x, double y, double w, double h);
-    static void translate(CanvasHandle canvasHandle, double dx, double dy);
     /**
-     * width and height will always be the same as the canvas width and height; they're mainly there
-     * to aid the native version.  TODO - see if we can dispense with width and height.
+     * Effectively calls the HTML5 Canvas method setTransform(a, b, c, d, e, f) method on \a canvasHandle 's context.
+     * See http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#dom-context-2d-transform
+     * for more information.
+     */
+    static void setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f);
+    /**
+     * Make all subsequent operations be rotated clockwise about origin by \a rotationDegrees
      */
     static void setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height);
     /**

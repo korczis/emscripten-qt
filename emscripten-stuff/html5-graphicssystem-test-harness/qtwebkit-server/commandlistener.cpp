@@ -220,12 +220,12 @@ void CommandListener::newCommandIncoming()
             evaluateJsStatements(QString("return _EMSCRIPTENQT_setClipRect_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(x).arg(y).arg(width).arg(height));
             break;
         }
-        case Command::Translate:
+        case Command::SetTransform:
         {
             CanvasHandle canvasHandle;
-            double dx, dy;
-            command.commandData() >> canvasHandle >> dx >> dy;
-            evaluateJsStatements(QString("return _EMSCRIPTENQT_translate_internal(%1, %2, %3); ").arg(canvasHandle).arg(dx).arg(dy));
+            double a, b, c, d, e, f;
+            command.commandData() >> canvasHandle >> a >> b >> c >> d >> e >> f;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_setTransform_internal(%1, %2, %3, %4, %5, %6, %7); ").arg(canvasHandle).arg(a).arg(b).arg(c).arg(d).arg(e).arg(f));
             break;
         }
         case Command::SetCanvasPixelsRaw:

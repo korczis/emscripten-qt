@@ -300,11 +300,35 @@ void QHtml5CanvasPaintEngine::renderHintsChanged()
 void QHtml5CanvasPaintEngine::transformChanged()
 {
     Q_D(QHtml5CanvasPaintEngine);
-    qDebug() << "QHtml5CanvasPaintEngine::transformChanged()";
-    if (state()->transform().isTranslating())
-    {
-        Html5CanvasInterface::translate(d->canvasHandle, state()->transform().dx(),  state()->transform().dy());
-    }
+#ifdef QT_DEBUG_DRAW
+    qDebug() << "QHtml5CanvasPaintEngine::transformChanged(): " << state()->transform();
+#endif
+//     if (state()->transform().isTranslating())
+//     {
+//         Html5CanvasInterface::translate(d->canvasHandle, state()->transform().dx(),  state()->transform().dy());
+//     }
+//     if (state()->transform().isRotating())
+//     {
+//         Html5CanvasInterface::translate(d->canvasHandle, state()->transform().dx(),  state()->transform().dy());
+//     }
+    // Map Qt's idea of a transform to HTML5's setTransform(a, b, c, d, e , f)'s idea.
+    // Note that the HTML5's notion of a transform, unlike Qt's one, does not include scaling,
+    // so we need to do that separately via HTML5's "scale" method.
+
+    // Qt:          HTML5:
+    // m11 m21 m31  a c e
+    // m12 m22 m32  b d f
+    // m13 m23  m33  0 0 1
+    //   ???
+    QTransform qtTransform = state()->transform();
+    Q_ASSERT(qtTransform.m33() == 1 && qtTransform.m23() == 0 && qtTransform.m13() == 0); // Not sure how this would be accomplished in HTML5 - might have to use WebGL :/
+    double a = qtTransform.m11();
+    double b = qtTransform.m12();
+    double c = qtTransform.m21();
+    double d_ = qtTransform.m22();
+    double e = qtTransform.dx(); // The docs state that e & f are equivalent to dx and dy, apparently(?)
+    double f = qtTransform.dy();
+    Html5CanvasInterface::setTransform(d->canvasHandle, a, b, c, d_, e, f);
 }
 
 /*!

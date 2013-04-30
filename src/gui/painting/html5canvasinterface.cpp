@@ -35,6 +35,16 @@ CanvasHandle Html5CanvasInterface::handleForMainCanvas()
     return EMSCRIPTENQT_handleForMainCanvas();
 }
 
+int Html5CanvasInterface::mainCanvasWidth()
+{
+    return EMSCRIPTENQT_canvas_width_pixels();
+}
+
+int Html5CanvasInterface::mainCanvasHeight()
+{
+    return EMSCRIPTENQT_canvas_height_pixels();
+}
+
 CanvasHandle Html5CanvasInterface::createCanvas(int width, int height)
 {
     return EMSCRIPTENQT_createCanvas(width, height);
@@ -92,7 +102,7 @@ void Html5CanvasInterface::setTransform(CanvasHandle canvasHandle, double a, dou
 
 void Html5CanvasInterface::setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height)
 {
-    EMSCRIPTENQT_setCanvasPixelsRaw(CanvasHandle, rgbaData, width, height);
+    EMSCRIPTENQT_setCanvasPixelsRaw(canvasHandle, rgbaData, width, height);
 }
 
 void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)

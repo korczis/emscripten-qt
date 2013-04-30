@@ -132,9 +132,14 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
-      EMSCRIPTENQT_handleForMainCanvas: function() {
-          return _EMSCRIPTENQT_handleForMainCanvas_internal();
+      EMSCRIPTENQT_clearMainCanvas: function(rgba) {
+          return _EMSCRIPTENQT_clearMainCanvas_internal(rgba);
       }
     });
 
 
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_handleForMainCanvas: function() {
+          return _EMSCRIPTENQT_handleForMainCanvas_internal();
+      }
+    });

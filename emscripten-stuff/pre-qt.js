@@ -880,3 +880,30 @@ function _EMSCRIPTENQT_mainCanvasContentsRaw_internal(destPointer, heapArray8)
         window.alert("Exception (_EMSCRIPTENQT_mainCanvasContentsRaw_internal): " + e);
     }
 }
+
+function _EMSCRIPTENQT_clearMainCanvas_internal(rgba)
+{
+    try 
+    { 
+    var canvas = document.getElementById('canvas');
+    var numPixels = canvas.width  * canvas.height; 
+    var pixels = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height); 
+    for (var pixelNum = 0; pixelNum < numPixels * 4; ) 
+    { 
+        pixels.data[pixelNum] = ((rgba & 0xFF000000) >> 24) & 0xFF; 
+        pixelNum++; 
+        pixels.data[pixelNum] = ((rgba & 0x00FF0000) >> 16) & 0xFF; 
+        pixelNum++; 
+        pixels.data[pixelNum] = ((rgba & 0x0000FF00) >> 8) & 0xFF; 
+        pixelNum++; 
+        pixels.data[pixelNum] = ((rgba & 0x000000FF) >> 0) & 0xFF; 
+        pixelNum++; 
+    } 
+    canvas.getContext("2d").putImageData(pixels, 0, 0); 
+    } 
+    catch (e) 
+    { 
+        return e; 
+    } 
+    return "OK"; 
+}

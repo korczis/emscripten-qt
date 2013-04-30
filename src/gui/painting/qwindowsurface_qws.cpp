@@ -1445,6 +1445,7 @@ void QWSDirectPainterSurface::unlock()
 
 #endif // QT_NO_DIRECTPAINTER
 
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
 QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()
     : QWSWindowSurface(), m_isServerSide(false), m_backingCanvasHandle(-1)
 {
@@ -1578,5 +1579,6 @@ CanvasHandle QWSHtml5CanvasSurface::backingCanvasHandle()
     qDebug() << "QWSHtml5CanvasSurface::backingCanvasHandle(): " << (void*)this;
     return m_backingCanvasHandle;
 }
+#endif
 
 QT_END_NAMESPACE

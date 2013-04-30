@@ -37,6 +37,8 @@
 
 #include <limits.h>
 
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
+
 QT_BEGIN_NAMESPACE
 
 QHtml5CanvasPaintEngine::QHtml5CanvasPaintEngine()
@@ -717,3 +719,4 @@ QRect QHtml5CanvasPaintEngine::clipBoundingRect() const
 */
 
 QT_END_NAMESPACE
+#endif

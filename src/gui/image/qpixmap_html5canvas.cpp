@@ -1,3 +1,5 @@
+#include "qpixmap_html5canvas_p.h"
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
 #include "qpixmap.h"
 
 #include <private/qfont_p.h>
@@ -10,7 +12,6 @@
 #include "qimage.h"
 #include <QBuffer>
 #include <QImageReader>
-#include "qpixmap_html5canvas_p.h"
 #include "painting/qpaintengine_html5canvas_p.h"
 #include "painting/html5canvasinterface.h"
 #include <private/qimage_p.h>
@@ -195,3 +196,4 @@ void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::Image
 }
 
 QT_END_NAMESPACE
+#endif

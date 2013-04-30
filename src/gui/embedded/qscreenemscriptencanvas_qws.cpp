@@ -19,6 +19,7 @@ QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
 {
     qDebug() << "QEmscriptenCanvasScreen::QEmscriptenCanvasScreen: display_id: " << display_id;
     qDebug() << "Initialising graphics system";
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
     QGraphicsSystem *graphics_system = QGraphicsSystemFactory::create(QApplicationPrivate::graphics_system_name);
     m_useRaster = (dynamic_cast<QHtml5CanvasGraphicsSystem*>(graphics_system) == NULL);
     qDebug() << "Raster " << m_useRaster;
@@ -30,6 +31,7 @@ QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
         qDebug() << "Main canvas handle: " << m_mainCanvasHandle;
         Q_ASSERT(m_mainCanvasHandle != -1);
     }
+#endif
 }
 QEmscriptenCanvasScreen::~QEmscriptenCanvasScreen()
 {
@@ -91,13 +93,16 @@ void QEmscriptenCanvasScreen::blank(bool something)
 
 void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
 {
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
     if (m_useRaster)
     {
+#endif
         // first, call the parent implementation. The parent implementation will update
         // the region on our in-memory surface
         QScreen::exposeRegion(r, changing);
         r = r.intersected(QRect(0, 0, EMSCRIPTENQT_canvas_width_pixels(), EMSCRIPTENQT_canvas_height_pixels()));
         EMSCRIPTENQT_flush_pixels(data, r.boundingRect().left(), r.boundingRect().top(), r.boundingRect().width(), r.boundingRect().height());
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
     }
     else
     {
@@ -119,14 +124,18 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
            Html5CanvasInterface::drawCanvasOnMainCanvas(winBackingCanvasHandle, winX, winY);
        }
     }
+#endif
 }
 
 QWSWindowSurface* QEmscriptenCanvasScreen::createSurface(const QString& key) const
 {
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
     qDebug() << "QEmscriptenCanvasScreen::createSurface(const QString& key) key:" << key << " m_useRaster: " << m_useRaster;
     if (m_useRaster)
     {
+#endif
         return QScreen::createSurface(key);
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
     }
     else
     {
@@ -134,19 +143,24 @@ QWSWindowSurface* QEmscriptenCanvasScreen::createSurface(const QString& key) con
             return new QWSHtml5CanvasSurface();
     }
     return 0;
+#endif
 }
 
 QWSWindowSurface* QEmscriptenCanvasScreen::createSurface(QWidget* widget) const
 {
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
     qDebug() << "QEmscriptenCanvasScreen::createSurface(const QWidget *widget) m_useRaster: " << m_useRaster;
     if (m_useRaster)
     {
+#endif
         return QScreen::createSurface(widget);
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
     }
     else
     {
         return new QWSHtml5CanvasSurface(widget);
     }
+#endif
 }
 
 static void setBrightness(int b)

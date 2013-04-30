@@ -1,6 +1,7 @@
 #ifndef QPAINTENGINE_HTML5CANVAS_P_H
 #define QPAINTENGINE_HTML5CANVAS_P_H
 
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
 //
 //  W A R N I N G
 //  -------------
@@ -179,4 +180,5 @@ public:
 };
 
 QT_END_NAMESPACE
+#endif
 #endif // QPAINTENGINE_RASTER_P_H

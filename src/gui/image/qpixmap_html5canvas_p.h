@@ -1,6 +1,7 @@
 #ifndef QPIXMAPDATA_HTML5CANVAS_P_H
 #define QPIXMAPDATA_HTML5CANVAS_P_H
 
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
 //
 //  W A R N I N G
 //  -------------
@@ -54,6 +55,8 @@ private:
 };
 
 QT_END_NAMESPACE
+
+#endif
 
 #endif // QPIXMAPDATA_RASTER_P_H
 

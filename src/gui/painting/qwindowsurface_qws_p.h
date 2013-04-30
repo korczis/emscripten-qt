@@ -351,6 +351,7 @@ private:
 
 #endif // QT_NO_DIRECTPAINTER
 
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
 class QHtml5CanvasPixmapData;
 class Q_GUI_EXPORT QWSHtml5CanvasSurface : public QWSWindowSurface
 {
@@ -391,6 +392,7 @@ private:
     bool m_isServerSide;
     CanvasHandle m_backingCanvasHandle; // Should only be accessed when m_isServerSide.
 };
+#endif
 
 QT_END_NAMESPACE
 

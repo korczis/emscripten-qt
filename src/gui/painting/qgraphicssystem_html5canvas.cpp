@@ -4,6 +4,8 @@
 #include <private/qpixmap_raster_p.h>
 #include <private/qwindowsurface_qws_p.h>
 
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
+
 QT_BEGIN_NAMESPACE
 
 QPixmapData *QHtml5CanvasGraphicsSystem::createPixmapData(QPixmapData::PixelType type) const
@@ -19,3 +21,5 @@ QWindowSurface *QHtml5CanvasGraphicsSystem::createWindowSurface(QWidget *widget)
 }
 
 QT_END_NAMESPACE
+
+#endif

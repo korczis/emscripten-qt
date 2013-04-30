@@ -82,7 +82,7 @@ QGraphicsSystem *QGraphicsSystemFactory::create(const QString& key)
 
     if (system == QLatin1String("raster"))
         return new QRasterGraphicsSystem;
-#ifdef EMSCRIPTEN
+#if !defined (QT_NO_GRAPHICSSYSTEM_HTML5CANVAS) && defined( EMSCRIPTEN )
     if (system == QLatin1String("html5canvas"))
         return new QHtml5CanvasGraphicsSystem;
 #endif

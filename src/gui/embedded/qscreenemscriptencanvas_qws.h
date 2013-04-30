@@ -31,7 +31,9 @@ public:
     virtual QWSWindowSurface* createSurface(const QString &key) const;
     static void setBrightness(int b);
 private:
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
     bool m_useRaster;
+#endif
     CanvasHandle m_mainCanvasHandle;
 };
 

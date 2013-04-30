@@ -14,6 +14,8 @@
 
 #include "qgraphicssystem_p.h"
 
+#ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
+
 QT_BEGIN_NAMESPACE
 
 class Q_GUI_EXPORT QHtml5CanvasGraphicsSystem : public QGraphicsSystem
@@ -29,5 +31,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+#endif
 
 #endif

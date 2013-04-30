@@ -114,8 +114,9 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
-      EMSCRIPTENQT_setCanvasPixelsRaw: function(canvasHandle, x, y, width, height) {
-          return _EMSCRIPTENQT_setCanvasPixelsRaw_internal(canvasHandle, sourcePointer, heapArray8);
+      EMSCRIPTENQT_setCanvasPixelsRaw: function(canvasHandle, sourcePointer, width, height) {
+          // Ignore width and height - they are currently used only by emscripten-native, and I hope to deprecate them, soon.
+          return _EMSCRIPTENQT_setCanvasPixelsRaw_internal(canvasHandle, sourcePointer);
       }
     });
 

@@ -1,4 +1,3 @@
-#include "../shared/canvasdimensions.h"
 #include "commandlistener.h"
 
 #include <QtGui/QApplication>
@@ -11,7 +10,7 @@ int main(int argc, char** argv)
 {
     if (argc != 3)
     {
-        qDebug() << "Expected: html-filename javascript-filename\n\n\tThe html in html-filename should contain the token %1, which will be replaced with the contents of javascript-filename.  It should also have a canvas element with id 'canvas' and the dimensions specified in canvasdimensions.h";
+        qDebug() << "Expected: html-filename javascript-filename\n\n\tThe html in html-filename should contain the token %1, which will be replaced with the contents of javascript-filename.  It should also have a canvas element with id 'canvas'";
         return EXIT_FAILURE;
     }
 
@@ -63,18 +62,6 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
     QVariant width = webView->page()->currentFrame()->evaluateJavaScript("(function() { return document.getElementById('canvas').width})()");
-    if (width.toInt() != CANVAS_WIDTH)
-    {
-        qDebug() << "Width of canvas should be " << CANVAS_WIDTH;
-        return EXIT_FAILURE;
-    }
-    QVariant height = webView->page()->currentFrame()->evaluateJavaScript("(function() { return document.getElementById('canvas').height})()");
-    //QVariant height = webView->page()->currentFrame()->evaluateJavaScript("(function() { return 123;})()");
-    if (height.toInt() != CANVAS_HEIGHT)
-    {
-        qDebug() << "height of canvas should be " << CANVAS_HEIGHT;
-        return EXIT_FAILURE;
-    }
 
     CommandListener *commandListener = new CommandListener(webView->page()->currentFrame());
     

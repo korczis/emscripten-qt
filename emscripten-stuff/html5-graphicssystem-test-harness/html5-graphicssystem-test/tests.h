@@ -22,6 +22,7 @@ public slots:
     void testChangingClipDoesntUndoPenAndBrush();
     void testChangingClipDoesntUndoSubsequentPenAndBrushChanges();
     void testDrawQPixmapWithVariableAlpha();
+    void testDrawQPixmapWithRGB32Format();
     void testSaveAndRestoreDrawingStateIncludesClip();
     void testCanTranslateQPainter();
     void testSettingClipBeforeTranslateDoesNotAlterClip();

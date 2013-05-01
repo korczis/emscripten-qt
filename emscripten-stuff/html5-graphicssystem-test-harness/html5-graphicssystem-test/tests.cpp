@@ -205,6 +205,14 @@ void Html5GraphicsSystemTests::testDrawQPixmapWithVariableAlpha()
     painter()->drawPixmap(5, 5, pixmap);
 }
 
+void Html5GraphicsSystemTests::testDrawQPixmapWithRGB32Format()
+{
+    const QPixmap pixmap(testDataPath + "cheese.jpg");
+    painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), QColor(0, 0, 255));
+    painter()->drawPixmap(5, 5, pixmap);
+}
+
+
 void Html5GraphicsSystemTests::testSaveAndRestoreDrawingStateIncludesClip()
 {
     int x = 5;

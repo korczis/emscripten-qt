@@ -650,9 +650,9 @@ function _EMSCRIPTENQT_createCanvas_internal(width, height)
         canvas.savedClips = [];
         emscriptenqt_handle_to_canvas[handle] = canvas;
         var ctx = canvas.getContext("2d");
-        ctx.trackedRestore = function() { canvas.savedStateCount--; ctx.restore();}
-        ctx.trackedSave = function() {canvas.savedStateCount++; ctx.save(); }
-        ctx.trackedSave(); // Store the initial state. 
+        canvas.trackedRestore = function() { canvas.savedStateCount--; ctx.restore();}
+        canvas.trackedSave = function() {canvas.savedStateCount++; ctx.save(); }
+        canvas.trackedSave(); // Store the initial state. 
         //window.alert("default strokeStyle: " + ctx.strokeStyle);
         
         return handle;
@@ -766,7 +766,7 @@ function _EMSCRIPTENQT_removeClip_internal(canvasCtx, canvas)
     var oldFillStyle = canvasCtx.fillStyle;
     var oldLineWidth = canvasCtx.lineWidth;
     var oldStrokeStyle = canvasCtx.strokeStyle;
-    canvasCtx.trackedRestore();
+    canvas.trackedRestore();
     canvas.hasClip = false;
     canvasCtx.fillStyle = oldFillStyle;
     canvasCtx.lineWidth = oldLineWidth;
@@ -788,7 +788,7 @@ try
     {
         canvas.savedClips.push(null);
     }
-    ctx.trackedSave();
+    canvas.trackedSave();
     if (canvas.lastSetClip)
     {
         // TODO - need to be able to save and restore more complex paths, too (i.e. resulting from a QPainterPainter instead of a rectangle).
@@ -812,7 +812,7 @@ try
     {
         _EMSCRIPTENQT_removeClip_internal(ctx, canvas);
     }
-    ctx.trackedRestore();
+    canvas.trackedRestore();
     var clipToRestore = canvas.savedClips.pop();
     if (clipToRestore)
     {
@@ -834,9 +834,9 @@ try
     var ctx = canvas.getContext("2d");
     while (canvas.savedStateCount > 0) 
     {
-        ctx.trackedRestore();
+        canvas.trackedRestore();
     }
-    ctx.trackedSave();
+    canvas.trackedSave();
     canvas.hasClip = false;
 }
 catch(e)
@@ -856,7 +856,7 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
     {
         _EMSCRIPTENQT_removeClip_internal(ctx, canvas);
     }
-    ctx.trackedSave();
+    canvas.trackedSave();
     ctx.beginPath();
     ctx.rect(x , y,  width, height);
     ctx.clip();

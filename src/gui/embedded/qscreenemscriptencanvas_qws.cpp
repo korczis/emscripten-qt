@@ -12,6 +12,7 @@ extern "C"
     int EMSCRIPTENQT_canvas_width_pixels();
     int EMSCRIPTENQT_canvas_height_pixels();
     int EMSCRIPTENQT_flush_pixels(uchar* data, int x, int y, int w, int h);
+    int EMSCRIPTENQT_notify_frame_rendered();
 }
 
 QEmscriptenCanvasScreen::QEmscriptenCanvasScreen(int display_id)
@@ -123,6 +124,7 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
        }
     }
 #endif
+    EMSCRIPTENQT_notify_frame_rendered();
 }
 
 QWSWindowSurface* QEmscriptenCanvasScreen::createSurface(const QString& key) const

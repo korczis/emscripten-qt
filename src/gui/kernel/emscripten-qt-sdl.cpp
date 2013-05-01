@@ -141,7 +141,7 @@ extern "C"
 				pos++;
 				setpixel(sdlCanvas, x, ytimesw, r, g, b);
 
-                
+
 			}
             pos += 4 * (canvasWidthPixels - regionW);
 		}
@@ -165,6 +165,10 @@ extern "C"
     }
 
     void EMSCRIPTENQT_mainLoopInitialised()
+    {
+    }
+
+    void EMSCRIPTENQT_notify_frame_rendered()
     {
     }
 

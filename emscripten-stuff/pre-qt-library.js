@@ -156,3 +156,9 @@ mergeInto(LibraryManager.library, {
           return _EMSCRIPTENQT_handleForMainCanvas_internal();
       }
     });
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_notify_frame_rendered: function() {
+          return _EMSCRIPTENQT_notify_frame_rendered_internal();
+      }
+    });

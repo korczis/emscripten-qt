@@ -995,3 +995,28 @@ function _EMSCRIPTENQT_clearMainCanvas_internal(rgba)
     } 
     return "OK"; 
 }
+
+var numFramesToSample = 10;
+var lastSampledFramesFinishTimes = [];
+var fpsCounter = document.getElementById('fpscounter');
+function _EMSCRIPTENQT_notify_frame_rendered_internal()
+{
+    if (!fpsCounter)
+    {
+        return;
+    }
+    var now = Date.now();
+    if (lastSampledFramesFinishTimes.length == numFramesToSample)
+    {
+        // Remove first (i.e. oldest) element.
+        lastSampledFramesFinishTimes.splice(0,1);
+    }
+    lastSampledFramesFinishTimes.push(now);
+    if (lastSampledFramesFinishTimes.length == numFramesToSample)
+    {
+        var millisecondsForLastSetOfSampledFrames = now - lastSampledFramesFinishTimes[0];
+        var millisPerFrame = millisecondsForLastSetOfSampledFrames / (numFramesToSample - 1);
+        var framesPerSecond = 1000 / millisPerFrame;
+        fpsCounter.innerHTML = "FPS: " + framesPerSecond;
+    }
+}

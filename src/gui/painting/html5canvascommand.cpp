@@ -1,4 +1,4 @@
-#include "command.h"
+#include "html5canvascommand.h"
 
 #include <QtCore/QIODevice>
 #include <QtCore/QDataStream>
@@ -56,7 +56,7 @@ Command Command::createFrom(QIODevice* commandSource)
 
     QByteArray commandData(commandLength - sizeof(quint32), '\0');
     commandSource->read(commandData.data(), commandData.size());
-    
+
     return Command(static_cast<Command::CommandType>(commandType), commandData);
 }
 
@@ -66,6 +66,6 @@ QByteArray Command::toData() const
     QDataStream fullCommandDataStream(&fullCommandData, QIODevice::WriteOnly);
     fullCommandDataStream << static_cast<quint32>(m_data.size() + sizeof(quint32));
     fullCommandDataStream << static_cast<quint32>(m_commandType);
-    
+
     return fullCommandData.append(m_data);
 }

@@ -1,6 +1,5 @@
 #include "commandlistener.h"
-#include "../shared/command.h"
-#include "../shared/canvasdimensions.h"
+#include "../../../src/gui/painting/html5canvascommand.h"
 #include "../shared/rgba.h"
 
 #include <QtNetwork/QTcpSocket>
@@ -8,6 +7,11 @@
 #include <QtCore/QTimer>
 
 typedef qint32 CanvasHandle;
+namespace
+{
+    int canvasWidth = -1;
+    int canvasHeight = -1;
+}
 
 CommandListener::CommandListener(QWebFrame *canvasPageFrame)
     : m_server(new QTcpServer), m_commandSource(NULL), m_canvasPageFrame(canvasPageFrame)
@@ -15,6 +19,16 @@ CommandListener::CommandListener(QWebFrame *canvasPageFrame)
     m_server->listen(QHostAddress::LocalHost, 2222);
     Q_ASSERT(m_server->isListening());
     connect(m_server.data(), SIGNAL(newConnection()), this, SLOT(newConnection()));
+    const QVariant canvasWidthQueryResult = evaluateJsStatements("return _EMSCRIPTENQT_mainCanvasWidth_internal();");
+    if (canvasWidthQueryResult.canConvert<CanvasHandle>())
+    {
+        canvasWidth = canvasWidthQueryResult.toInt();
+    }
+    const QVariant canvasHeightQueryResult = evaluateJsStatements("return _EMSCRIPTENQT_mainCanvasHeight_internal();");
+    if (canvasHeightQueryResult.canConvert<CanvasHandle>())
+    {
+        canvasHeight = canvasHeightQueryResult.toInt();
+    }
 }
 
 void CommandListener::newConnection()
@@ -51,7 +65,7 @@ void CommandListener::newCommandIncoming()
         }
         case Command::GetCanvasPixels:
         {
-            const qint64 bytesToWrite = sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT;
+            const qint64 bytesToWrite = sizeof(Rgba) * canvasWidth * canvasHeight;
             qDebug() << "About to write " << bytesToWrite;
             Rgba* fakeRgba = static_cast<Rgba*>(malloc(bytesToWrite));
             const QVariant result = evaluateJsStatements("return EMSCRIPTENNATIVEHELPER_canvasPixelsAsRGBAString();");

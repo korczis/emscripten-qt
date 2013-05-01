@@ -158,7 +158,10 @@ emscripten: {
         painting/qgraphicssystemfactory.cpp \
         painting/qgraphicssystemplugin.cpp \
         painting/qpaintengine_html5canvas.cpp \
-        painting/qwindowsurface_raster.cpp
+        painting/qwindowsurface_raster.cpp \
+        painting/html5canvasinterface-native.cpp \
+        painting/html5canvascommand.cpp \
+        painting/html5canvascommandsender.cpp
 }
 
 unix:x11 {

@@ -1,7 +1,7 @@
 project(QtWebkit-Server)
 find_package(Qt4)
 
-set(SRC main.cpp commandlistener.cpp ../shared/command.cpp)
+set(SRC main.cpp commandlistener.cpp ${CMAKE_SOURCE_DIR}/../../../src/gui/painting/html5canvascommand.cpp)
 qt4_wrap_cpp(SRC_MOC commandlistener.h)
 
 include_directories(${QT_INCLUDES})

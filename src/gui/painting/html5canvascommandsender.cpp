@@ -1,7 +1,7 @@
-#include "commandsender.h"
-#include "../shared/command.h"
+#include "html5canvascommandsender.h"
+#include "html5canvascommand.h"
 
-#include <QtCore/QDebug>
+#include <qdebug.h>
 
 CommandSender::CommandSender()
     : m_commandServerSocket(NULL)

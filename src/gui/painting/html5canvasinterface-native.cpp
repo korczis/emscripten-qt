@@ -1,21 +1,24 @@
-#include "commandsender.h"
-#include "../shared/command.h"
-#include "../shared/canvasdimensions.h"
+#include "html5canvascommandsender.h"
+#include "html5canvascommand.h"
+#include "html5canvasinterface.h"
 
 #include <QtCore/QDataStream>
 #include <QtCore/QBuffer>
 #include <QtCore/QDebug>
 #include <QtGui/QColor>
-#include <QtGui/html5canvasinterface.h>
 
-namespace 
+namespace
 {
+    int canvasWidth = -1;
+    int canvasHeight = -1;
     CommandSender* commandSender()
     {
         static CommandSender *commandSender = NULL;
         if (!commandSender)
         {
             commandSender = new CommandSender;
+            canvasWidth = Html5CanvasInterface::mainCanvasWidth();
+            canvasHeight = Html5CanvasInterface::mainCanvasHeight();
         }
         return commandSender;
     }
@@ -25,7 +28,7 @@ Rgba* Html5CanvasInterface::mainCanvasContentsRaw()
 {
     Command getCanvasPixelsCommand(Command::GetCanvasPixels);
     commandSender()->sendCommand(getCanvasPixelsCommand);
-    Rgba* rbga = static_cast<Rgba*>(commandSender()->readCommandResponse(sizeof(Rgba) * CANVAS_WIDTH * CANVAS_HEIGHT));
+    Rgba* rbga = static_cast<Rgba*>(commandSender()->readCommandResponse(sizeof(Rgba) * canvasWidth * canvasHeight));
     return rbga;
 }
 

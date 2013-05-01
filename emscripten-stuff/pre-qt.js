@@ -721,6 +721,24 @@ function _EMSCRIPTENQT_strokeEllipse_internal(canvasHandle, cx, cy, width, heigh
     ctx.restore(); 
 }
 
+function _EMSCRIPTENQT_fillEllipse_internal(canvasHandle, cx, cy, width, height)
+{
+    // See _EMSCRIPTENQT_strokeEllipse_internal.
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    var originalLineWidth = ctx.lineWidth;
+
+    ctx.save(); 
+    ctx.beginPath();
+
+    ctx.translate(cx - width / 2, cy - height / 2);
+    ctx.scale(width / 2, height / 2);
+    ctx.arc(1, 1, 1, 0, 2 * Math.PI, false);
+
+    ctx.fill();
+    ctx.restore(); 
+}
+
 function _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];

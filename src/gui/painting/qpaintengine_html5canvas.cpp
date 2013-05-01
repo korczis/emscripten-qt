@@ -665,6 +665,7 @@ void QHtml5CanvasPaintEngine::drawEllipse(const QRectF &rect)
     Q_D(QHtml5CanvasPaintEngine);
     qDebug() << "QHtml5CanvasPaintEngine::drawEllipse(const QRectF &rect)";
     Html5CanvasInterface::strokeEllipse(d->canvasHandle, rect.center().x(), rect.center().y(), rect.width(), rect.height());
+    Html5CanvasInterface::fillEllipse(d->canvasHandle, rect.center().x(), rect.center().y(), rect.width(), rect.height());
 }
 
 /*!

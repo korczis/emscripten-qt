@@ -189,6 +189,14 @@ void CommandListener::newCommandIncoming()
             evaluateJsStatements(QString("return _EMSCRIPTENQT_strokeEllipse_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(cx).arg(cy).arg(width).arg(height));
             break;
         }
+        case Command::FillEllipse:
+        {
+            CanvasHandle canvasHandle;
+            double cx, cy, width, height;
+            command.commandData() >> canvasHandle >> cx >> cy >> width >> height;
+            evaluateJsStatements(QString("return _EMSCRIPTENQT_fillEllipse_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(cx).arg(cy).arg(width).arg(height));
+            break;
+        }
         case Command::ChangePenColor:
         {
             CanvasHandle canvasHandle;

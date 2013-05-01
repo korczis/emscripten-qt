@@ -307,6 +307,17 @@ void Html5GraphicsSystemTests::testDrawEllipseNoFill()
     painter()->drawEllipse((widgetWidth() - ellipseWidth) / 2, (widgetHeight() - ellipseHeight) / 2, ellipseWidth, ellipseHeight);
 }
 
+void Html5GraphicsSystemTests::testDrawEllipse()
+{
+    const int ellipseWidth = widgetWidth() / 2;
+    const int ellipseHeight = widgetHeight() / 2;
+
+    painter()->setPen(QPen(Qt::blue, 20));
+    painter()->setBrush(Qt::green);
+    painter()->drawEllipse((widgetWidth() - ellipseWidth) / 2, (widgetHeight() - ellipseHeight) / 2, ellipseWidth, ellipseHeight);
+}
+
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

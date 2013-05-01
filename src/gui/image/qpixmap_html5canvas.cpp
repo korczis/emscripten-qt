@@ -19,6 +19,11 @@
 #include <private/qdrawhelper_p.h>
 
 
+#ifdef EMSCRIPTEN_NATIVE
+#define QT_DEBUG_PIXMAP
+#endif
+
+
 QT_BEGIN_NAMESPACE
 
 QHtml5CanvasPixmapData::QHtml5CanvasPixmapData(PixelType type)
@@ -27,12 +32,16 @@ QHtml5CanvasPixmapData::QHtml5CanvasPixmapData(PixelType type)
       m_canvasHandle(-1)
 {
     is_null = true;
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "Created QHtml5CanvasPixmapData : " << (void*)this;
+#endif
 }
 
 QHtml5CanvasPixmapData::~QHtml5CanvasPixmapData()
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "Destroyed QHtml5CanvasPixmapData : " << (void*)this;
+#endif
 }
 
 QPixmapData *QHtml5CanvasPixmapData::createCompatiblePixmapData() const
@@ -42,7 +51,9 @@ QPixmapData *QHtml5CanvasPixmapData::createCompatiblePixmapData() const
 
 void QHtml5CanvasPixmapData::resize(int width, int height)
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::resize(int width, int height) width: " << width << " height: " << height;
+#endif
     w = width;
     h = height;
     if (width <= 0 || height <= 0)
@@ -54,7 +65,9 @@ void QHtml5CanvasPixmapData::resize(int width, int height)
     {
         // TODO - check for existing canvas!
         m_canvasHandle = Html5CanvasInterface::createCanvas(width, height);
+#ifdef QT_DEBUG_PIXMAP
         qDebug() << "Create canvas: got handle: " << m_canvasHandle;
+#endif
         // TODO - width and height if failed?
         is_null = (m_canvasHandle == -1);
     }
@@ -103,46 +116,62 @@ void QHtml5CanvasPixmapData::copy(const QPixmapData *data, const QRect &rect)
 
 bool QHtml5CanvasPixmapData::scroll(int dx, int dy, const QRect &rect)
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::scroll(int dx, int dy, const QRect &rect)";
+#endif
     return true;
 }
 
 void QHtml5CanvasPixmapData::fill(const QColor &color)
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::fill(const QColor &color)";
+#endif
 }
 
 void QHtml5CanvasPixmapData::setMask(const QBitmap &mask)
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::setMask(const QBitmap &mask)";
+#endif
 }
 
 bool QHtml5CanvasPixmapData::hasAlphaChannel() const
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::hasAlphaChannel()";
+#endif
     return true;
 }
 
 QImage QHtml5CanvasPixmapData::toImage() const
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::toImage()";
+#endif
     return QImage();
 }
 
 QImage QHtml5CanvasPixmapData::toImage(const QRect &rect) const
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::toImage(const QRect &rect)";
+#endif
     return QImage();
 }
 
 void QHtml5CanvasPixmapData::setAlphaChannel(const QPixmap &alphaChannel)
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::setAlphaChannel(const QPixmap &alphaChannel)";
+#endif
 }
 
 QPaintEngine* QHtml5CanvasPixmapData::paintEngine() const
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::paintEngine()";
+#endif
     if (!pengine)
     {
         pengine = new QHtml5CanvasPaintEngine;
@@ -152,7 +181,9 @@ QPaintEngine* QHtml5CanvasPixmapData::paintEngine() const
 
 int QHtml5CanvasPixmapData::metric(QPaintDevice::PaintDeviceMetric metric) const
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::metric(QPaintDevice::PaintDeviceMetric metric)";
+#endif
     return 0;
 }
 
@@ -163,7 +194,9 @@ CanvasHandle QHtml5CanvasPixmapData::canvasHandle() const
 
 void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace)
 {
+#ifdef QT_DEBUG_PIXMAP
     qDebug() << "QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace) flags: " << flags << " inPlace: " << inPlace << " image size: " << sourceImage.size() << " image format: " << sourceImage.format();
+#endif
     resize(sourceImage.width(), sourceImage.height());
     if (is_null)
     {
@@ -221,7 +254,9 @@ void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::Image
     }
     else
     {
+#ifdef QT_DEBUG_PIXMAP
         qDebug() << "Format " << sourceImage.format() << " not yet supported for QHtml5CanvasPixmapData";
+#endif
         // Pure black.
         uchar* rgbaData = static_cast<uchar*>(malloc(sourceImage.width() * sourceImage.height() * 4));
         uchar* rgbaDataWriter = rgbaData;

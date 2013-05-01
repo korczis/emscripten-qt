@@ -7,7 +7,7 @@ class CommandSender;
 class Command
 {
 public:
-    enum CommandType { GetMainCanvasWidth, GetMainCanvasHeight, ClearCanvas, GetCanvasPixels, GetHandleForMainCanvas, CreateCanvas, FillSolidRect, StrokeRect, FillRect, ChangePenColor, ChangePenThickness, ChangeBrushColor, SavePaintState, RestorePaintState, RestoreToOriginalState, SetClipRect, SetTransform, SetCanvasPixelsRaw, DrawCanvasOnMainCanvas, DrawCanvasOnCanvas};
+    enum CommandType { GetMainCanvasWidth, GetMainCanvasHeight, ClearCanvas, GetCanvasPixels, GetHandleForMainCanvas, CreateCanvas, FillSolidRect, StrokeRect, FillRect, StrokeEllipse, ChangePenColor, ChangePenThickness, ChangeBrushColor, SavePaintState, RestorePaintState, RestoreToOriginalState, SetClipRect, SetTransform, SetCanvasPixelsRaw, DrawCanvasOnMainCanvas, DrawCanvasOnCanvas};
     Command(CommandType commandType);
     Command(const Command& other);
     ~Command();
@@ -18,7 +18,7 @@ public:
     QByteArray toData() const;
 private:
     Command(CommandType commandType, const QByteArray& commandData);
-    
+
     CommandType m_commandType;
     QDataStream *m_dataStream;
     QByteArray m_data;

@@ -44,6 +44,10 @@ public:
      */
     static void fillRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
     /**
+     * Draw (but don't fill) the given ellipse with the current pen. TODO - explain (after figuring out!) how pen thickness is handled, etc.
+     */
+    static void strokeEllipse(CanvasHandle canvasHandle, double cx, double cy, double width, double height);
+    /**
      * Draw the canvas with the requested \a canvasHandle on the main canvas at \a x, \a y
      */
     static void changePenColor(CanvasHandle canvasHandle, int r, int g, int b);

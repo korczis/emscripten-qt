@@ -66,6 +66,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_strokeEllipse: function(canvasHandle, cx, cy, width, height) {
+          return _EMSCRIPTENQT_strokeEllipse_internal(canvasHandle, cx, cy, width, height);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_changePenColor: function(canvasHandle, r, g, b) {
           return _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b);
       }

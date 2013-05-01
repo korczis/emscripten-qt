@@ -298,6 +298,15 @@ void Html5GraphicsSystemTests::testDrawRectangleAfterRotateBySixtyDegreesOnUntra
     painter()->drawRect(rectWidth - rectWidth / 4, rectHeight - rectHeight / 4, rectWidth / 4, rectHeight / 4);
 }
 
+void Html5GraphicsSystemTests::testDrawEllipseNoFill()
+{
+    const int ellipseWidth = widgetWidth() / 2;
+    const int ellipseHeight = widgetHeight() / 2;
+
+    painter()->setPen(QPen(Qt::red, 20));
+    painter()->drawEllipse((widgetWidth() - ellipseWidth) / 2, (widgetHeight() - ellipseHeight) / 2, ellipseWidth, ellipseHeight);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

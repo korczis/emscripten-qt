@@ -28,6 +28,7 @@ public slots:
     void testSettingClipBeforeTranslateDoesNotAlterClip();
     void testClippingAfterTranslateGivesTranslatedClip();
     void testDrawRectangleAfterRotateBySixtyDegreesOnUntranslatedCanvas();
+    void testDrawEllipseNoFill();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

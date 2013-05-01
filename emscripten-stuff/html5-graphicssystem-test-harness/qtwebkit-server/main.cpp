@@ -62,6 +62,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
     QVariant width = webView->page()->currentFrame()->evaluateJavaScript("(function() { return document.getElementById('canvas').width})()");
+    webView->page()->currentFrame()->evaluateJavaScript("(function() {bottoms()})()");
 
     CommandListener *commandListener = new CommandListener(webView->page()->currentFrame());
     

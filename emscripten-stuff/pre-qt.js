@@ -690,6 +690,37 @@ function _EMSCRIPTENQT_fillRect_internal(canvasHandle, x, y, width, height)
     ctx.fillRect(x + 0.5, y + 0.5,  width, height);
 }
 
+function _EMSCRIPTENQT_strokeEllipse_internal(canvasHandle, cx, cy, width, height)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    var originalLineWidth = ctx.lineWidth;
+
+    // There is, astoundingly, no well-supported ellipse drawing functionality in HTML5 yet,
+    // so we must fake it by drawing a stretched circle.
+    // Of course, this doesn't really work too well, since the line will be stretched by possibly different
+    // amounts in the horizontal and vertical dimensions, leading to a lack of uniform thickness :/
+    ctx.save(); 
+    ctx.beginPath();
+
+    ctx.translate(cx - width / 2, cy - height / 2);
+    ctx.scale(width / 2, height / 2);
+    // Ugh - there's always going to be some distortion of the line, but let's try and minimise it - although
+    // this really doesn't do any good :/
+    if (width < height)
+    {
+        ctx.lineWidth = 2 * originalLineWidth / width;
+    }
+    else
+    {
+        ctx.lineWidth = 2 * originalLineWidth / height;
+    }
+    ctx.arc(1, 1, 1, 0, 2 * Math.PI, false);
+
+    ctx.stroke();
+    ctx.restore(); 
+}
+
 function _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];

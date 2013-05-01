@@ -1,3 +1,4 @@
+#if defined(EMSCRIPTEN_NATIVE) && !defined(QT_NO_GRAPHICSSYSTEM_HTML5CANVAS)
 #include "html5canvascommandsender.h"
 #include "html5canvascommand.h"
 #include "html5canvasinterface.h"
@@ -203,3 +204,4 @@ void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int
     commandSender()->sendCommand(drawCanvasOnMainCanvasCommand);
 }
 
+#endif

@@ -1,3 +1,4 @@
+#if defined(EMSCRIPTEN_NATIVE) && !defined(QT_NO_GRAPHICSSYSTEM_HTML5CANVAS)
 #include "html5canvascommand.h"
 
 #include <QtCore/QIODevice>
@@ -69,3 +70,4 @@ QByteArray Command::toData() const
 
     return fullCommandData.append(m_data);
 }
+#endif

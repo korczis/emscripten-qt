@@ -1,3 +1,4 @@
+#if defined(EMSCRIPTEN_NATIVE) && !defined(QT_NO_GRAPHICSSYSTEM_HTML5CANVAS)
 class QDataStream;
 class QIODevice;
 class CommandSender;
@@ -23,3 +24,4 @@ private:
     QDataStream *m_dataStream;
     QByteArray m_data;
 };
+#endif

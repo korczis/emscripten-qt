@@ -2,7 +2,10 @@
 
 #define QT_FT_BEGIN_HEADER
 #define QT_FT_END_HEADER
+
+#ifdef EMSCRIPTEN_NATIVE
 #define QT_DEBUG_DRAW
+#endif
 
 #include "qpaintengine_html5canvas_p.h"
 #include <qpainterpath.h>
@@ -57,7 +60,9 @@ QHtml5CanvasPaintEngine::QHtml5CanvasPaintEngine(QHtml5CanvasPaintEnginePrivate 
 QHtml5CanvasPaintEngine::~QHtml5CanvasPaintEngine()
 {
     Q_D(QHtml5CanvasPaintEngine);
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::~QHtml5CanvasPaintEngine()";
+#endif
 }
 
 /*!
@@ -66,14 +71,18 @@ QHtml5CanvasPaintEngine::~QHtml5CanvasPaintEngine()
 bool QHtml5CanvasPaintEngine::begin(QPaintDevice *device)
 {
     Q_D(QHtml5CanvasPaintEngine);
+#ifdef QT_DEBUG_DRAW
     printf("QHtml5CanvasPaintEngine::begin(QPaintDevice *device)\n");
+#endif
     Q_ASSERT(device->devType() == QInternal::Pixmap);
     d->device = device;
     QPixmap *pixmap = static_cast<QPixmap *>(device);
     QPixmapData *pd = pixmap->pixmapData();
     QHtml5CanvasPixmapData *html5CanvasPixmap = static_cast<QHtml5CanvasPixmapData*>(pd);
     d->canvasHandle = html5CanvasPixmap->canvasHandle();
+#ifdef QT_DEBUG_DRAW
     qDebug() << "Restoring to (almost) empty paint stack canvasHandle: " << d->canvasHandle;
+#endif
     // oldInitialState would have been set by QPainter::begin, before QHtml5CanvasPaintEngine::begin() was called;
     // so we need to hang onto it and re-add it to the saved states after wiping the old saved states.
     QPainterState *oldInitialState = d->savedStateHistory.top();
@@ -90,7 +99,9 @@ bool QHtml5CanvasPaintEngine::begin(QPaintDevice *device)
 bool QHtml5CanvasPaintEngine::end()
 {
     Q_D(QHtml5CanvasPaintEngine);
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::end()";
+#endif
     d->isReallyActive = false;
     return true;
 }
@@ -100,7 +111,9 @@ bool QHtml5CanvasPaintEngine::end()
 */
 void QHtml5CanvasPaintEngine::releaseBuffer()
 {
+#ifdef QT_DEBUG_DRAW
     qDebug()<< "QHtml5CanvasPaintEngine::releaseBuffer()";
+#endif
 }
 
 /*!
@@ -109,7 +122,9 @@ void QHtml5CanvasPaintEngine::releaseBuffer()
 QSize QHtml5CanvasPaintEngine::size() const
 {
     Q_D(const QHtml5CanvasPaintEngine);
+#ifdef QT_DEBUG_DRAW
     qDebug()<< "QHtml5CanvasPaintEngine::size()";
+#endif
     return QSize();
 }
 
@@ -129,26 +144,34 @@ void QHtml5CanvasPaintEngine::saveBuffer(const QString &s) const
 */
 void QHtml5CanvasPaintEngine::updateMatrix(const QTransform &matrix)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug()<< "QHtml5CanvasPaintEngine::updateMatrix(const QTransform &matrix)";
+#endif
 }
 
 
 
 QHtml5CanvasPaintEngineState::~QHtml5CanvasPaintEngineState()
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngineState::~QHtml5CanvasPaintEngineState()";
+#endif
 }
 
 
 QHtml5CanvasPaintEngineState::QHtml5CanvasPaintEngineState()
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngineState::QHtml5CanvasPaintEngineState()";
+#endif
 }
 
 QHtml5CanvasPaintEngineState::QHtml5CanvasPaintEngineState(QHtml5CanvasPaintEngineState &s)
     : QPainterState(s)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngineState::QHtml5CanvasPaintEngineState(QHtml5CanvasPaintEngineState &s)";
+#endif
 }
 
 /*!
@@ -156,7 +179,9 @@ QHtml5CanvasPaintEngineState::QHtml5CanvasPaintEngineState(QHtml5CanvasPaintEngi
 */
 QPainterState *QHtml5CanvasPaintEngine::createState(QPainterState *orig) const
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::createState(QPainterState *orig)";
+#endif
     if (!orig)
         return new QHtml5CanvasPaintEngineState();
     else
@@ -169,12 +194,17 @@ QPainterState *QHtml5CanvasPaintEngine::createState(QPainterState *orig) const
 void QHtml5CanvasPaintEngine::setState(QPainterState *s)
 {
     Q_D(QHtml5CanvasPaintEngine);
-    printf("QHtml5CanvasPaintEngine::setState(QPainterState *s): %p %d\n", (void*)s, d->canvasHandle);
+
+#ifdef QT_DEBUG_DRAW
+    qDebug() << "QHtml5CanvasPaintEngine::setState(QPainterState *s):" <<  (void*)s << d->canvasHandle;
+#endif
     // I think setState should only be called at paint begin, or when save()ing or restore()ing a QPainter.
     QPaintEngineEx::setState(s);
     if (d->savedStateHistory.contains(s))
     {
+#ifdef QT_DEBUG_DRAW
         printf("Restoring\n");
+#endif
         while (d->savedStateHistory.top() != s)
         {
             d->savedStateHistory.pop();
@@ -182,18 +212,24 @@ void QHtml5CanvasPaintEngine::setState(QPainterState *s)
             {
                 Html5CanvasInterface::restorePaintState(d->canvasHandle);
             }
+#ifdef QT_DEBUG_DRAW
             printf(" popped; now %d elements, with %p at top\n", d->savedStateHistory.size(), d->savedStateHistory.top());
+#endif
         }
     }
     else
     {
+#ifdef QT_DEBUG_DRAW
         qDebug() << "Saving";
+#endif
         d->savedStateHistory.push(s);
         if (d->isReallyActive)
         {
             Html5CanvasInterface::savePaintState(d->canvasHandle);
         }
+#ifdef QT_DEBUG_DRAW
         qDebug() << "Saved; now " << d->savedStateHistory.size() << " with " << (void*)d->savedStateHistory.top() << "at top";
+#endif
     }
 }
 
@@ -228,7 +264,9 @@ void QHtml5CanvasPaintEngine::penChanged()
 */
 void QHtml5CanvasPaintEngine::updatePen(const QPen &pen)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::updatePen(const QPen &pen)";
+#endif
 }
 
 
@@ -238,7 +276,9 @@ void QHtml5CanvasPaintEngine::updatePen(const QPen &pen)
 */
 void QHtml5CanvasPaintEngine::brushOriginChanged()
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::brushOriginChanged()";
+#endif
 }
 
 
@@ -249,7 +289,9 @@ void QHtml5CanvasPaintEngine::brushChanged()
 {
     Q_D(QHtml5CanvasPaintEngine);
     const QColor brushColor = state()->brush.color();
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::brushChanged(): " << state()->brush;
+#endif
     Html5CanvasInterface::changeBrushColor(d->canvasHandle, brushColor.red(), brushColor.green(), brushColor.blue());
 }
 
@@ -268,7 +310,9 @@ void QHtml5CanvasPaintEngine::updateBrush(const QBrush &brush)
 
 void QHtml5CanvasPaintEngine::updateState(const QPaintEngineState &state)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::updateState()";
+#endif
 }
 
 
@@ -277,7 +321,9 @@ void QHtml5CanvasPaintEngine::updateState(const QPaintEngineState &state)
 */
 void QHtml5CanvasPaintEngine::opacityChanged()
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::opacityChanged()";
+#endif
 }
 
 /*!
@@ -285,7 +331,9 @@ void QHtml5CanvasPaintEngine::opacityChanged()
 */
 void QHtml5CanvasPaintEngine::compositionModeChanged()
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::compositionModeChanged()";
+#endif
 }
 
 /*!
@@ -293,7 +341,9 @@ void QHtml5CanvasPaintEngine::compositionModeChanged()
 */
 void QHtml5CanvasPaintEngine::renderHintsChanged()
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::renderHintsChanged()";
+#endif
 }
 
 /*!
@@ -338,7 +388,9 @@ void QHtml5CanvasPaintEngine::transformChanged()
 */
 void QHtml5CanvasPaintEngine::clipEnabledChanged()
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::clipEnabledChanged()";
+#endif
 }
 
 // #define QT_CLIPPING_RATIOS
@@ -456,7 +508,9 @@ void QHtml5CanvasPaintEngine::drawRects(const QRectF *rects, int rectCount)
 */
 void QHtml5CanvasPaintEngine::stroke(const QVectorPath &path, const QPen &pen)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::stroke(const QVectorPath &path, const QPen &pen)";
+#endif
 }
 
 /*!
@@ -486,7 +540,9 @@ void QHtml5CanvasPaintEngine::fillRect(const QRectF &r, const QBrush &brush)
 #endif
     if (brush.style() != Qt::SolidPattern)
     {
+#ifdef QT_DEBUG_DRAW
         qDebug() << "fillRect with non SolidPattern QBrush not yet supported!";
+#endif
         return;
     }
     Html5CanvasInterface::fillSolidRect(d->canvasHandle, brush.color().red(), brush.color().green(), brush.color().blue(), r.left(), r.top(), r.width(), r.height());
@@ -509,7 +565,9 @@ void QHtml5CanvasPaintEngine::fillRect(const QRectF &r, const QColor &color)
  */
 void QHtml5CanvasPaintEngine::fillPolygon(const QPointF *points, int pointCount, PolygonDrawMode mode)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::fillPolygon(const QPointF *points, int pointCount, PolygonDrawMode mode)";
+#endif
 }
 
 /*!
@@ -598,7 +656,9 @@ void QHtml5CanvasPaintEngine::drawTiledPixmap(const QRectF &r, const QPixmap &pi
 */
 void QHtml5CanvasPaintEngine::alphaPenBlt(const void* src, int bpl, int depth, int rx,int ry,int w,int h)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::alphaPenBlt(const void* src, int bpl, int depth, int rx,int ry,int w,int h)";
+#endif
 }
 
 /*!
@@ -606,7 +666,9 @@ void QHtml5CanvasPaintEngine::alphaPenBlt(const void* src, int bpl, int depth, i
 */
 void QHtml5CanvasPaintEngine::drawStaticTextItem(QStaticTextItem *textItem)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::drawStaticTextItem(QStaticTextItem *textItem)";
+#endif
 }
 
 /*!
@@ -627,13 +689,17 @@ void QHtml5CanvasPaintEngine::drawTextItem(const QPointF &p, const QTextItem &te
 */
 void QHtml5CanvasPaintEngine::drawPoints(const QPointF *points, int pointCount)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::drawPoints(const QPointF *points, int pointCount)";
+#endif
 }
 
 
 void QHtml5CanvasPaintEngine::drawPoints(const QPoint *points, int pointCount)
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::drawPoints(const QPoint *points, int pointCount)";
+#endif
 }
 
 /*!
@@ -663,7 +729,9 @@ void QHtml5CanvasPaintEngine::drawLines(const QLineF *lines, int lineCount)
 void QHtml5CanvasPaintEngine::drawEllipse(const QRectF &rect)
 {
     Q_D(QHtml5CanvasPaintEngine);
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::drawEllipse(const QRectF &rect)";
+#endif
     Html5CanvasInterface::strokeEllipse(d->canvasHandle, rect.center().x(), rect.center().y(), rect.width(), rect.height());
     Html5CanvasInterface::fillEllipse(d->canvasHandle, rect.center().x(), rect.center().y(), rect.width(), rect.height());
 }
@@ -674,13 +742,17 @@ void QHtml5CanvasPaintEngine::drawEllipse(const QRectF &rect)
 
 bool QHtml5CanvasPaintEngine::supportsTransformations(const QFontEngine *fontEngine) const
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::supportsTransformations(const QFontEngine *fontEngine)";
+#endif
     return true;
 }
 
 bool QHtml5CanvasPaintEngine::supportsTransformations(qreal pixelSize, const QTransform &m) const
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::supportsTransformations(qreal pixelSize, const QTransform &m)";
+#endif
     return true;
 }
 
@@ -689,7 +761,9 @@ bool QHtml5CanvasPaintEngine::supportsTransformations(qreal pixelSize, const QTr
 */
 QPoint QHtml5CanvasPaintEngine::coordinateOffset() const
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::coordinateOffset()";
+#endif
     return QPoint(0, 0);
 }
 
@@ -699,7 +773,9 @@ QPoint QHtml5CanvasPaintEngine::coordinateOffset() const
 */
 QRect QHtml5CanvasPaintEngine::clipBoundingRect() const
 {
+#ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::clipBoundingRect()";
+#endif
     return QRect();
 }
 

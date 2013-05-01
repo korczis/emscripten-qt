@@ -1,3 +1,4 @@
+#if defined(EMSCRIPTEN_NATIVE) && !defined(QT_NO_GRAPHICSSYSTEM_HTML5CANVAS)
 #include "html5canvascommandsender.h"
 #include "html5canvascommand.h"
 
@@ -45,3 +46,4 @@ void *CommandSender::readCommandResponse(const quint32 numBytes)
     }
     return destBuffer;
 }
+#endif

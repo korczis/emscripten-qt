@@ -116,8 +116,6 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
 
            const int winX = win->requestedRegion().boundingRect().left();
            const int winY = win->requestedRegion().boundingRect().top();
-           qDebug() << "blah: " << win->requestedRegion().boundingRect();
-           qDebug() << "surface: " << windowSurface;
 
            const CanvasHandle winBackingCanvasHandle = windowSurface->backingCanvasHandle();
 

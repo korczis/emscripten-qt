@@ -1446,17 +1446,24 @@ void QWSDirectPainterSurface::unlock()
 #endif // QT_NO_DIRECTPAINTER
 
 #ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
+#ifdef EMSCRIPTEN_NATIVE
+#define QT_DEBUG_SURFACE
+#endif
 QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()
     : QWSWindowSurface(), m_isServerSide(false), m_backingCanvasHandle(-1)
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface()" << "(" << (void*)this << ")";
+#endif
     setSurfaceFlags(Buffered);
 }
 
 QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)
     : QWSWindowSurface(widget), m_isServerSide(false), m_backingCanvasHandle(-1)
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)" << "(" << (void*)this << ")";
+#endif
     SurfaceFlags flags = Buffered;
     if (isWidgetOpaque(widget))
         flags |= Opaque;
@@ -1465,18 +1472,24 @@ QWSHtml5CanvasSurface::QWSHtml5CanvasSurface(QWidget *widget)
 
 QWSHtml5CanvasSurface::~QWSHtml5CanvasSurface()
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::~QWSHtml5CanvasSurface";
+#endif
 }
 
 bool QWSHtml5CanvasSurface::isValid() const
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::isValid()";
+#endif
     return !pixmap.isNull();
 }
 
 QByteArray QWSHtml5CanvasSurface::permanentState() const
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::permanentState()"<< "(" << (void*)this << ")";
+#endif
     Q_ASSERT(!m_isServerSide);
     QByteArray array(sizeof(CanvasHandle) + 3 * sizeof(int) + sizeof(SurfaceFlags), Qt::Uninitialized);
 
@@ -1499,7 +1512,9 @@ QByteArray QWSHtml5CanvasSurface::permanentState() const
 }
 void QWSHtml5CanvasSurface::setPermanentState(const QByteArray &data)
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::setPermanentState()"<< "(" << (void*)this << ")";
+#endif
     int width;
     int height;
     QImage::Format format;
@@ -1530,11 +1545,15 @@ void QWSHtml5CanvasSurface::setPermanentState(const QByteArray &data)
 
 void QWSHtml5CanvasSurface::setGeometry(const QRect &rect)
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::setGeometry():" << rect << "(" << (void*)this << ")";
+#endif
     img = QImage(rect.width(), rect.height(), QImage::Format_RGB32);
     pixmap = QPixmap(rect.width(), rect.height());
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "Pixmap width: " << pixmap.width();
     qDebug() << "Pixmap height: " << pixmap.height();
+#endif
     QWSWindowSurface::setGeometry(rect);
 }
 
@@ -1549,26 +1568,34 @@ void QWSHtml5CanvasSurface::setGeometry(const QRect &rect)
 
 QPaintDevice *QWSHtml5CanvasSurface::paintDevice() {
     Q_ASSERT(!m_isServerSide);
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::paintDevice():  (" << (void*)this << ")";
+#endif
     return &pixmap;
     //return &img;
 }
 
 bool QWSHtml5CanvasSurface::scroll(const QRegion &area, int dx, int dy)
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::scroll()";
+#endif
     return true;
 }
 
 QImage QWSHtml5CanvasSurface::image() const
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "Warning: request for QWSHtml5CanvasSurface::image";
+#endif
     return img;
 }
 
 QString QWSHtml5CanvasSurface::key() const
 {
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::key()";
+#endif
     return "html5canvas";
 }
 
@@ -1576,7 +1603,9 @@ QString QWSHtml5CanvasSurface::key() const
 CanvasHandle QWSHtml5CanvasSurface::backingCanvasHandle()
 {
     Q_ASSERT(m_isServerSide && m_backingCanvasHandle != -1);
+#ifdef QT_DEBUG_SURFACE
     qDebug() << "QWSHtml5CanvasSurface::backingCanvasHandle(): " << (void*)this;
+#endif
     return m_backingCanvasHandle;
 }
 #endif

@@ -164,7 +164,6 @@ CanvasHandle QHtml5CanvasPixmapData::canvasHandle() const
 void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace)
 {
     qDebug() << "QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::ImageConversionFlags flags, bool inPlace) flags: " << flags << " inPlace: " << inPlace << " image size: " << sourceImage.size() << " image format: " << sourceImage.format();
-    Q_ASSERT(sourceImage.format() == QImage::Format_ARGB32 || sourceImage.format() == QImage::Format_RGB32 );
     resize(sourceImage.width(), sourceImage.height());
     if (is_null)
     {
@@ -214,6 +213,30 @@ void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::Image
                 *rgbaDataWriter = (uchar)qBlue(rgba);
                 rgbaDataWriter++;
                 *rgbaDataWriter = 0xFF;
+                rgbaDataWriter++;
+            }
+        }
+        Html5CanvasInterface::setCanvasPixelsRaw(m_canvasHandle, rgbaData, width, height);
+        free(rgbaData);
+    }
+    else
+    {
+        qDebug() << "Format " << sourceImage.format() << " not yet supported for QHtml5CanvasPixmapData";
+        // Pure black.
+        uchar* rgbaData = static_cast<uchar*>(malloc(sourceImage.width() * sourceImage.height() * 4));
+        uchar* rgbaDataWriter = rgbaData;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                const QRgb rgba = sourceImage.pixel(x, y);
+                *rgbaDataWriter = 0;
+                rgbaDataWriter++;
+                *rgbaDataWriter = 0;
+                rgbaDataWriter++;
+                *rgbaDataWriter = 0;
+                rgbaDataWriter++;
+                *rgbaDataWriter = 0;
                 rgbaDataWriter++;
             }
         }

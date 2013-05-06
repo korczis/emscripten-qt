@@ -17,6 +17,7 @@ extern "C"
     void EMSCRIPTENQT_fillEllipse(CanvasHandle canvasHandle, double cx, double cy, double width, double height);
     void EMSCRIPTENQT_changePenColor(CanvasHandle canvasHandle, int r, int g, int b);
     void EMSCRIPTENQT_changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b);
+    void EMSCRIPTENQT_changeBrushTexture(CanvasHandle canvasHandle, CanvasHandle textureHandle);
     void EMSCRIPTENQT_changePenThickness(CanvasHandle canvasHandle, double thickness);
     void EMSCRIPTENQT_savePaintState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_restorePaintState(CanvasHandle canvasHandle);
@@ -80,6 +81,11 @@ void Html5CanvasInterface::changePenColor(CanvasHandle canvasHandle, int r, int 
 void Html5CanvasInterface::changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b)
 {
     EMSCRIPTENQT_changeBrushColor(canvasHandle, r, g, b);
+}
+
+void Html5CanvasInterface::changeBrushTexture(CanvasHandle canvasHandle, CanvasHandle textureHandle)
+{
+    EMSCRIPTENQT_changeBrushTexture(canvasHandle, textureHandle);
 }
 
 void Html5CanvasInterface::changePenThickness(CanvasHandle canvasHandle, double thickness)

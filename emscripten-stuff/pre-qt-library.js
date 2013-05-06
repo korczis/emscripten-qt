@@ -96,6 +96,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_changeBrushTexture: function(canvasHandle, r, g, b) {
+          return _EMSCRIPTENQT_changeBrushTexture_internal(canvasHandle, r, g, b);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_savePaintState: function(canvasHandle) {
           return _EMSCRIPTENQT_savePaintState_internal(canvasHandle);
       }

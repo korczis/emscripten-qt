@@ -760,6 +760,16 @@ function _EMSCRIPTENQT_changeBrushColor_internal(canvasHandle, r, g, b)
     ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + 0xFF + ")";
 }
 
+function _EMSCRIPTENQT_changeBrushTexture_internal(canvasHandle, textureCanvasHandle)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var textureCanvas = emscriptenqt_handle_to_canvas[textureCanvasHandle];
+    var ctx = canvas.getContext("2d");
+    var texturePattern = ctx.createPattern(textureCanvas, "repeat");
+
+    ctx.fillStyle = texturePattern;
+}
+
 function _EMSCRIPTENQT_removeClip_internal(canvasCtx, canvas)
 {
     // Assumes that canvas has a clip.  Results are undefined otherwise!

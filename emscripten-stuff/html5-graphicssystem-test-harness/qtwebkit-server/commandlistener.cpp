@@ -223,6 +223,13 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_changeBrushColor_internal(%1, %2, %3, %4); ").arg(canvasHandle).arg(r).arg(g).arg(b));
                     break;
                 }
+            case Command::ChangeBrushTexture:
+                {
+                    CanvasHandle canvasHandle, textureHandle;
+                    command.commandData() >> canvasHandle >> textureHandle;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_changeBrushTexture_internal(%1, %2); ").arg(canvasHandle).arg(textureHandle));
+                    break;
+                }
             case Command::SavePaintState:
                 {
                     CanvasHandle canvasHandle;

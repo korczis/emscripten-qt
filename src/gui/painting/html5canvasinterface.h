@@ -56,6 +56,7 @@ public:
      */
     static void changePenColor(CanvasHandle canvasHandle, int r, int g, int b);
     static void changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b);
+    static void changeBrushTexture(CanvasHandle canvasHandle, CanvasHandle textureHandle);
     static void changePenThickness(CanvasHandle canvasHandle, double thickness);
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
     static void drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw,CanvasHandle canvasHandleToDrawOn, double x, double y);

@@ -1,4 +1,6 @@
-#if defined(EMSCRIPTEN_NATIVE) && !defined(QT_NO_GRAPHICSSYSTEM_HTML5CANVAS)
+// Needs to be usable by both EMSCRIPTEN_NATIVE and also the qtwebkit-server, which does not
+// define either of EMSCRIPTEN or EMSCRIPTEN_NATIVE
+#if (defined(EMSCRIPTEN_NATIVE) || !defined(EMSCRIPTEN))  && !defined(QT_NO_GRAPHICSSYSTEM_HTML5CANVAS)
 #include "html5canvascommand.h"
 
 #include <QtCore/QIODevice>

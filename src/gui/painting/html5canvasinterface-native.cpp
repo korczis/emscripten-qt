@@ -137,6 +137,13 @@ void Html5CanvasInterface::changeBrushColor(CanvasHandle canvasHandle, int r, in
     commandSender()->sendCommand(changeBrushColorCommand);
 }
 
+void Html5CanvasInterface::changeBrushTexture(CanvasHandle canvasHandle, CanvasHandle textureHandle)
+{
+    Command changeBrushTextureCommand(Command::ChangeBrushTexture);
+    changeBrushTextureCommand.commandData() << canvasHandle << textureHandle;
+    commandSender()->sendCommand(changeBrushTextureCommand);
+}
+
 void Html5CanvasInterface::savePaintState(CanvasHandle canvasHandle)
 {
     Q_ASSERT(canvasHandle != -1);

@@ -292,7 +292,21 @@ void QHtml5CanvasPaintEngine::brushChanged()
 #ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::brushChanged(): " << state()->brush;
 #endif
-    Html5CanvasInterface::changeBrushColor(d->canvasHandle, brushColor.red(), brushColor.green(), brushColor.blue());
+    if (state()->brush.style() == Qt::SolidPattern)
+    {
+        Html5CanvasInterface::changeBrushColor(d->canvasHandle, brushColor.red(), brushColor.green(), brushColor.blue());
+    }
+    else if (state()->brush.style() == Qt::TexturePattern)
+    {
+        CanvasHandle textureCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(state()->brush.texture().pixmapData())->canvasHandle();
+        Html5CanvasInterface::changeBrushTexture(d->canvasHandle, textureCanvasHandle);
+    }
+    else
+    {
+#ifdef QT_DEBUG_DRAW
+        qDebug() << "Brush style " << state()->brush.style() << " currently unsupported";
+#endif
+    }
 }
 
 

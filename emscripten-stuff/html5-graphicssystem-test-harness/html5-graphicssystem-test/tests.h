@@ -30,6 +30,7 @@ public slots:
     void testDrawRectangleAfterRotateBySixtyDegreesOnUntranslatedCanvas();
     void testDrawEllipseNoFill();
     void testDrawEllipse();
+    void testFillWithTexturedQBrush();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

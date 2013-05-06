@@ -317,6 +317,29 @@ void Html5GraphicsSystemTests::testDrawEllipse()
     painter()->drawEllipse((widgetWidth() - ellipseWidth) / 2, (widgetHeight() - ellipseHeight) / 2, ellipseWidth, ellipseHeight);
 }
 
+void Html5GraphicsSystemTests::testFillWithTexturedQBrush()
+{
+    
+    const int numRectsHorizontal = 5;
+    const int numRectsVertical = 5;
+    const int interRectXPad = 10;
+    const int interRectYPad = 10;
+
+    const int rectWidth = (widgetWidth() - numRectsHorizontal * interRectXPad) / numRectsHorizontal;
+    const int rectHeight = (widgetHeight() - numRectsVertical * interRectYPad) / numRectsVertical;
+
+    const QPixmap pixmap(testDataPath + "qt-logo-variable-alpha.png");
+    painter()->setBrush(QBrush(pixmap));
+    
+
+    for (int horiz = 0; horiz < numRectsHorizontal; horiz++)
+    {
+        for (int vert = 0; vert < numRectsVertical; vert++)
+        {
+            painter()->drawRect(horiz * (rectWidth + interRectXPad), vert * (rectHeight + interRectYPad), rectWidth, rectHeight);
+        }
+    }
+}
 
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {

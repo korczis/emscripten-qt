@@ -615,6 +615,11 @@ void QHtml5CanvasPaintEngine::drawImage(const QPointF &p, const QImage &img)
 #ifdef QT_DEBUG_DRAW
     qDebug() << " - QHtml5CanvasPaintEngine::drawImage(), p=" <<  p << " image=" << img.size() << "depth=" << img.depth();
 #endif
+    // TODO - we can do better than this! Render pixels direct to canvas rather than wasteful
+    // conversion to QPixmap. Need to be careful with clipping if we do this, though, and hard
+    // to support palettised QImages.
+    QPixmap imageAsPixmap(QPixmap::fromImage(img));
+    drawPixmap(p, imageAsPixmap);
 }
 
 /*!
@@ -626,6 +631,13 @@ void QHtml5CanvasPaintEngine::drawImage(const QRectF &r, const QImage &img, cons
 #ifdef QT_DEBUG_DRAW
     qDebug() << " - QHtml5CanvasPaintEngine::drawImage(), r=" << r << " sr=" << sr << " image=" << img.size() << "depth=" << img.depth();
 #endif
+    if (r.size() != sr.size())
+    {
+#ifdef QT_DEBUG_DRAW
+        qDebug() << "drawImage with scaling not yet supported!";
+#endif
+        return;
+    }
 }
 
 /*!

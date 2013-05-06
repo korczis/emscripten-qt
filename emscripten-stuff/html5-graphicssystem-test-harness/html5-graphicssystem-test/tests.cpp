@@ -365,6 +365,12 @@ void Html5GraphicsSystemTests::testFillRectWithTexturedQBrush()
     }
 }
 
+void Html5GraphicsSystemTests::testDrawARGB32QImage()
+{
+    const QImage image(testDataPath + "qt-logo-variable-alpha.png");
+    painter()->drawImage((widgetWidth() - image.width()) / 2, (widgetHeight() - image.height()) / 2, image);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

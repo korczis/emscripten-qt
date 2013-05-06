@@ -83,6 +83,12 @@ public:
      * Retrieve the contents of the main canvas as  a QImage. Mainly used by the html5canvas test suite.
      */
     static QImage mainCanvasContents();
+#ifdef EMSCRIPTEN_NATIVE
+    // Tells the qtwebkit server to process events in order to e.g flush the canvas to screen.
+    // This is only really needed if you are testing an app with animations and want to inspect it
+    // visually.
+    static void processEvents();
+#endif
 private:
     static Rgba* mainCanvasContentsRaw();
 };

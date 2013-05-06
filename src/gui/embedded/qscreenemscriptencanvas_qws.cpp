@@ -122,6 +122,10 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
 
            Html5CanvasInterface::drawCanvasOnMainCanvas(winBackingCanvasHandle, winX, winY);
        }
+#ifdef EMSCRIPTEN_NATIVE
+    // Tell qtwebkit-server to update its UI in order to show the contents.
+    Html5CanvasInterface::processEvents();
+#endif
     }
 #endif
     EMSCRIPTENQT_notify_frame_rendered();

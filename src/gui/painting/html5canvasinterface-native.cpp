@@ -218,4 +218,10 @@ void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int
     commandSender()->sendCommand(drawCanvasOnMainCanvasCommand);
 }
 
+void Html5CanvasInterface::processEvents()
+{
+    Command processEventsCommand(Command::ProcessEvents);
+    commandSender()->sendCommand(processEventsCommand);
+}
+
 #endif

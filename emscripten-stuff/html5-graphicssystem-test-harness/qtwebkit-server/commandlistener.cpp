@@ -5,6 +5,7 @@
 #include <QtNetwork/QTcpSocket>
 #include <QtWebKit/QWebFrame>
 #include <QtCore/QTimer>
+#include <QtGui/QApplication>
 
 typedef qint32 CanvasHandle;
 namespace
@@ -307,6 +308,14 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(%1, %2, %3); ").arg(canvasHandle).arg(x).arg(y));
                     break;
                 }
+            case Command::ProcessEvents:
+            {
+                while(QApplication::hasPendingEvents())
+                {
+                    QApplication::processEvents();
+                }
+                break;
+            }
         }
     }
     qDebug() << "Command queue cleared";

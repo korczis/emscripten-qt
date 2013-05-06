@@ -35,6 +35,7 @@ public slots:
     void testDrawARGB32QImage();
     void testDrawStretchedPortionOfImage();
     void testDraw8BitQImage();
+    void testFillRectWithAngledLinearGradient();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

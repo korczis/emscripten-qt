@@ -216,6 +216,29 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_changePenThickness_internal(%1, %2); ").arg(canvasHandle).arg(thickness));
                     break;
                 }
+            case Command::CreateLinearGradient:
+                {
+                    CanvasHandle canvasHandle;
+                    double startX, startY, endX, endY;
+                    command.commandData() >> canvasHandle >> startX >> startY >> endX >> endY;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_createLinearGradient_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(startX).arg(startY).arg(endX).arg(endY));
+                    break;
+                }
+            case Command::AddStopPointToCurrentGradient:
+                {
+                    double position;
+                    int r, g, b;
+                    command.commandData() >> position >> r >> g >> b;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_addStopPointToCurrentGradient_internal(%1, %2, %3, %4); ").arg(position).arg(r).arg(g).arg(b));
+                    break;
+                }
+            case Command::SetBrushToCurrentGradient:
+                {
+                    CanvasHandle canvasHandle;
+                    command.commandData() >> canvasHandle;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_setBrushToCurrentGradient_internal(%1); ").arg(canvasHandle));
+                    break;
+                }
             case Command::ChangeBrushColor:
                 {
                     CanvasHandle canvasHandle;

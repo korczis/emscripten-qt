@@ -7,6 +7,7 @@
 #include <QtCore/QBuffer>
 #include <QtCore/QDebug>
 #include <QtGui/QColor>
+#include "../itemviews/qbsptree_p.h"
 
 namespace
 {
@@ -128,6 +129,27 @@ void Html5CanvasInterface::changePenThickness(CanvasHandle canvasHandle, double 
     Command changePenThicknessCommand(Command::ChangePenThickness);
     changePenThicknessCommand.commandData() << canvasHandle << thickness;
     commandSender()->sendCommand(changePenThicknessCommand);
+}
+
+void Html5CanvasInterface::createLinearGradient(CanvasHandle canvasHandle, double startX, double startY, double endX, double endY)
+{
+    Command createLinearGradientCommand(Command::CreateLinearGradient);
+    createLinearGradientCommand.commandData() << canvasHandle << startX << startY << endX << endY;
+    commandSender()->sendCommand(createLinearGradientCommand);
+}
+
+void Html5CanvasInterface::addStopPointToCurrentGradient(double position, int r, int g, int b)
+{
+    Command addStopPointToCurrentGradientCommand(Command::AddStopPointToCurrentGradient);
+    addStopPointToCurrentGradientCommand.commandData() << position << r << g << b;
+    commandSender()->sendCommand(addStopPointToCurrentGradientCommand);
+}
+
+void Html5CanvasInterface::setBrushToCurrentGradient(CanvasHandle canvasHandle)
+{
+    Command setBrushToCurrentGradientCurrentGradientCommand(Command::SetBrushToCurrentGradient);
+    setBrushToCurrentGradientCurrentGradientCommand.commandData() << canvasHandle;
+    commandSender()->sendCommand(setBrushToCurrentGradientCurrentGradientCommand);
 }
 
 void Html5CanvasInterface::changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b)

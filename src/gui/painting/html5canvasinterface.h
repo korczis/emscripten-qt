@@ -58,6 +58,16 @@ public:
     static void changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b);
     static void changeBrushTexture(CanvasHandle canvasHandle, CanvasHandle textureHandle);
     static void changePenThickness(CanvasHandle canvasHandle, double thickness);
+    /**
+     * Create a linear gradient with the given start and end points.  This will be set to the <em>current</em>
+     * gradient, which can be modified via calls to #addStopPointToCurrentGradient and set as a brush via
+     * #setBrushToCurrentGradient.
+     * The \a canvasHandle should be the same as that used when you call setBrushToCurrentGradient (HTML5
+     * canvas requires this knowledge upfront).
+     */
+    static void createLinearGradient(CanvasHandle canvasHandle, double startX, double startY, double endX, double endY);
+    static void addStopPointToCurrentGradient(double position, int r, int g, int b);
+    static void setBrushToCurrentGradient(CanvasHandle canvasHandle);
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
     static void drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw,CanvasHandle canvasHandleToDrawOn, double x, double y);
     static void drawStretchedCanvasPortionOnCanvas(CanvasHandle canvasHandleToDraw, CanvasHandle canvasHandleToDrawOn, double targetX, double targetY, double targetWidth, double targetHeight, double sourceX, double sourceY, double sourceWidth, double sourceHeight);

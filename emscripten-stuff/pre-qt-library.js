@@ -102,6 +102,27 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_createLinearGradient: function(canvasHandle, startX, startY, endX, endY) {
+          return _EMSCRIPTENQT_createLinearGradient_internal(canvasHandle, startX, startY, endX, endY);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_addStopPointToCurrentGradient: function(position, r, g, b) {
+          return _EMSCRIPTENQT_addStopPointToCurrentGradient_internal(position, r, g, b);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_setBrushToCurrentGradient: function(canvasHandle) {
+          return _EMSCRIPTENQT_setBrushToCurrentGradient(canvasHandle);
+      }
+    });
+
+function _EMSCRIPTENQT_changeBrushColor_internal(canvasHandle, r, g, b)
+{
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_savePaintState: function(canvasHandle) {
           return _EMSCRIPTENQT_savePaintState_internal(canvasHandle);
       }

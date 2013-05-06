@@ -389,6 +389,16 @@ void Html5GraphicsSystemTests::testDrawStretchedPortionOfImage()
     painter()->drawImage(targetRect, image, sourcePortion);
 }
 
+void Html5GraphicsSystemTests::testFillRectWithAngledLinearGradient()
+{
+    QLinearGradient angledLinearGradient(QPoint(0, 0), QPoint(widgetWidth() / 2, widgetHeight() / 2));
+    angledLinearGradient.setColorAt(0, Qt::red);
+    angledLinearGradient.setColorAt(1, Qt::blue);
+
+    painter()->setBrush(angledLinearGradient);
+    painter()->drawRect(widgetWidth() / 4, widgetHeight() / 4, widgetWidth() / 2, widgetHeight() / 2);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

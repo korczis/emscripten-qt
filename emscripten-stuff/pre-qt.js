@@ -753,6 +753,26 @@ function _EMSCRIPTENQT_changePenThickness_internal(canvasHandle, thickness)
     ctx.lineWidth = thickness;
 }
 
+var _EMSCRIPTENQT_currentGradient = null;
+function _EMSCRIPTENQT_createLinearGradient_internal(canvasHandle, startX, startY, endX, endY)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    _EMSCRIPTENQT_currentGradient = ctx.createLinearGradient(startX, startY, endX, endY);
+}
+
+function _EMSCRIPTENQT_addStopPointToCurrentGradient_internal(position, r, g, b)
+{
+    _EMSCRIPTENQT_currentGradient.addColorStop(position, "rgba(" + r + "," + g + "," + b + "," + 0xFF + ")");
+}
+
+function _EMSCRIPTENQT_setBrushToCurrentGradient_internal(canvasHandle)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = _EMSCRIPTENQT_currentGradient;
+}
+
 function _EMSCRIPTENQT_changeBrushColor_internal(canvasHandle, r, g, b)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];

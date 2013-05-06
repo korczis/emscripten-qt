@@ -802,6 +802,20 @@ void QHtml5CanvasPaintEngine::setHtml5Brush(const QBrush& brush)
         CanvasHandle textureCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(brush.texture().pixmapData())->canvasHandle();
         Html5CanvasInterface::changeBrushTexture(d->canvasHandle, textureCanvasHandle);
     }
+    else if (brush.style() == Qt::LinearGradientPattern)
+    {
+        const QLinearGradient* brushGradient = static_cast<const QLinearGradient*>(brush.gradient());
+        Html5CanvasInterface::createLinearGradient(d->canvasHandle, brushGradient->start().x(), brushGradient->start().y(),
+                                                   brushGradient->finalStop().x(), brushGradient->finalStop().y());
+        QVector<QGradientStop> gradientStops = brushGradient->stops();
+        foreach(const QGradientStop& gradientStop, gradientStops)
+        {
+            const qreal position = gradientStop.first;
+            const QColor stopColour = gradientStop.second;
+            Html5CanvasInterface::addStopPointToCurrentGradient(position, stopColour.red(), stopColour.green(), stopColour.blue());
+        }
+        Html5CanvasInterface::setBrushToCurrentGradient(d->canvasHandle);
+    }
     else
     {
 #ifdef QT_DEBUG_DRAW

@@ -19,6 +19,9 @@ extern "C"
     void EMSCRIPTENQT_changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b);
     void EMSCRIPTENQT_changeBrushTexture(CanvasHandle canvasHandle, CanvasHandle textureHandle);
     void EMSCRIPTENQT_changePenThickness(CanvasHandle canvasHandle, double thickness);
+    void EMSCRIPTENQT_createLinearGradient(CanvasHandle canvasHandle, double startX, double startY, double endX, double endY);
+    void EMSCRIPTENQT_addStopPointToCurrentGradient(double position, int r, int g, int b);
+    void EMSCRIPTENQT_setBrushToCurrentGradient(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_savePaintState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_restorePaintState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_restoreToOriginalState(CanvasHandle canvasHandle);
@@ -92,6 +95,21 @@ void Html5CanvasInterface::changeBrushTexture(CanvasHandle canvasHandle, CanvasH
 void Html5CanvasInterface::changePenThickness(CanvasHandle canvasHandle, double thickness)
 {
     EMSCRIPTENQT_changePenThickness(canvasHandle, thickness);
+}
+
+void Html5CanvasInterface::createLinearGradient(CanvasHandle canvasHandle, double startX, double startY, double endX, double endY)
+{
+    EMSCRIPTENQT_createLinearGradient(canvasHandle, startX, startY, endX, endY);
+}
+
+void Html5CanvasInterface::addStopPointToCurrentGradient(double position, int r, int g, int b)
+{
+    EMSCRIPTENQT_addStopPointToCurrentGradient(position, r, g, b);
+}
+
+void Html5CanvasInterface::setBrushToCurrentGradient(CanvasHandle canvasHandle)
+{
+    EMSCRIPTENQT_setBrushToCurrentGradient(canvasHandle);
 }
 
 void Html5CanvasInterface::savePaintState(CanvasHandle canvasHandle)

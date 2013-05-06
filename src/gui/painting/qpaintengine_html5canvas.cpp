@@ -44,6 +44,8 @@
 
 QT_BEGIN_NAMESPACE
 
+Q_GUI_EXPORT extern QImage qt_imageForBrush(int brushStyle, bool invert);
+
 QHtml5CanvasPaintEngine::QHtml5CanvasPaintEngine()
     : QPaintEngineEx(*(new QHtml5CanvasPaintEnginePrivate))
 {
@@ -792,35 +794,63 @@ void QHtml5CanvasPaintEngine::setHtml5Brush(const QBrush& brush)
 #ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::brushChanged(): " << state()->brush;
 #endif
-    if (brush.style() == Qt::SolidPattern)
+    switch(brush.style())
     {
-        const QColor brushColor = brush.color();
-        Html5CanvasInterface::changeBrushColor(d->canvasHandle, brushColor.red(), brushColor.green(), brushColor.blue());
-    }
-    else if (brush.style() == Qt::TexturePattern)
-    {
-        CanvasHandle textureCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(brush.texture().pixmapData())->canvasHandle();
-        Html5CanvasInterface::changeBrushTexture(d->canvasHandle, textureCanvasHandle);
-    }
-    else if (brush.style() == Qt::LinearGradientPattern)
-    {
-        const QLinearGradient* brushGradient = static_cast<const QLinearGradient*>(brush.gradient());
-        Html5CanvasInterface::createLinearGradient(d->canvasHandle, brushGradient->start().x(), brushGradient->start().y(),
-                                                   brushGradient->finalStop().x(), brushGradient->finalStop().y());
-        QVector<QGradientStop> gradientStops = brushGradient->stops();
-        foreach(const QGradientStop& gradientStop, gradientStops)
+        case Qt::SolidPattern:
         {
-            const qreal position = gradientStop.first;
-            const QColor stopColour = gradientStop.second;
-            Html5CanvasInterface::addStopPointToCurrentGradient(position, stopColour.red(), stopColour.green(), stopColour.blue());
+            const QColor brushColor = brush.color();
+            Html5CanvasInterface::changeBrushColor(d->canvasHandle, brushColor.red(), brushColor.green(), brushColor.blue());
+            break;
         }
-        Html5CanvasInterface::setBrushToCurrentGradient(d->canvasHandle);
-    }
-    else
-    {
+        case Qt::TexturePattern:
+        {
+            CanvasHandle textureCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(brush.texture().pixmapData())->canvasHandle();
+            Html5CanvasInterface::changeBrushTexture(d->canvasHandle, textureCanvasHandle);
+            break;
+        }
+        case Qt::LinearGradientPattern:
+        {
+            const QLinearGradient* brushGradient = static_cast<const QLinearGradient*>(brush.gradient());
+            Html5CanvasInterface::createLinearGradient(d->canvasHandle, brushGradient->start().x(), brushGradient->start().y(),
+                                                       brushGradient->finalStop().x(), brushGradient->finalStop().y());
+            QVector<QGradientStop> gradientStops = brushGradient->stops();
+            foreach(const QGradientStop& gradientStop, gradientStops)
+            {
+                const qreal position = gradientStop.first;
+                const QColor stopColour = gradientStop.second;
+                Html5CanvasInterface::addStopPointToCurrentGradient(position, stopColour.red(), stopColour.green(), stopColour.blue());
+            }
+            Html5CanvasInterface::setBrushToCurrentGradient(d->canvasHandle);
+            break;
+        }
+        case Qt::Dense1Pattern:
+        case Qt::Dense2Pattern:
+        case Qt::Dense3Pattern:
+        case Qt::Dense4Pattern:
+        case Qt::Dense5Pattern:
+        case Qt::Dense6Pattern:
+        case Qt::Dense7Pattern:
+        case Qt::HorPattern:
+        case Qt::VerPattern:
+        case Qt::CrossPattern:
+        case Qt::BDiagPattern:
+        case Qt::FDiagPattern:
+        case Qt::DiagCrossPattern:
+        {
+            QImage patternImage = qt_imageForBrush(brush.style(), true);
+            patternImage.setColor(0, Qt::transparent);
+            patternImage.setColor(1, brush.color().rgba());
+            QPixmap patternImageAsPixmap = QPixmap::fromImage(patternImage);
+            CanvasHandle patternPixmapHandle = static_cast<QHtml5CanvasPixmapData*>(patternImageAsPixmap.pixmapData())->canvasHandle();
+            Html5CanvasInterface::changeBrushTexture(d->canvasHandle, patternPixmapHandle);
+            break;
+        }
+        default:
+        {
 #ifdef QT_DEBUG_DRAW
-        qDebug() << "Brush style " << brush.style() << " currently unsupported";
+            qDebug() << "Brush style " << brush.style() << " currently unsupported";
 #endif
+        }
     }
 }
 

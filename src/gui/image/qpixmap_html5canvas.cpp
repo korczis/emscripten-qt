@@ -208,7 +208,7 @@ void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::Image
     // copy the image data.
     const int width = sourceImage.width();
     const int height = sourceImage.height();
-    if (sourceImage.format() == QImage::Format_ARGB32 || sourceImage.format() == QImage::Format_RGB32 ||sourceImage.format() == QImage::Format_Indexed8)
+    if (sourceImage.format() == QImage::Format_ARGB32 || sourceImage.format() == QImage::Format_RGB32 ||sourceImage.format() == QImage::Format_Indexed8 || sourceImage.format() == QImage::Format_MonoLSB)
     {
         uchar* rgbaData = static_cast<uchar*>(malloc(sourceImage.width() * sourceImage.height() * 4));
         uchar* rgbaDataWriter = rgbaData;

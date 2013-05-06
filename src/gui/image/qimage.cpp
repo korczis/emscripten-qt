@@ -4141,6 +4141,7 @@ QRgb QImage::pixel(int x, int y) const
     case Format_Mono:
         return d->colortable.at((*(s + (x >> 3)) >> (7- (x & 7))) & 1);
     case Format_MonoLSB:
+        qDebug() << "Gobbles: " << ((*(s + (x >> 3)) >> (x & 7)) & 1) << "/" << d->colortable.size();
         return d->colortable.at((*(s + (x >> 3)) >> (x & 7)) & 1);
     case Format_Indexed8:
         return d->colortable.at((int)s[x]);

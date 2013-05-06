@@ -36,6 +36,7 @@ public slots:
     void testDrawStretchedPortionOfImage();
     void testDraw8BitQImage();
     void testFillRectWithAngledLinearGradient();
+    void testFillRectWithBuiltInPatterns();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

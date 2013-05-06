@@ -399,6 +399,34 @@ void Html5GraphicsSystemTests::testFillRectWithAngledLinearGradient()
     painter()->drawRect(widgetWidth() / 4, widgetHeight() / 4, widgetWidth() / 2, widgetHeight() / 2);
 }
 
+void Html5GraphicsSystemTests::testFillRectWithBuiltInPatterns()
+{
+    Qt::BrushStyle builtInPatterns[] = { Qt::Dense1Pattern, Qt::Dense2Pattern, Qt::Dense3Pattern, Qt::Dense4Pattern, Qt::Dense5Pattern, Qt::Dense6Pattern, Qt::Dense7Pattern, 
+                                       Qt::HorPattern, Qt::VerPattern, Qt::BDiagPattern, Qt::FDiagPattern, Qt::DiagCrossPattern };
+    Qt::GlobalColor colors[] = { Qt::black, Qt::red, Qt::darkRed, Qt::green, Qt::darkGreen, Qt::blue, Qt::darkBlue, Qt::cyan, Qt::darkCyan, Qt::magenta, Qt::yellow, Qt::gray, Qt::darkGray, Qt::lightGray};
+    const int patternsAcross = 4;
+    const int patternsDown = 3;
+
+    const int rectWidth = widgetWidth() / patternsAcross;
+    const int rectHeight = widgetHeight() / patternsDown;
+
+    int builtInPatternIndex = 0;
+    int colorIndex = 0;
+    for (int x = 0; x < patternsAcross; x++)
+    {
+        for (int y = 0; y < patternsDown; y++)
+        {
+            painter()->setBrush(QBrush(colors[colorIndex], builtInPatterns[builtInPatternIndex]));
+
+            painter()->drawRect(x * rectWidth, y * rectHeight, rectWidth, rectHeight);
+
+            builtInPatternIndex++;
+            colorIndex++;
+        }
+    }
+
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

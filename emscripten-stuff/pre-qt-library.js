@@ -115,12 +115,9 @@ mergeInto(LibraryManager.library, {
 
 mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_setBrushToCurrentGradient: function(canvasHandle) {
-          return _EMSCRIPTENQT_setBrushToCurrentGradient(canvasHandle);
+          return _EMSCRIPTENQT_setBrushToCurrentGradient_internal(canvasHandle);
       }
     });
-
-function _EMSCRIPTENQT_changeBrushColor_internal(canvasHandle, r, g, b)
-{
 
 mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_savePaintState: function(canvasHandle) {

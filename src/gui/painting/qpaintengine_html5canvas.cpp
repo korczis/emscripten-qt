@@ -716,9 +716,14 @@ void QHtml5CanvasPaintEngine::drawPoints(const QPoint *points, int pointCount)
 */
 void QHtml5CanvasPaintEngine::drawLines(const QLine *lines, int lineCount)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << " - QHtml5CanvasPaintEngine::drawLines(QLine*)" << lineCount;
 #endif
+    for (int i = 0; i < lineCount; i++)
+    {
+        Html5CanvasInterface::drawLine(d->canvasHandle, lines[i].x1(), lines[i].y1(), lines[i].x2(), lines[i].y2());
+    }
 }
 
 /*!
@@ -726,9 +731,14 @@ void QHtml5CanvasPaintEngine::drawLines(const QLine *lines, int lineCount)
 */
 void QHtml5CanvasPaintEngine::drawLines(const QLineF *lines, int lineCount)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << " - QHtml5CanvasPaintEngine::drawLines(QLineF *)" << lineCount;
 #endif
+    for (int i = 0; i < lineCount; i++)
+    {
+        Html5CanvasInterface::drawLine(d->canvasHandle, lines[i].x1(), lines[i].y1(), lines[i].x2(), lines[i].y2());
+    }
 }
 
 

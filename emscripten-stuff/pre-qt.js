@@ -739,6 +739,19 @@ function _EMSCRIPTENQT_fillEllipse_internal(canvasHandle, cx, cy, width, height)
     ctx.restore(); 
 }
 
+function _EMSCRIPTENQT_drawLine_internal(canvasHandle, startX, startY, endX, endY)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+
+    ctx.beginPath();
+    ctx.moveTo(startX + 0.5, startY + 0.5);
+    ctx.lineTo(endX + 0.5, endY + 0.5);
+    ctx.closePath();
+    ctx.stroke();
+    
+}
+
 function _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b)
 {
     var canvas = emscriptenqt_handle_to_canvas[canvasHandle];

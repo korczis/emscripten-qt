@@ -51,6 +51,7 @@ public:
      * Fill (without outline) the given ellipse with the current pen.
      */
     static void fillEllipse(CanvasHandle canvasHandle, double cx, double cy, double width, double height);
+    static void drawLine(CanvasHandle canvasHandle, double startX, double startY, double endX, double endY);
     /**
      * Draw the canvas with the requested \a canvasHandle on the main canvas at \a x, \a y
      */

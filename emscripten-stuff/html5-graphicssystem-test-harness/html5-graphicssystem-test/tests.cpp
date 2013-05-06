@@ -427,6 +427,45 @@ void Html5GraphicsSystemTests::testFillRectWithBuiltInPatterns()
 
 }
 
+void Html5GraphicsSystemTests::testDrawLines()
+{
+    const int numLines = 10;
+
+    const int lineGapHorizontal = widgetWidth() / numLines;
+    const int lineGapVertical = widgetHeight() / numLines;
+
+    QVector<QPoint> linePoints;
+    for (int i = 0; i < numLines; i++)
+    {
+        const int lineStartX = 0;
+        const int lineEndY = 0;
+        const int lineStartY = widgetHeight() - i * lineGapVertical;
+        const int lineEndX = i * lineGapHorizontal;
+
+        linePoints.append(QPoint(lineStartX, lineStartY)); 
+        linePoints.append(QPoint(lineEndX, lineEndY));
+    }
+    painter()->setPen(QPen(Qt::red, 3));
+    painter()->drawLines(linePoints.data(), numLines);
+
+    QVector<QPoint> linePointsF;
+    for (int i = 0; i < numLines; i++)
+    {
+        const int lineStartX = widgetWidth() - 1;
+        const int lineEndY = widgetHeight() - 1;
+        const int lineStartY = i * lineGapVertical;
+        const int lineEndX = widgetWidth() - i * lineGapHorizontal;
+
+        linePointsF.append(QPoint(lineStartX, lineStartY)); 
+        linePointsF.append(QPoint(lineEndX, lineEndY));
+    }
+    painter()->setPen(QPen(Qt::green, 5));
+    painter()->drawLines(linePointsF.data(), numLines);
+
+    painter()->setPen(QPen(Qt::blue, 17));
+    painter()->drawLine(widgetWidth(), 0, 0, widgetHeight());
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

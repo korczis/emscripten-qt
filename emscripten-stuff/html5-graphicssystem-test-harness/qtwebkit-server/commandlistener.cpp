@@ -200,6 +200,14 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_fillEllipse_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(cx).arg(cy).arg(width).arg(height));
                     break;
                 }
+            case Command::DrawLine:
+                {
+                    CanvasHandle canvasHandle;
+                    double startX, startY, endX, endY;
+                    command.commandData() >> canvasHandle >> startX >> startY >> endX >> endY;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_drawLine_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(startX).arg(startY).arg(endX).arg(endY));
+                    break;
+                }
             case Command::ChangePenColor:
                 {
                     CanvasHandle canvasHandle;

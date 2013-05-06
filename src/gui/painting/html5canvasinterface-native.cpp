@@ -117,6 +117,13 @@ void Html5CanvasInterface::fillEllipse(CanvasHandle canvasHandle, double cx, dou
     commandSender()->sendCommand(fillEllipseCommand);
 }
 
+void Html5CanvasInterface::drawLine(CanvasHandle canvasHandle, double startX, double startY, double endX, double endY)
+{
+    Command drawLineCommand(Command::DrawLine);
+    drawLineCommand.commandData() << canvasHandle << startX << startY << endX << endY;
+    commandSender()->sendCommand(drawLineCommand);
+}
+
 void Html5CanvasInterface::changePenColor(CanvasHandle canvasHandle, int r, int g, int b)
 {
     Command changePenColorCommand(Command::ChangePenColor);

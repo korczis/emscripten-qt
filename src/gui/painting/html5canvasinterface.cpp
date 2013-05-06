@@ -15,6 +15,7 @@ extern "C"
     void EMSCRIPTENQT_strokeRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
     void EMSCRIPTENQT_strokeEllipse(CanvasHandle canvasHandle, double cx, double cy, double width, double height);
     void EMSCRIPTENQT_fillEllipse(CanvasHandle canvasHandle, double cx, double cy, double width, double height);
+    void EMSCRIPTENQT_drawLine(CanvasHandle canvasHandle, double startX, double startY, double endX, double endY);
     void EMSCRIPTENQT_changePenColor(CanvasHandle canvasHandle, int r, int g, int b);
     void EMSCRIPTENQT_changeBrushColor(CanvasHandle canvasHandle, int r, int g, int b);
     void EMSCRIPTENQT_changeBrushTexture(CanvasHandle canvasHandle, CanvasHandle textureHandle);
@@ -75,6 +76,11 @@ void Html5CanvasInterface::strokeEllipse(CanvasHandle canvasHandle, double cx, d
 void Html5CanvasInterface::fillEllipse(CanvasHandle canvasHandle, double cx, double cy, double width, double height)
 {
     EMSCRIPTENQT_fillEllipse(canvasHandle, cx, cy, width, height);
+}
+
+void Html5CanvasInterface::drawLine(CanvasHandle canvasHandle, double startX, double startY, double endX, double endY)
+{
+    EMSCRIPTENQT_drawLine(canvasHandle, startX, startY, endX, endY);
 }
 
 void Html5CanvasInterface::changePenColor(CanvasHandle canvasHandle, int r, int g, int b)

@@ -78,6 +78,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_drawLine: function(canvasHandle, startX, startY, endX, endY) {
+          return _EMSCRIPTENQT_drawLine_internal(canvasHandle, startX, startY, endX, endY);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_changePenColor: function(canvasHandle, r, g, b) {
           return _EMSCRIPTENQT_changePenColor_internal(canvasHandle, r, g, b);
       }

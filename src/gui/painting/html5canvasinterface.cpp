@@ -13,6 +13,7 @@ extern "C"
     CanvasHandle EMSCRIPTENQT_createCanvas(int width, int height);
     void EMSCRIPTENQT_fillSolidRect(CanvasHandle canvasHandle, int r, int g, int b, double x, double y, double width, double height);
     void EMSCRIPTENQT_strokeRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
+    void EMSCRIPTENQT_fillRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
     void EMSCRIPTENQT_strokeEllipse(CanvasHandle canvasHandle, double cx, double cy, double width, double height);
     void EMSCRIPTENQT_fillEllipse(CanvasHandle canvasHandle, double cx, double cy, double width, double height);
     void EMSCRIPTENQT_drawLine(CanvasHandle canvasHandle, double startX, double startY, double endX, double endY);
@@ -66,6 +67,11 @@ void Html5CanvasInterface::fillSolidRect(CanvasHandle canvasHandle, int r, int g
 void Html5CanvasInterface::strokeRect(CanvasHandle canvasHandle, double x, double y, double width, double height)
 {
     EMSCRIPTENQT_strokeRect(canvasHandle, x, y, width, height);
+}
+
+void Html5CanvasInterface::fillRect(CanvasHandle canvasHandle, double x, double y, double width, double height)
+{
+    EMSCRIPTENQT_fillRect(canvasHandle, x, y, width, height);
 }
 
 void Html5CanvasInterface::strokeEllipse(CanvasHandle canvasHandle, double cx, double cy, double width, double height)

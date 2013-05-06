@@ -371,6 +371,15 @@ void Html5GraphicsSystemTests::testDrawARGB32QImage()
     painter()->drawImage((widgetWidth() - image.width()) / 2, (widgetHeight() - image.height()) / 2, image);
 }
 
+void Html5GraphicsSystemTests::testDrawStretchedPortionOfImage()
+{
+    const QImage image(testDataPath + "qt-logo-variable-alpha.png");
+    const QRect targetRect = QRect(widgetWidth() / 4, widgetHeight() / 4, widgetWidth() / 2, widgetHeight() / 2);
+    const QRect sourcePortion = QRect(image.width() / 4, image.height() / 4, image.width() / 2, image.height() / 2);
+    Q_ASSERT(targetRect.size() != sourcePortion.size());
+    painter()->drawImage(targetRect, image, sourcePortion);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

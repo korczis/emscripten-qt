@@ -626,18 +626,25 @@ void QHtml5CanvasPaintEngine::drawImage(const QPointF &p, const QImage &img)
     \reimp
 */
 void QHtml5CanvasPaintEngine::drawImage(const QRectF &r, const QImage &img, const QRectF &sr,
-                                   Qt::ImageConversionFlags)
+                                   Qt::ImageConversionFlags conversionFlags)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << " - QHtml5CanvasPaintEngine::drawImage(), r=" << r << " sr=" << sr << " image=" << img.size() << "depth=" << img.depth();
 #endif
-    if (r.size() != sr.size())
+    if (conversionFlags != Qt::AutoColor)
     {
 #ifdef QT_DEBUG_DRAW
-        qDebug() << "drawImage with scaling not yet supported!";
+        qDebug() << "drawImage with conversionFlags " << conversionFlags << "  not yet supported!";
 #endif
         return;
     }
+    // TODO - we can do better than this! Render pixels direct to canvas rather than wasteful
+    // conversion to QPixmap. Need to be careful with clipping if we do this, though, and hard
+    // to support palettised QImages.
+    QPixmap imageAsPixmap(QPixmap::fromImage(img));
+    CanvasHandle pixmapCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(imageAsPixmap.pixmapData())->canvasHandle();
+    Html5CanvasInterface::drawStretchedCanvasPortionOnCanvas(pixmapCanvasHandle, d->canvasHandle, r.x(), r.y(), r.width(), r.height(), sr.x(), sr.y(), sr.width(), sr.height());
 }
 
 /*!

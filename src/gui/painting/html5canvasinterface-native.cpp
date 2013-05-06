@@ -204,6 +204,13 @@ void Html5CanvasInterface::drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw, C
     commandSender()->sendCommand(drawCanvasOnCanvasCommand);
 }
 
+void Html5CanvasInterface::drawStretchedCanvasPortionOnCanvas(CanvasHandle canvasHandleToDraw, CanvasHandle canvasHandleToDrawOn, double targetX, double targetY, double targetWidth, double targetHeight, double sourceX, double sourceY, double sourceWidth, double sourceHeight)
+{
+    Command drawCanvasPortionOnCanvasCommand(Command::DrawStretchedCanvasPortionOnCanvas);
+    drawCanvasPortionOnCanvasCommand.commandData() << canvasHandleToDraw << canvasHandleToDrawOn << targetX << targetY << targetWidth << targetHeight << sourceX << sourceY << sourceWidth << sourceHeight;
+    commandSender()->sendCommand(drawCanvasPortionOnCanvasCommand);
+}
+
 void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y)
 {
     Command drawCanvasOnMainCanvasCommand(Command::DrawCanvasOnMainCanvas);

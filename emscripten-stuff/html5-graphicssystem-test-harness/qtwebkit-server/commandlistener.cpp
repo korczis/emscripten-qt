@@ -291,6 +291,14 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_drawCanvasOnCanvas_internal(%1, %2, %3, %4); ").arg(canvasHandleToDraw).arg(canvasHandleToDrawOn).arg(x).arg(y));
                     break;
                 }
+            case Command::DrawStretchedCanvasPortionOnCanvas:
+                {   
+                    CanvasHandle canvasHandleToDraw, canvasHandleToDrawOn;
+                    double targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight;
+                    command.commandData() >> canvasHandleToDraw >> canvasHandleToDrawOn >> targetX >> targetY >> targetWidth >> targetHeight >> sourceX >> sourceY >> sourceWidth >> sourceHeight;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_drawStretchedCanvasPortionOnCanvas_internal(%1, %2, %3, %4, %5, %6, %7, %8, %9, %10); ").arg(canvasHandleToDraw).arg(canvasHandleToDrawOn).arg(targetX).arg(targetY).arg(targetWidth).arg(targetHeight).arg(sourceX).arg(sourceY).arg(sourceWidth).arg(sourceHeight));
+                    break;
+                }
             case Command::DrawCanvasOnMainCanvas:
                 {
                     CanvasHandle canvasHandle;

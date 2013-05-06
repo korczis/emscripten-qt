@@ -27,6 +27,7 @@ extern "C"
     void EMSCRIPTENQT_setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height);
     void EMSCRIPTENQT_drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
     void EMSCRIPTENQT_drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw,CanvasHandle canvasHandleToDrawOn, double x, double y);
+    void EMSCRIPTENQT_drawStretchedCanvasPortionOnCanvas(CanvasHandle canvasHandleToDraw, CanvasHandle canvasHandleToDrawOn, double targetX, double targetY, double targetWidth, double targetHeight, double sourceX, double sourceY, double sourceWidth, double sourceHeight);
     void EMSCRIPTENQT_clearMainCanvas(Rgba rgba);
     void EMSCRIPTENQT_mainCanvasContentsRaw_internal(void* destPtr);
     int EMSCRIPTENQT_canvas_width_pixels();
@@ -133,6 +134,11 @@ void Html5CanvasInterface::drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw, C
     EMSCRIPTENQT_drawCanvasOnCanvas(canvasHandleToDraw, canvasHandleToDrawOn, x, y);
 }
 
+
+void Html5CanvasInterface::drawStretchedCanvasPortionOnCanvas(CanvasHandle canvasHandleToDraw, CanvasHandle canvasHandleToDrawOn, double targetX, double targetY, double targetWidth, double targetHeight, double sourceX, double sourceY, double sourceWidth, double sourceHeight)
+{
+    EMSCRIPTENQT_drawStretchedCanvasPortionOnCanvas(canvasHandleToDraw, canvasHandleToDrawOn, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight);
+}
 
 void Html5CanvasInterface::clearMainCanvas(Rgba rgba)
 {

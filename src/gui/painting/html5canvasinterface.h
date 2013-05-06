@@ -60,6 +60,7 @@ public:
     static void changePenThickness(CanvasHandle canvasHandle, double thickness);
     static void drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
     static void drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw,CanvasHandle canvasHandleToDrawOn, double x, double y);
+    static void drawStretchedCanvasPortionOnCanvas(CanvasHandle canvasHandleToDraw, CanvasHandle canvasHandleToDrawOn, double targetX, double targetY, double targetWidth, double targetHeight, double sourceX, double sourceY, double sourceWidth, double sourceHeight);
     static void savePaintState(CanvasHandle canvasHandle);
     static void restorePaintState(CanvasHandle canvasHandle);
     static void restoreToOriginalState(CanvasHandle canvasHandle);

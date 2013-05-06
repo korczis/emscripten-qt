@@ -935,6 +935,22 @@ window.alert("drawCanvasOnCanvas e: " + e);
 }
 }
 
+function _EMSCRIPTENQT_drawStretchedCanvasPortionOnCanvas_internal(canvasHandleToDraw, canvasHandleToDrawOn, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight)
+{
+try
+{
+    var canvasToDraw = emscriptenqt_handle_to_canvas[canvasHandleToDraw];
+    var canvasToDrawOn = emscriptenqt_handle_to_canvas[canvasHandleToDrawOn];
+    var contextToDrawOn = canvasToDrawOn.getContext("2d");
+    contextToDrawOn.drawImage(canvasToDraw, sourceX, sourceY, sourceWidth, sourceHeight, targetX, targetY, targetWidth, targetHeight);
+    return true;
+}
+catch (e)
+{
+window.alert("drawImagePortion e: " + e);
+}
+}
+
 function _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(canvasHandle, x, y)
 {
 try

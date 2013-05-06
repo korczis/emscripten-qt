@@ -31,6 +31,7 @@ public slots:
     void testDrawEllipseNoFill();
     void testDrawEllipse();
     void testFillWithTexturedQBrush();
+    void testFillRectWithTexturedQBrush();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

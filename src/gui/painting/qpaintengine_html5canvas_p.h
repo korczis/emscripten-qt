@@ -157,6 +157,7 @@ public:
 protected:
     QHtml5CanvasPaintEngine(QHtml5CanvasPaintEnginePrivate &d, QPaintDevice *);
 private:
+    void setHtml5Brush(const QBrush& brush);
 };
 
 

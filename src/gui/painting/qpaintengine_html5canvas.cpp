@@ -287,30 +287,8 @@ void QHtml5CanvasPaintEngine::brushOriginChanged()
 */
 void QHtml5CanvasPaintEngine::brushChanged()
 {
-    Q_D(QHtml5CanvasPaintEngine);
-    const QColor brushColor = state()->brush.color();
-#ifdef QT_DEBUG_DRAW
-    qDebug() << "QHtml5CanvasPaintEngine::brushChanged(): " << state()->brush;
-#endif
-    if (state()->brush.style() == Qt::SolidPattern)
-    {
-        Html5CanvasInterface::changeBrushColor(d->canvasHandle, brushColor.red(), brushColor.green(), brushColor.blue());
-    }
-    else if (state()->brush.style() == Qt::TexturePattern)
-    {
-        CanvasHandle textureCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(state()->brush.texture().pixmapData())->canvasHandle();
-        Html5CanvasInterface::changeBrushTexture(d->canvasHandle, textureCanvasHandle);
-    }
-    else
-    {
-#ifdef QT_DEBUG_DRAW
-        qDebug() << "Brush style " << state()->brush.style() << " currently unsupported";
-#endif
-    }
+    setHtml5Brush(state()->brush);
 }
-
-
-
 
 /*!
     \internal
@@ -552,14 +530,10 @@ void QHtml5CanvasPaintEngine::fillRect(const QRectF &r, const QBrush &brush)
 #ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::fillRecct(): " << r << brush;
 #endif
-    if (brush.style() != Qt::SolidPattern)
-    {
-#ifdef QT_DEBUG_DRAW
-        qDebug() << "fillRect with non SolidPattern QBrush not yet supported!";
-#endif
-        return;
-    }
-    Html5CanvasInterface::fillSolidRect(d->canvasHandle, brush.color().red(), brush.color().green(), brush.color().blue(), r.left(), r.top(), r.width(), r.height());
+    const QBrush originalBrush = state()->brush;
+    setHtml5Brush(brush);
+    Html5CanvasInterface::fillRect(d->canvasHandle, r.left(), r.top(), r.width(), r.height());
+    setHtml5Brush(originalBrush);
 }
 
 /*!
@@ -791,6 +765,30 @@ QRect QHtml5CanvasPaintEngine::clipBoundingRect() const
     qDebug() << "QHtml5CanvasPaintEngine::clipBoundingRect()";
 #endif
     return QRect();
+}
+
+void QHtml5CanvasPaintEngine::setHtml5Brush(const QBrush& brush)
+{
+    Q_D(QHtml5CanvasPaintEngine);
+#ifdef QT_DEBUG_DRAW
+    qDebug() << "QHtml5CanvasPaintEngine::brushChanged(): " << state()->brush;
+#endif
+    if (brush.style() == Qt::SolidPattern)
+    {
+        const QColor brushColor = brush.color();
+        Html5CanvasInterface::changeBrushColor(d->canvasHandle, brushColor.red(), brushColor.green(), brushColor.blue());
+    }
+    else if (brush.style() == Qt::TexturePattern)
+    {
+        CanvasHandle textureCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(brush.texture().pixmapData())->canvasHandle();
+        Html5CanvasInterface::changeBrushTexture(d->canvasHandle, textureCanvasHandle);
+    }
+    else
+    {
+#ifdef QT_DEBUG_DRAW
+        qDebug() << "Brush style " << brush.style() << " currently unsupported";
+#endif
+    }
 }
 
 /*!

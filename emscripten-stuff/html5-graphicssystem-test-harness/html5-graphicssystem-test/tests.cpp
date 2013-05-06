@@ -341,6 +341,30 @@ void Html5GraphicsSystemTests::testFillWithTexturedQBrush()
     }
 }
 
+void Html5GraphicsSystemTests::testFillRectWithTexturedQBrush()
+{
+    // drawRect and fillRect use entirely different rendering paths, weirdly enough.
+    const int numRectsHorizontal = 5;
+    const int numRectsVertical = 5;
+    const int interRectXPad = 10;
+    const int interRectYPad = 10;
+
+    const int rectWidth = (widgetWidth() - numRectsHorizontal * interRectXPad) / numRectsHorizontal;
+    const int rectHeight = (widgetHeight() - numRectsVertical * interRectYPad) / numRectsVertical;
+
+    const QPixmap pixmap(testDataPath + "qt-logo-variable-alpha.png");
+
+    const QBrush texturedBrush(pixmap);
+
+    for (int horiz = 0; horiz < numRectsHorizontal; horiz++)
+    {
+        for (int vert = 0; vert < numRectsVertical; vert++)
+        {
+            painter()->fillRect(horiz * (rectWidth + interRectXPad), vert * (rectHeight + interRectYPad), rectWidth, rectHeight, texturedBrush);
+        }
+    }
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

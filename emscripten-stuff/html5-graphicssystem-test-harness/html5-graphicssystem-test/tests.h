@@ -34,6 +34,7 @@ public slots:
     void testFillRectWithTexturedQBrush();
     void testDrawARGB32QImage();
     void testDrawStretchedPortionOfImage();
+    void testDraw8BitQImage();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

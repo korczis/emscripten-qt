@@ -371,6 +371,15 @@ void Html5GraphicsSystemTests::testDrawARGB32QImage()
     painter()->drawImage((widgetWidth() - image.width()) / 2, (widgetHeight() - image.height()) / 2, image);
 }
 
+void Html5GraphicsSystemTests::testDraw8BitQImage()
+{
+    const QImage image(testDataPath + "qt-logo-variable-alpha.png");
+    const QImage image8Bit = image.convertToFormat(QImage::Format_Indexed8);
+
+    qDebug() << "Format: " << image8Bit.format();
+    painter()->drawImage((widgetWidth() - image.width()) / 2, (widgetHeight() - image.height()) / 2, image8Bit);
+}
+
 void Html5GraphicsSystemTests::testDrawStretchedPortionOfImage()
 {
     const QImage image(testDataPath + "qt-logo-variable-alpha.png");

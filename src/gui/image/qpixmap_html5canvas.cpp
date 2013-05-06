@@ -252,6 +252,28 @@ void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::Image
         Html5CanvasInterface::setCanvasPixelsRaw(m_canvasHandle, rgbaData, width, height);
         free(rgbaData);
     }
+    else if (sourceImage.format() == QImage::Format_Indexed8)
+    {
+        uchar* rgbaData = static_cast<uchar*>(malloc(sourceImage.width() * sourceImage.height() * 4));
+        uchar* rgbaDataWriter = rgbaData;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                const QRgb rgba = sourceImage.pixel(x, y);
+                *rgbaDataWriter = (uchar)qRed(rgba);
+                rgbaDataWriter++;
+                *rgbaDataWriter = (uchar)qGreen(rgba);
+                rgbaDataWriter++;
+                *rgbaDataWriter = (uchar)qBlue(rgba);
+                rgbaDataWriter++;
+                *rgbaDataWriter = (uchar)qAlpha(rgba);
+                rgbaDataWriter++;
+            }
+        }
+        Html5CanvasInterface::setCanvasPixelsRaw(m_canvasHandle, rgbaData, width, height);
+        free(rgbaData);
+    }
     else
     {
 #ifdef QT_DEBUG_PIXMAP

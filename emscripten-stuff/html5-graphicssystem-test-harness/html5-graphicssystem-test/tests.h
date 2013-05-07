@@ -38,6 +38,7 @@ public slots:
     void testFillRectWithAngledLinearGradient();
     void testFillRectWithBuiltInPatterns();
     void testDrawLines();
+    void testFillRectWithBuiltInPatternsHasTransparentBackground();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

@@ -434,6 +434,16 @@ void Html5GraphicsSystemTests::testFillRectWithBuiltInPatternsHasTransparentBack
     painter()->drawRect(0, 0, widgetWidth(), widgetHeight());
 }
 
+void Html5GraphicsSystemTests::testFillRectWithBuiltInPatternsRespectsOpaqueBackgroundMode()
+{
+    painter()->fillRect(widgetWidth() / 4, widgetHeight() / 4, widgetWidth() / 2, widgetHeight() / 2, Qt::blue);
+    painter()->setBackgroundMode(Qt::OpaqueMode);
+    painter()->setBackground(Qt::green);
+
+    painter()->setBrush(QBrush(Qt::red, Qt::Dense5Pattern));
+    painter()->drawRect(0, 0, widgetWidth(), widgetHeight());
+}
+
 void Html5GraphicsSystemTests::testDrawLines()
 {
     const int numLines = 10;

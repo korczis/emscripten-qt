@@ -521,6 +521,18 @@ void QHtml5CanvasPaintEngine::fill(const QVectorPath &path, const QBrush &brush)
              << ", hints=" << hex << path.hints()
              << rf << brush;
 #endif
+    if (path.shape() == QVectorPath::RectangleHint) {
+        const qreal *p = path.points();
+        QPointF tl = QPointF(p[0], p[1]);
+        QPointF br = QPointF(p[4], p[5]);
+        fillRect(QRectF(tl, br), brush);
+    }
+    else
+    {
+#ifdef QT_DEBUG_DRAW
+        qDebug() << "Drawing this QVectorPath not currently supported!";
+#endif
+    }
 }
 
 /*!

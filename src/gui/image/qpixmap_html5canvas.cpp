@@ -208,54 +208,25 @@ void QHtml5CanvasPixmapData::createPixmapForImage(QImage &sourceImage, Qt::Image
     // copy the image data.
     const int width = sourceImage.width();
     const int height = sourceImage.height();
-    if (sourceImage.format() == QImage::Format_ARGB32 || sourceImage.format() == QImage::Format_RGB32 ||sourceImage.format() == QImage::Format_Indexed8 || sourceImage.format() == QImage::Format_MonoLSB)
+    uchar* rgbaData = static_cast<uchar*>(malloc(sourceImage.width() * sourceImage.height() * 4));
+    uchar* rgbaDataWriter = rgbaData;
+    for (int y = 0; y < height; y++)
     {
-        uchar* rgbaData = static_cast<uchar*>(malloc(sourceImage.width() * sourceImage.height() * 4));
-        uchar* rgbaDataWriter = rgbaData;
-        for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
         {
-            for (int x = 0; x < width; x++)
-            {
-                const QRgb rgba = sourceImage.pixel(x, y);
-                *rgbaDataWriter = (uchar)qRed(rgba);
-                rgbaDataWriter++;
-                *rgbaDataWriter = (uchar)qGreen(rgba);
-                rgbaDataWriter++;
-                *rgbaDataWriter = (uchar)qBlue(rgba);
-                rgbaDataWriter++;
-                *rgbaDataWriter = (uchar)qAlpha(rgba);
-                rgbaDataWriter++;
-            }
+            const QRgb rgba = sourceImage.pixel(x, y);
+            *rgbaDataWriter = (uchar)qRed(rgba);
+            rgbaDataWriter++;
+            *rgbaDataWriter = (uchar)qGreen(rgba);
+            rgbaDataWriter++;
+            *rgbaDataWriter = (uchar)qBlue(rgba);
+            rgbaDataWriter++;
+            *rgbaDataWriter = (uchar)qAlpha(rgba);
+            rgbaDataWriter++;
         }
-        Html5CanvasInterface::setCanvasPixelsRaw(m_canvasHandle, rgbaData, width, height);
-        free(rgbaData);
     }
-    else
-    {
-#ifdef QT_DEBUG_PIXMAP
-        qDebug() << "Format " << sourceImage.format() << " not yet supported for QHtml5CanvasPixmapData";
-#endif
-        // Pure black.
-        uchar* rgbaData = static_cast<uchar*>(malloc(sourceImage.width() * sourceImage.height() * 4));
-        uchar* rgbaDataWriter = rgbaData;
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                const QRgb rgba = sourceImage.pixel(x, y);
-                *rgbaDataWriter = 0;
-                rgbaDataWriter++;
-                *rgbaDataWriter = 0;
-                rgbaDataWriter++;
-                *rgbaDataWriter = 0;
-                rgbaDataWriter++;
-                *rgbaDataWriter = 0;
-                rgbaDataWriter++;
-            }
-        }
-        Html5CanvasInterface::setCanvasPixelsRaw(m_canvasHandle, rgbaData, width, height);
-        free(rgbaData);
-    }
+    Html5CanvasInterface::setCanvasPixelsRaw(m_canvasHandle, rgbaData, width, height);
+    free(rgbaData);
 }
 
 QT_END_NAMESPACE

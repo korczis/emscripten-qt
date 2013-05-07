@@ -125,6 +125,7 @@ void QEmscriptenCanvasScreen::exposeRegion(QRegion r, int changing)
 #ifdef EMSCRIPTEN_NATIVE
     // Tell qtwebkit-server to update its UI in order to show the contents.
     Html5CanvasInterface::processEvents();
+    qDebug() << "Expose occurred";
 #endif
     }
 #endif

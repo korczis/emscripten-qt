@@ -534,6 +534,22 @@ void Html5GraphicsSystemTests::testDrawLines()
     painter()->drawLine(widgetWidth(), 0, 0, widgetHeight());
 }
 
+void Html5GraphicsSystemTests::testDoNotTryToRestoreClipFromEndedPainter()
+{
+    QPixmap widgetSizedPixmap(widgetWidth(), widgetHeight());
+    QPainter pixmapPainter(&widgetSizedPixmap);
+
+    pixmapPainter.setClipRect(0, 0, widgetWidth() / 4, widgetHeight() / 4);
+    pixmapPainter.end();
+
+    pixmapPainter.begin(&widgetSizedPixmap);
+    pixmapPainter.save();// May attempt to restore the last set clip.
+
+    pixmapPainter.fillRect(0, 0, widgetWidth(), widgetHeight(), Qt::green);
+
+    painter()->drawPixmap(0, 0, widgetSizedPixmap);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

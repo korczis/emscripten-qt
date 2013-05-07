@@ -881,6 +881,7 @@ try
     }
     canvas.trackedSave();
     canvas.hasClip = false;
+    canvas.lastSetClip = null;
 }
 catch(e)
 {

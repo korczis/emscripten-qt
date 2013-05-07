@@ -43,6 +43,7 @@ public slots:
     void testFillRectWithBuiltInPatternsRespectsOpaqueBackgroundMode();
     void testSetComplexClipRegion();
     void testSetComplexClipRegionWorksAfterSettingSimpleClip();
+    void testSetDisjointClipRegion();
     void testDoNotTryToRestoreClipFromEndedPainter();
 public:
     void setExpectedImage(const QImage& expectedImage);

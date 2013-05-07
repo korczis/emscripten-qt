@@ -504,6 +504,17 @@ void Html5GraphicsSystemTests::testSetComplexClipRegionWorksAfterSettingSimpleCl
     painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), Qt::blue);
 }
 
+void Html5GraphicsSystemTests::testSetDisjointClipRegion()
+{
+    const QRect clipRect1(widgetWidth() / 5, 0, widgetWidth() / 5, widgetHeight());
+    const QRect clipRect2(3* widgetWidth() / 5, 0, widgetWidth() / 5, widgetHeight());
+
+    const QRegion disjointUnionClip = QRegion(clipRect1).united(clipRect2);
+
+    painter()->setClipRegion(disjointUnionClip);
+    painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), Qt::blue);
+}
+
 void Html5GraphicsSystemTests::testDrawLines()
 {
     const int numLines = 10;

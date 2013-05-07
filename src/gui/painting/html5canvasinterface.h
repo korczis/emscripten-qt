@@ -76,6 +76,7 @@ public:
     static void restorePaintState(CanvasHandle canvasHandle);
     static void restoreToOriginalState(CanvasHandle canvasHandle);
     static void setClipRect(CanvasHandle canvasHandle, double x, double y, double w, double h);
+    static void removeClip(CanvasHandle canvasHandle);
 
     static void beginPath(CanvasHandle canvasHandle);
     static void addRectToCurrentPath(double x, double y, double width, double height);

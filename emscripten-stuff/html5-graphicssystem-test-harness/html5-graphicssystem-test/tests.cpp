@@ -468,6 +468,33 @@ void Html5GraphicsSystemTests::testSetComplexClipRegion()
     painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), Qt::blue);
 }
 
+void Html5GraphicsSystemTests::testSetComplexClipRegionWorksAfterSettingSimpleClip()
+{
+    // "simple clip" part.
+    painter()->setClipRect(widgetWidth() * 3 / 4, 0, widgetWidth() / 8, widgetHeight());
+    painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), Qt::green);
+
+    const int numStarTips = 5;
+    const int starTipRadius = qMin(widgetWidth(), widgetHeight()) / 2;
+    const int starValleyRadius = starTipRadius / 2;
+
+    QVector<QPoint> starPoints;
+    const double PI  = 3.141592653589793238462;
+    for (int i = 0; i <= numStarTips * 2; i++)
+    {
+        const int pointRadius = ((i % 2) == 0) ? starTipRadius : starValleyRadius;
+        const qreal pointAngleRads = PI * i /  numStarTips;
+        const qreal pointX = widgetWidth() / 2 + cos(pointAngleRads) * pointRadius;
+        const qreal pointY = widgetHeight() / 2 + sin(pointAngleRads) * pointRadius;
+
+        starPoints.append(QPoint(pointX, pointY));
+    }
+    const QRegion starClipRegion = QPolygon(starPoints);
+
+    painter()->setClipRegion(starClipRegion);
+    painter()->fillRect(0, 0, widgetWidth(), widgetHeight(), Qt::blue);
+}
+
 void Html5GraphicsSystemTests::testDrawLines()
 {
     const int numLines = 10;

@@ -803,7 +803,7 @@ function _EMSCRIPTENQT_changeBrushTexture_internal(canvasHandle, textureCanvasHa
     ctx.fillStyle = texturePattern;
 }
 
-function _EMSCRIPTENQT_removeClip_internal(canvasCtx, canvas)
+function _EMSCRIPTENQT_removeClipInternal_internal(canvasCtx, canvas)
 {
     // Assumes that canvas has a clip.  Results are undefined otherwise!
     var oldFillStyle = canvasCtx.fillStyle;
@@ -825,7 +825,7 @@ try
     if (canvas.hasClip)
     {
         canvas.savedClips.push(canvas.lastSetClip);
-        _EMSCRIPTENQT_removeClip_internal(ctx, canvas);
+        _EMSCRIPTENQT_removeClipInternal_internal(ctx, canvas);
     }
     else
     {
@@ -853,7 +853,7 @@ try
     var ctx = canvas.getContext("2d");
     if (canvas.hasClip)
     {
-        _EMSCRIPTENQT_removeClip_internal(ctx, canvas);
+        _EMSCRIPTENQT_removeClipInternal_internal(ctx, canvas);
     }
     canvas.trackedRestore();
     var clipToRestore = canvas.savedClips.pop();
@@ -897,7 +897,7 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
     var ctx = canvas.getContext("2d");
     if (canvas.hasClip)
     {
-        _EMSCRIPTENQT_removeClip_internal(ctx, canvas);
+        _EMSCRIPTENQT_removeClipInternal_internal(ctx, canvas);
     }
     canvas.trackedSave();
     ctx.beginPath();
@@ -910,6 +910,16 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
     catch (e)
     {
         window.alert("e: " + e);
+    }
+}
+
+function _EMSCRIPTENQT_removeClip_internal(canvasHandle)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+    if (canvas.hasClip)
+    {
+        _EMSCRIPTENQT_removeClipInternal_internal(ctx, canvas);
     }
 }
 

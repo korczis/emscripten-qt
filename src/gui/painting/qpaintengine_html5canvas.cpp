@@ -464,6 +464,7 @@ void QHtml5CanvasPaintEngine::clip(const QRegion &region, Qt::ClipOperation op)
     }
     else
     {
+        Html5CanvasInterface::removeClip(d->canvasHandle);
         Html5CanvasInterface::beginPath(d->canvasHandle);
         const QVector<QRect> rects = region.rects();
         for (int i = 0; i < numRects; i++)

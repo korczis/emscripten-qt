@@ -202,6 +202,13 @@ void Html5CanvasInterface::setClipRect(CanvasHandle canvasHandle, double x, doub
     commandSender()->sendCommand(setClipRectCommand);
 }
 
+void Html5CanvasInterface::removeClip(CanvasHandle canvasHandle)
+{
+    Command removeClipCommand(Command::RemoveClip);
+    removeClipCommand.commandData() << canvasHandle;
+    commandSender()->sendCommand(removeClipCommand);
+}
+
 void Html5CanvasInterface::beginPath(CanvasHandle canvasHandle)
 {
     Command beginPathCommand(Command::BeginPath);

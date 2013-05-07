@@ -150,6 +150,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+     EMSCRIPTENQT_removeClip: function (canvasHandle) {
+          return _EMSCRIPTENQT_removeClip_internal(canvasHandle);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_beginPath: function(canvasHandle) {
           return _EMSCRIPTENQT_beginPath_internal(canvasHandle);
       }

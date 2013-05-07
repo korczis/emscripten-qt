@@ -41,6 +41,7 @@ public slots:
     void testFillRectWithBuiltInPatternsHasTransparentBackground();
     void testFillRectWithBuiltInPatternsRespectsOpaqueBackgroundMode();
     void testSetComplexClipRegion();
+    void testSetComplexClipRegionWorksAfterSettingSimpleClip();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

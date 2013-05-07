@@ -28,6 +28,7 @@ extern "C"
     void EMSCRIPTENQT_restorePaintState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_restoreToOriginalState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_setClipRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
+    void EMSCRIPTENQT_removeClip(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_beginPath(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_addRectToCurrentPath(double x, double y, double width, double height);
     void EMSCRIPTENQT_setClipToCurrentPath();
@@ -145,6 +146,11 @@ void Html5CanvasInterface::restoreToOriginalState(CanvasHandle canvasHandle)
 void Html5CanvasInterface::setClipRect(CanvasHandle canvasHandle, double x, double y, double w, double h)
 {
     EMSCRIPTENQT_setClipRect(canvasHandle, x, y, w, h);
+}
+
+void Html5CanvasInterface::removeClip(CanvasHandle canvasHandle)
+{
+    EMSCRIPTENQT_removeClip(canvasHandle);
 }
 
 void Html5CanvasInterface::beginPath(CanvasHandle canvasHandle)

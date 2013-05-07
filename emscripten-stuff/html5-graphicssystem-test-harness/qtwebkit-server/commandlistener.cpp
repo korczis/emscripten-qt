@@ -291,6 +291,13 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_setClipRect_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(x).arg(y).arg(width).arg(height));
                     break;
                 }
+            case Command::RemoveClip:
+                {
+                    CanvasHandle canvasHandle;
+                    command.commandData() >> canvasHandle;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_removeClip_internal(%1); ").arg(canvasHandle));
+                    break;
+                }
             case Command::BeginPath:
             {
                     CanvasHandle canvasHandle;

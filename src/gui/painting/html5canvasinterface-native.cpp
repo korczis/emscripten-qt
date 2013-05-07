@@ -216,6 +216,20 @@ void Html5CanvasInterface::beginPath(CanvasHandle canvasHandle)
     commandSender()->sendCommand(beginPathCommand);
 }
 
+void Html5CanvasInterface::currentPathMoveTo(double x, double y)
+{
+    Command currentPathMoveToCommand(Command::CurrentPathMoveTo);
+    currentPathMoveToCommand.commandData() << x << y;
+    commandSender()->sendCommand(currentPathMoveToCommand);
+}
+
+void Html5CanvasInterface::currentPathCubicTo(double control1X, double control1Y, double control2X, double control2Y, double endX, double endY)
+{
+    Command currentPathCubicToCommand(Command::CurrentPathCubicTo);
+    currentPathCubicToCommand.commandData() << control1X << control1Y << control2X << control2Y << endX << endY;
+    commandSender()->sendCommand(currentPathCubicToCommand);
+}
+
 void Html5CanvasInterface::addRectToCurrentPath(double x, double y, double width, double height)
 {
     Command addRectToCurrentPathCommand(Command::AddRectToCurrentPath);
@@ -227,6 +241,12 @@ void Html5CanvasInterface::setClipToCurrentPath()
 {
     Command setClipToCurrentPathCommand(Command::SetClipToCurrentPath);
     commandSender()->sendCommand(setClipToCurrentPathCommand);
+}
+
+void Html5CanvasInterface::strokeCurrentPath()
+{
+    Command strokeToCurrentPathCommand(Command::StrokeCurrentPath);
+    commandSender()->sendCommand(strokeToCurrentPathCommand);
 }
 
 void Html5CanvasInterface::setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f)

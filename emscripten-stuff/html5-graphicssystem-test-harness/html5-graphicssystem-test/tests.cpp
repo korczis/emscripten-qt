@@ -570,6 +570,21 @@ void Html5GraphicsSystemTests::testDoNotTryToRestoreClipFromEndedPainter()
     painter()->drawPixmap(0, 0, widgetSizedPixmap);
 }
 
+void Html5GraphicsSystemTests::testMoveToPointAndDrawBezier()
+{
+    painter()->setPen(QPen(Qt::red, 20));
+    
+    QPainterPath path;
+    path.moveTo(3 * widgetWidth() / 4, widgetHeight() / 2);
+    const QPoint control1(QPoint(widgetWidth() / 2, widgetHeight() / 4));
+    const QPoint control2(QPoint(widgetWidth() / 3, 3 * widgetHeight() / 4));
+    const QPoint end(QPoint(widgetWidth() / 5, widgetHeight() / 5));
+    path.cubicTo(control1, control2, end);
+
+    painter()->drawPath(path);
+
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

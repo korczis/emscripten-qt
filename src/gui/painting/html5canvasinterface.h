@@ -79,8 +79,11 @@ public:
     static void removeClip(CanvasHandle canvasHandle);
 
     static void beginPath(CanvasHandle canvasHandle);
+    static void currentPathMoveTo(double x, double y);
+    static void currentPathCubicTo(double context1X, double context1Y, double context2X, double context2Y, double endX, double endY);
     static void addRectToCurrentPath(double x, double y, double width, double height);
     static void setClipToCurrentPath();
+    static void strokeCurrentPath();
     /**
      * Effectively calls the HTML5 Canvas method setTransform(a, b, c, d, e, f) method on \a canvasHandle 's context.
      * See http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#dom-context-2d-transform

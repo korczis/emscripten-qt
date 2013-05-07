@@ -162,6 +162,18 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+     EMSCRIPTENQT_currentPathMoveTo: function(x, y) {
+         return _EMSCRIPTENQT_currentPathMoveTo_internal(x, y);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
+     EMSCRIPTENQT_currentPathCubicTo: function(control1X, control1Y, control2X, control2Y, endX, endY) {
+         return _EMSCRIPTENQT_currentPathCubicTo_internal(control1X, control1Y, control2X, control2Y, endX, endY);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_addRectToCurrentPath: function(x, y, width, height) {
           return _EMSCRIPTENQT_addRectToCurrentPath_internal(x, y, width, height);
       }
@@ -171,6 +183,13 @@ mergeInto(LibraryManager.library, {
           return _EMSCRIPTENQT_setClipToCurrentPath_internal();
      }
    });
+
+mergeInto(LibraryManager.library, {
+     EMSCRIPTENQT_strokeCurrentPath: function() {
+         return _EMSCRIPTENQT_strokeCurrentPath_internal();
+      }
+    });
+
 
 mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_setTransform: function(canvasHandle, a, b, c, d, e, f) {

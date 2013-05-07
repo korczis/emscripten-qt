@@ -305,6 +305,20 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_beginPath_internal(%1); ").arg(canvasHandle));
                     break;
             }
+            case Command::CurrentPathMoveTo:
+            {
+                    double x, y;
+                    command.commandData() >> x >> y;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_currentPathMoveTo_internal(%1, %2); ").arg(x).arg(y));
+                    break;
+            }
+            case Command::CurrentPathCubicTo:
+            {
+                    double control1X, control1Y, control2X, control2Y, endX, endY;
+                    command.commandData() >> control1X >> control1Y >> control2X >> control2Y >> endX >> endY;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_currentPathCubicTo_internal(%1, %2, %3, %4, %5, %6); ").arg(control1X).arg(control1Y).arg(control2X).arg(control2Y).arg(endX).arg(endY));
+                    break;
+            }
             case Command::AddRectToCurrentPath:
                 {
                     double x, y, width, height;
@@ -315,6 +329,11 @@ void CommandListener::newCommandIncoming()
             case Command::SetClipToCurrentPath:
             {
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_setClipToCurrentPath_internal(); "));
+                    break;
+            }
+            case Command::StrokeCurrentPath:
+            {
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_strokeCurrentPath_internal(); "));
                     break;
             }
             case Command::SetTransform:

@@ -934,6 +934,20 @@ function _EMSCRIPTENQT_beginPath_internal(canvasHandle)
     ctx.beginPath();
 }
 
+function _EMSCRIPTENQT_currentPathMoveTo_internal(x, y)
+{
+    var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.moveTo(x, y);
+}
+
+function _EMSCRIPTENQT_currentPathCubicTo_internal(control1X, control1Y, control2X, control2Y, endX, endY)
+{
+    var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.bezierCurveTo(control1X, control1Y, control2X, control2Y, endX, endY);
+}
+
 function _EMSCRIPTENQT_addRectToCurrentPath_internal(x, y, width, height)
 {
     var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];
@@ -946,6 +960,13 @@ function _EMSCRIPTENQT_setClipToCurrentPath_internal()
     var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];
     var ctx = canvas.getContext("2d");
     ctx.clip();
+}
+
+function _EMSCRIPTENQT_strokeCurrentPath_internal()
+{
+    var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.stroke();
 }
 
 function _EMSCRIPTENQT_setTransform_internal(canvasHandle, a, b, c, d, e, f)

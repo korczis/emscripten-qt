@@ -527,9 +527,41 @@ void QHtml5CanvasPaintEngine::drawRects(const QRectF *rects, int rectCount)
 */
 void QHtml5CanvasPaintEngine::stroke(const QVectorPath &path, const QPen &pen)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << "QHtml5CanvasPaintEngine::stroke(const QVectorPath &path, const QPen &pen)";
 #endif
+    Html5CanvasInterface::beginPath(d->canvasHandle);
+    // TODO - maybe avoid the conversion to QPainterPath.
+    const QPainterPath painterPath = path.convertToPainterPath();
+    for (int elementIndex = 0; elementIndex < painterPath.elementCount(); elementIndex++)
+    {
+        QPainterPath::Element element = painterPath.elementAt(elementIndex);
+        if (element.isMoveTo())
+        {
+            Html5CanvasInterface::currentPathMoveTo(element.x, element.y);
+        }
+        else if (element.isCurveTo())
+        {
+            double control1X = element.x;
+            double control1Y = element.y;
+
+            elementIndex++;
+            element = painterPath.elementAt(elementIndex);
+            Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
+            double control2X = element.x;
+            double control2Y = element.y;
+
+            elementIndex++;
+            element = painterPath.elementAt(elementIndex);
+            Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
+            double endX = element.x;
+            double endY = element.y;
+
+            Html5CanvasInterface::currentPathCubicTo(control1X, control1Y, control2X, control2Y, endX, endY);
+        }
+    }
+    Html5CanvasInterface::strokeCurrentPath();
 }
 
 /*!

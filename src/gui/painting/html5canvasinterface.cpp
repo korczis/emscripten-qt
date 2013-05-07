@@ -30,8 +30,11 @@ extern "C"
     void EMSCRIPTENQT_setClipRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
     void EMSCRIPTENQT_removeClip(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_beginPath(CanvasHandle canvasHandle);
+    void EMSCRIPTENQT_currentPathMoveTo(double x, double y);
+    void EMSCRIPTENQT_currentPathCubicTo(double context1X, double context1Y, double context2X, double context2Y, double endX, double endY);
     void EMSCRIPTENQT_addRectToCurrentPath(double x, double y, double width, double height);
     void EMSCRIPTENQT_setClipToCurrentPath();
+    void EMSCRIPTENQT_strokeCurrentPath();
     void EMSCRIPTENQT_setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f);
     void EMSCRIPTENQT_setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height);
     void EMSCRIPTENQT_drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
@@ -158,6 +161,16 @@ void Html5CanvasInterface::beginPath(CanvasHandle canvasHandle)
     EMSCRIPTENQT_beginPath(canvasHandle);
 }
 
+void Html5CanvasInterface::currentPathMoveTo(double x, double y)
+{
+    EMSCRIPTENQT_currentPathMoveTo(x, y);
+}
+
+void Html5CanvasInterface::currentPathCubicTo(double control1X, double control1Y, double control2X, double control2Y, double endX, double endY)
+{
+    EMSCRIPTENQT_currentPathCubicTo(control1X, control1Y, control2X, control2Y, endX, endY);
+}
+
 void Html5CanvasInterface::addRectToCurrentPath(double x, double y, double width, double height)
 {
     EMSCRIPTENQT_addRectToCurrentPath(x, y, width, height);
@@ -166,6 +179,11 @@ void Html5CanvasInterface::addRectToCurrentPath(double x, double y, double width
 void Html5CanvasInterface::setClipToCurrentPath()
 {
     EMSCRIPTENQT_setClipToCurrentPath();
+}
+
+void Html5CanvasInterface::strokeCurrentPath()
+{
+    EMSCRIPTENQT_strokeCurrentPath();
 }
 
 void Html5CanvasInterface::setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f)

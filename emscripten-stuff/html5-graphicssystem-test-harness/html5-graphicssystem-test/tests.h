@@ -45,6 +45,7 @@ public slots:
     void testSetComplexClipRegionWorksAfterSettingSimpleClip();
     void testSetDisjointClipRegion();
     void testDoNotTryToRestoreClipFromEndedPainter();
+    void testMoveToPointAndDrawBezier();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

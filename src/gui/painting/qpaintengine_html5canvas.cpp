@@ -639,9 +639,12 @@ void QHtml5CanvasPaintEngine::drawPixmap(const QPointF &pos, const QPixmap &pixm
 */
 void QHtml5CanvasPaintEngine::drawPixmap(const QRectF &r, const QPixmap &pixmap, const QRectF &sr)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     qDebug() << " - QHtml5CanvasPaintEngine::drawPixmap(), r=" << r << " sr=" << sr << " pixmap=" << pixmap.size() << "depth=" << pixmap.depth();
 #endif
+    CanvasHandle pixmapCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(pixmap.pixmapData())->canvasHandle();
+    Html5CanvasInterface::drawStretchedCanvasPortionOnCanvas(pixmapCanvasHandle, d->canvasHandle, r.x(), r.y(), r.width(), r.height(), sr.x(), sr.y(), sr.width(), sr.height());
 }
 
 // assumes that rect has positive width and height
@@ -682,8 +685,7 @@ void QHtml5CanvasPaintEngine::drawImage(const QRectF &r, const QImage &img, cons
     // conversion to QPixmap. Need to be careful with clipping if we do this, though, and hard
     // to support palettised QImages.
     QPixmap imageAsPixmap(QPixmap::fromImage(img));
-    CanvasHandle pixmapCanvasHandle = static_cast<QHtml5CanvasPixmapData*>(imageAsPixmap.pixmapData())->canvasHandle();
-    Html5CanvasInterface::drawStretchedCanvasPortionOnCanvas(pixmapCanvasHandle, d->canvasHandle, r.x(), r.y(), r.width(), r.height(), sr.x(), sr.y(), sr.width(), sr.height());
+    drawPixmap(r, imageAsPixmap, sr);
 }
 
 /*!

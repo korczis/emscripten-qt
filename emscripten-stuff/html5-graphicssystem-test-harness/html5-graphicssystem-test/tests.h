@@ -34,6 +34,7 @@ public slots:
     void testFillRectWithTexturedQBrush();
     void testDrawARGB32QImage();
     void testDrawStretchedPortionOfImage();
+    void testDrawStretchedPortionOfPixmap();
     void testDraw8BitQImage();
     void testFillRectWithAngledLinearGradient();
     void testFillRectWithBuiltInPatterns();

@@ -390,6 +390,15 @@ void Html5GraphicsSystemTests::testDrawStretchedPortionOfImage()
     painter()->drawImage(targetRect, image, sourcePortion);
 }
 
+void Html5GraphicsSystemTests::testDrawStretchedPortionOfPixmap()
+{
+    const QPixmap pixmap = QPixmap::fromImage(QImage(testDataPath + "qt-logo-variable-alpha.png"));
+    const QRect targetRect = QRect(widgetWidth() / 4, widgetHeight() / 4, widgetWidth() / 2, widgetHeight() / 2);
+    const QRect sourcePortion = QRect(pixmap.width() / 4, pixmap.height() / 4, pixmap.width() / 2, pixmap.height() / 2);
+    Q_ASSERT(targetRect.size() != sourcePortion.size());
+    painter()->drawPixmap(targetRect, pixmap, sourcePortion);
+}
+
 void Html5GraphicsSystemTests::testFillRectWithAngledLinearGradient()
 {
     QLinearGradient angledLinearGradient(QPoint(0, 0), QPoint(widgetWidth() / 2, widgetHeight() / 2));

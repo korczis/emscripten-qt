@@ -202,6 +202,26 @@ void Html5CanvasInterface::setClipRect(CanvasHandle canvasHandle, double x, doub
     commandSender()->sendCommand(setClipRectCommand);
 }
 
+void Html5CanvasInterface::beginPath(CanvasHandle canvasHandle)
+{
+    Command beginPathCommand(Command::BeginPath);
+    beginPathCommand.commandData() << canvasHandle;
+    commandSender()->sendCommand(beginPathCommand);
+}
+
+void Html5CanvasInterface::addRectToCurrentPath(double x, double y, double width, double height)
+{
+    Command addRectToCurrentPathCommand(Command::AddRectToCurrentPath);
+    addRectToCurrentPathCommand.commandData() << x << y << width << height;
+    commandSender()->sendCommand(addRectToCurrentPathCommand);
+}
+
+void Html5CanvasInterface::setClipToCurrentPath()
+{
+    Command setClipToCurrentPathCommand(Command::SetClipToCurrentPath);
+    commandSender()->sendCommand(setClipToCurrentPathCommand);
+}
+
 void Html5CanvasInterface::setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f)
 {
     Command setTransformCommand(Command::SetTransform);

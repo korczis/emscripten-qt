@@ -913,6 +913,30 @@ function _EMSCRIPTENQT_setClipRect_internal(canvasHandle, x, y, width, height)
     }
 }
 
+var _EMSCRIPTENQT_currentPathCanvasHandle = null;
+function _EMSCRIPTENQT_beginPath_internal(canvasHandle)
+{
+    var canvas = emscriptenqt_handle_to_canvas[canvasHandle];
+    var ctx = canvas.getContext("2d");
+
+    _EMSCRIPTENQT_currentPathCanvasHandle = canvasHandle;
+    ctx.beginPath();
+}
+
+function _EMSCRIPTENQT_addRectToCurrentPath_internal(x, y, width, height)
+{
+    var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.rect(x, y, width, height);
+}
+
+function _EMSCRIPTENQT_setClipToCurrentPath_internal()
+{
+    var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.clip();
+}
+
 function _EMSCRIPTENQT_setTransform_internal(canvasHandle, a, b, c, d, e, f)
 {
     try

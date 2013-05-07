@@ -445,9 +445,33 @@ void QHtml5CanvasPaintEngine::clip(const QRect &rect, Qt::ClipOperation op)
 */
 void QHtml5CanvasPaintEngine::clip(const QRegion &region, Qt::ClipOperation op)
 {
+    Q_D(QHtml5CanvasPaintEngine);
 #ifdef QT_DEBUG_DRAW
     printf("QHtml5CanvasPaintEngine::clip(): region bounding rect (%d, %d, %d, %d) , %d \n", region.boundingRect().x(), region.boundingRect().y(), region.boundingRect().width(), region.boundingRect().height(), op);
 #endif
+    // It looks like QRegion automatically "rasterises" stuff when it is built - so e.g. a polygon will be
+    // broken down into a set of tiny rectangles, whereas we'd *really* like to get access to the original
+    // polygon, which would be faster to clip as HTML5 canvas supports this natively.
+    // The QPainter docs say:
+    //  "Whether paths or regions are preferred (faster) depends on the underlying paintEngine()."
+    // It looks like HTML5 canvas prefers paths.
+    const int numRects = region.rectCount();
+    if (numRects == 1) {
+        // Optimise for common, easy case.
+        const QRect rect = region.rects()[0];
+        Html5CanvasInterface::setClipRect(d->canvasHandle, rect.x(), rect.y(), rect.width(), rect.height());
+        return;
+    }
+    else
+    {
+        Html5CanvasInterface::beginPath(d->canvasHandle);
+        const QVector<QRect> rects = region.rects();
+        for (int i = 0; i < numRects; i++)
+        {
+            Html5CanvasInterface::addRectToCurrentPath(rects[i].x(), rects[i].y(), rects[i].width(), rects[i].height());
+        }
+        Html5CanvasInterface::setClipToCurrentPath();
+    }
 }
 
 /*!

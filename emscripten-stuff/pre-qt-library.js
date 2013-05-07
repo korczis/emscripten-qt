@@ -150,6 +150,23 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_beginPath: function(canvasHandle) {
+          return _EMSCRIPTENQT_beginPath_internal(canvasHandle);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
+      EMSCRIPTENQT_addRectToCurrentPath: function(x, y, width, height) {
+          return _EMSCRIPTENQT_addRectToCurrentPath_internal(x, y, width, height);
+      }
+    });
+mergeInto(LibraryManager.library, {
+       EMSCRIPTENQT_setClipToCurrentPath: function() {
+          return _EMSCRIPTENQT_setClipToCurrentPath_internal();
+     }
+   });
+
+mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_setTransform: function(canvasHandle, a, b, c, d, e, f) {
           return _EMSCRIPTENQT_setTransform_internal(canvasHandle, a, b, c, d, e, f);
       }

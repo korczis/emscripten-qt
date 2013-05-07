@@ -28,6 +28,9 @@ extern "C"
     void EMSCRIPTENQT_restorePaintState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_restoreToOriginalState(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_setClipRect(CanvasHandle canvasHandle, double x, double y, double width, double height);
+    void EMSCRIPTENQT_beginPath(CanvasHandle canvasHandle);
+    void EMSCRIPTENQT_addRectToCurrentPath(double x, double y, double width, double height);
+    void EMSCRIPTENQT_setClipToCurrentPath();
     void EMSCRIPTENQT_setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f);
     void EMSCRIPTENQT_setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height);
     void EMSCRIPTENQT_drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
@@ -142,6 +145,21 @@ void Html5CanvasInterface::restoreToOriginalState(CanvasHandle canvasHandle)
 void Html5CanvasInterface::setClipRect(CanvasHandle canvasHandle, double x, double y, double w, double h)
 {
     EMSCRIPTENQT_setClipRect(canvasHandle, x, y, w, h);
+}
+
+void Html5CanvasInterface::beginPath(CanvasHandle canvasHandle)
+{
+    EMSCRIPTENQT_beginPath(canvasHandle);
+}
+
+void Html5CanvasInterface::addRectToCurrentPath(double x, double y, double width, double height)
+{
+    EMSCRIPTENQT_addRectToCurrentPath(x, y, width, height);
+}
+
+void Html5CanvasInterface::setClipToCurrentPath()
+{
+    EMSCRIPTENQT_setClipToCurrentPath();
 }
 
 void Html5CanvasInterface::setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f)

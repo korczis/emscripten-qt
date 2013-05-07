@@ -291,6 +291,25 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_setClipRect_internal(%1, %2, %3, %4, %5); ").arg(canvasHandle).arg(x).arg(y).arg(width).arg(height));
                     break;
                 }
+            case Command::BeginPath:
+            {
+                    CanvasHandle canvasHandle;
+                    command.commandData() >> canvasHandle;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_beginPath_internal(%1); ").arg(canvasHandle));
+                    break;
+            }
+            case Command::AddRectToCurrentPath:
+                {
+                    double x, y, width, height;
+                    command.commandData() >> x >> y >> width >> height;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_addRectToCurrentPath_internal(%1, %2, %3, %4); ").arg(x).arg(y).arg(width).arg(height));
+                    break;
+                }
+            case Command::SetClipToCurrentPath:
+            {
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_setClipToCurrentPath_internal(); "));
+                    break;
+            }
             case Command::SetTransform:
                 {
                     CanvasHandle canvasHandle;

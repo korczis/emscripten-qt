@@ -532,39 +532,7 @@ void QHtml5CanvasPaintEngine::stroke(const QVectorPath &path, const QPen &pen)
     qDebug() << "QHtml5CanvasPaintEngine::stroke(const QVectorPath &path, const QPen &pen)";
 #endif
     Html5CanvasInterface::beginPath(d->canvasHandle);
-    // TODO - maybe avoid the conversion to QPainterPath.
-    const QPainterPath painterPath = path.convertToPainterPath();
-    for (int elementIndex = 0; elementIndex < painterPath.elementCount(); elementIndex++)
-    {
-        QPainterPath::Element element = painterPath.elementAt(elementIndex);
-        if (element.isMoveTo())
-        {
-            Html5CanvasInterface::currentPathMoveTo(element.x, element.y);
-        }
-        else if (element.isLineTo())
-        {
-            Html5CanvasInterface::currentPathLineTo(element.x, element.y);
-        }
-        else if (element.isCurveTo())
-        {
-            double control1X = element.x;
-            double control1Y = element.y;
-
-            elementIndex++;
-            element = painterPath.elementAt(elementIndex);
-            Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
-            double control2X = element.x;
-            double control2Y = element.y;
-
-            elementIndex++;
-            element = painterPath.elementAt(elementIndex);
-            Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
-            double endX = element.x;
-            double endY = element.y;
-
-            Html5CanvasInterface::currentPathCubicTo(control1X, control1Y, control2X, control2Y, endX, endY);
-        }
-    }
+    createHtml5Path(path);
     Html5CanvasInterface::strokeCurrentPath();
 }
 
@@ -591,43 +559,10 @@ void QHtml5CanvasPaintEngine::fill(const QVectorPath &path, const QBrush &brush)
     }
     else
     {
-        // TODO - maybe avoid the conversion to QPainterPath.
-        Html5CanvasInterface::beginPath(d->canvasHandle);
-        const QPainterPath painterPath = path.convertToPainterPath();
-        for (int elementIndex = 0; elementIndex < painterPath.elementCount(); elementIndex++)
-        {
-            QPainterPath::Element element = painterPath.elementAt(elementIndex);
-            if (element.isMoveTo())
-            {
-                Html5CanvasInterface::currentPathMoveTo(element.x, element.y);
-            }
-            else if (element.isLineTo())
-            {
-                Html5CanvasInterface::currentPathLineTo(element.x, element.y);
-            }
-            else if (element.isCurveTo())
-            {
-                double control1X = element.x;
-                double control1Y = element.y;
-
-                elementIndex++;
-                element = painterPath.elementAt(elementIndex);
-                Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
-                double control2X = element.x;
-                double control2Y = element.y;
-
-                elementIndex++;
-                element = painterPath.elementAt(elementIndex);
-                Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
-                double endX = element.x;
-                double endY = element.y;
-
-                Html5CanvasInterface::currentPathCubicTo(control1X, control1Y, control2X, control2Y, endX, endY);
-            }
-        }
     }
     const QBrush originalBrush = state()->brush;
     setHtml5Brush(brush);
+    createHtml5Path(path);
     Html5CanvasInterface::fillCurrentPath();
     setHtml5Brush(originalBrush);
 }
@@ -971,6 +906,45 @@ void QHtml5CanvasPaintEngine::setHtml5Brush(const QBrush& brush)
 #ifdef QT_DEBUG_DRAW
             qDebug() << "Brush style " << brush.style() << " currently unsupported";
 #endif
+        }
+    }
+}
+
+void QHtml5CanvasPaintEngine::createHtml5Path(const QVectorPath& qtPath)
+{
+    Q_D(QHtml5CanvasPaintEngine);
+    // TODO - maybe avoid the conversion to QPainterPath.
+    Html5CanvasInterface::beginPath(d->canvasHandle);
+    const QPainterPath painterPath = qtPath.convertToPainterPath();
+    for (int elementIndex = 0; elementIndex < painterPath.elementCount(); elementIndex++)
+    {
+        QPainterPath::Element element = painterPath.elementAt(elementIndex);
+        if (element.isMoveTo())
+        {
+            Html5CanvasInterface::currentPathMoveTo(element.x, element.y);
+        }
+        else if (element.isLineTo())
+        {
+            Html5CanvasInterface::currentPathLineTo(element.x, element.y);
+        }
+        else if (element.isCurveTo())
+        {
+            double control1X = element.x;
+            double control1Y = element.y;
+
+            elementIndex++;
+            element = painterPath.elementAt(elementIndex);
+            Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
+            double control2X = element.x;
+            double control2Y = element.y;
+
+            elementIndex++;
+            element = painterPath.elementAt(elementIndex);
+            Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
+            double endX = element.x;
+            double endY = element.y;
+
+            Html5CanvasInterface::currentPathCubicTo(control1X, control1Y, control2X, control2Y, endX, endY);
         }
     }
 }

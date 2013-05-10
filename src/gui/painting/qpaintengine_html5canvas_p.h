@@ -36,6 +36,7 @@ class QHtml5CanvasPaintEnginePrivate;
 class QRasterBuffer;
 class QClipData;
 class QCustomRasterPaintDevice;
+class QVectorPath;
 
 class QHtml5CanvasPaintEngineState : public QPainterState
 {
@@ -158,6 +159,7 @@ protected:
     QHtml5CanvasPaintEngine(QHtml5CanvasPaintEnginePrivate &d, QPaintDevice *);
 private:
     void setHtml5Brush(const QBrush& brush);
+    void createHtml5Path(const QVectorPath& qtPath);
 };
 
 

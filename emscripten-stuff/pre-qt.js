@@ -941,6 +941,13 @@ function _EMSCRIPTENQT_currentPathMoveTo_internal(x, y)
     ctx.moveTo(x, y);
 }
 
+function _EMSCRIPTENQT_currentPathLineTo_internal(x, y)
+{
+    var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.lineTo(x, y);
+}
+
 function _EMSCRIPTENQT_currentPathCubicTo_internal(control1X, control1Y, control2X, control2Y, endX, endY)
 {
     var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];

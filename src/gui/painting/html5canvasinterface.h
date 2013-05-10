@@ -80,6 +80,7 @@ public:
 
     static void beginPath(CanvasHandle canvasHandle);
     static void currentPathMoveTo(double x, double y);
+    static void currentPathLineTo(double x, double y);
     static void currentPathCubicTo(double context1X, double context1Y, double context2X, double context2Y, double endX, double endY);
     static void addRectToCurrentPath(double x, double y, double width, double height);
     static void setClipToCurrentPath();

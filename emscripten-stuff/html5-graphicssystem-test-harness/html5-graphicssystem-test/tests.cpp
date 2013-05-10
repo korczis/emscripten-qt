@@ -585,6 +585,21 @@ void Html5GraphicsSystemTests::testMoveToPointAndDrawBezier()
 
 }
 
+void Html5GraphicsSystemTests::testDrawLineTo()
+{
+    QPainterPath path;
+    const QPoint trianglePointTop = QPoint(widgetWidth() / 2, widgetHeight() / 3);
+    const QPoint trianglePointBottomRight = QPoint(3 * widgetWidth() / 4, 2 * widgetHeight() / 3);
+    const QPoint trianglePointBottomLeft = QPoint( widgetWidth() / 4, 2 * widgetHeight() / 3);
+    path.moveTo(trianglePointTop);
+    path.lineTo(trianglePointBottomLeft);
+    path.lineTo(trianglePointBottomRight);
+    path.lineTo(trianglePointTop);
+
+    painter()->setPen(QPen(Qt::red, 15));
+    painter()->drawPath(path);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

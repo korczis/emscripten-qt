@@ -541,6 +541,10 @@ void QHtml5CanvasPaintEngine::stroke(const QVectorPath &path, const QPen &pen)
         {
             Html5CanvasInterface::currentPathMoveTo(element.x, element.y);
         }
+        else if (element.isLineTo())
+        {
+            Html5CanvasInterface::currentPathLineTo(element.x, element.y);
+        }
         else if (element.isCurveTo())
         {
             double control1X = element.x;

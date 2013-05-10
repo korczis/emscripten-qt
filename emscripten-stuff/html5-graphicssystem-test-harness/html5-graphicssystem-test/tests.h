@@ -46,6 +46,7 @@ public slots:
     void testSetDisjointClipRegion();
     void testDoNotTryToRestoreClipFromEndedPainter();
     void testMoveToPointAndDrawBezier();
+    void testDrawLineTo();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

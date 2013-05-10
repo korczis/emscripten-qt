@@ -312,6 +312,13 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_currentPathMoveTo_internal(%1, %2); ").arg(x).arg(y));
                     break;
             }
+            case Command::CurrentPathLineTo:
+            {
+                    double x, y;
+                    command.commandData() >> x >> y;
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_currentPathLineTo_internal(%1, %2); ").arg(x).arg(y));
+                    break;
+            }
             case Command::CurrentPathCubicTo:
             {
                     double control1X, control1Y, control2X, control2Y, endX, endY;

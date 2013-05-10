@@ -31,6 +31,7 @@ extern "C"
     void EMSCRIPTENQT_removeClip(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_beginPath(CanvasHandle canvasHandle);
     void EMSCRIPTENQT_currentPathMoveTo(double x, double y);
+    void EMSCRIPTENQT_currentPathLineTo(double x, double y);
     void EMSCRIPTENQT_currentPathCubicTo(double context1X, double context1Y, double context2X, double context2Y, double endX, double endY);
     void EMSCRIPTENQT_addRectToCurrentPath(double x, double y, double width, double height);
     void EMSCRIPTENQT_setClipToCurrentPath();
@@ -164,6 +165,11 @@ void Html5CanvasInterface::beginPath(CanvasHandle canvasHandle)
 void Html5CanvasInterface::currentPathMoveTo(double x, double y)
 {
     EMSCRIPTENQT_currentPathMoveTo(x, y);
+}
+
+void Html5CanvasInterface::currentPathLineTo(double x, double y)
+{
+    EMSCRIPTENQT_currentPathLineTo(x, y);
 }
 
 void Html5CanvasInterface::currentPathCubicTo(double control1X, double control1Y, double control2X, double control2Y, double endX, double endY)

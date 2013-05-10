@@ -10,7 +10,7 @@ class CommandSender;
 class Command
 {
 public:
-    enum CommandType { GetMainCanvasWidth, GetMainCanvasHeight, ClearCanvas, GetCanvasPixels, GetHandleForMainCanvas, CreateCanvas, FillSolidRect, StrokeRect, FillRect, StrokeEllipse, FillEllipse, DrawLine, ChangePenColor, ChangePenThickness, ChangeBrushColor, ChangeBrushTexture, CreateLinearGradient, AddStopPointToCurrentGradient, SetBrushToCurrentGradient, SavePaintState, RestorePaintState, RestoreToOriginalState, SetClipRect, RemoveClip, BeginPath, CurrentPathMoveTo, CurrentPathCubicTo, AddRectToCurrentPath, SetClipToCurrentPath, StrokeCurrentPath, SetTransform, SetCanvasPixelsRaw, DrawCanvasOnMainCanvas, DrawCanvasOnCanvas, DrawStretchedCanvasPortionOnCanvas, ProcessEvents};
+    enum CommandType { GetMainCanvasWidth, GetMainCanvasHeight, ClearCanvas, GetCanvasPixels, GetHandleForMainCanvas, CreateCanvas, FillSolidRect, StrokeRect, FillRect, StrokeEllipse, FillEllipse, DrawLine, ChangePenColor, ChangePenThickness, ChangeBrushColor, ChangeBrushTexture, CreateLinearGradient, AddStopPointToCurrentGradient, SetBrushToCurrentGradient, SavePaintState, RestorePaintState, RestoreToOriginalState, SetClipRect, RemoveClip, BeginPath, CurrentPathMoveTo, CurrentPathLineTo, CurrentPathCubicTo, AddRectToCurrentPath, SetClipToCurrentPath, StrokeCurrentPath, SetTransform, SetCanvasPixelsRaw, DrawCanvasOnMainCanvas, DrawCanvasOnCanvas, DrawStretchedCanvasPortionOnCanvas, ProcessEvents};
     Command(CommandType commandType);
     Command(const Command& other);
     ~Command();

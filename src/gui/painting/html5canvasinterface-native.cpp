@@ -223,6 +223,13 @@ void Html5CanvasInterface::currentPathMoveTo(double x, double y)
     commandSender()->sendCommand(currentPathMoveToCommand);
 }
 
+void Html5CanvasInterface::currentPathLineTo(double x, double y)
+{
+    Command currentPathLineToCommand(Command::CurrentPathLineTo);
+    currentPathLineToCommand.commandData() << x << y;
+    commandSender()->sendCommand(currentPathLineToCommand);
+}
+
 void Html5CanvasInterface::currentPathCubicTo(double control1X, double control1Y, double control2X, double control2Y, double endX, double endY)
 {
     Command currentPathCubicToCommand(Command::CurrentPathCubicTo);

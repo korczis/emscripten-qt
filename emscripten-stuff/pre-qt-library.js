@@ -168,6 +168,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+     EMSCRIPTENQT_currentPathLineTo: function(x, y) {
+         return _EMSCRIPTENQT_currentPathLineTo_internal(x, y);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
      EMSCRIPTENQT_currentPathCubicTo: function(control1X, control1Y, control2X, control2Y, endX, endY) {
          return _EMSCRIPTENQT_currentPathCubicTo_internal(control1X, control1Y, control2X, control2Y, endX, endY);
       }

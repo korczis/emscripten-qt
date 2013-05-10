@@ -573,6 +573,7 @@ void QHtml5CanvasPaintEngine::stroke(const QVectorPath &path, const QPen &pen)
 */
 void QHtml5CanvasPaintEngine::fill(const QVectorPath &path, const QBrush &brush)
 {
+    Q_D(QHtml5CanvasPaintEngine);
     if (path.isEmpty())
         return;
 #ifdef QT_DEBUG_DRAW
@@ -590,10 +591,45 @@ void QHtml5CanvasPaintEngine::fill(const QVectorPath &path, const QBrush &brush)
     }
     else
     {
-#ifdef QT_DEBUG_DRAW
-        qDebug() << "Drawing this QVectorPath not currently supported!";
-#endif
+        // TODO - maybe avoid the conversion to QPainterPath.
+        Html5CanvasInterface::beginPath(d->canvasHandle);
+        const QPainterPath painterPath = path.convertToPainterPath();
+        for (int elementIndex = 0; elementIndex < painterPath.elementCount(); elementIndex++)
+        {
+            QPainterPath::Element element = painterPath.elementAt(elementIndex);
+            if (element.isMoveTo())
+            {
+                Html5CanvasInterface::currentPathMoveTo(element.x, element.y);
+            }
+            else if (element.isLineTo())
+            {
+                Html5CanvasInterface::currentPathLineTo(element.x, element.y);
+            }
+            else if (element.isCurveTo())
+            {
+                double control1X = element.x;
+                double control1Y = element.y;
+
+                elementIndex++;
+                element = painterPath.elementAt(elementIndex);
+                Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
+                double control2X = element.x;
+                double control2Y = element.y;
+
+                elementIndex++;
+                element = painterPath.elementAt(elementIndex);
+                Q_ASSERT(element.type == QPainterPath::CurveToDataElement);
+                double endX = element.x;
+                double endY = element.y;
+
+                Html5CanvasInterface::currentPathCubicTo(control1X, control1Y, control2X, control2Y, endX, endY);
+            }
+        }
     }
+    const QBrush originalBrush = state()->brush;
+    setHtml5Brush(brush);
+    Html5CanvasInterface::fillCurrentPath();
+    setHtml5Brush(originalBrush);
 }
 
 /*!

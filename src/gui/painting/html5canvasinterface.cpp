@@ -36,6 +36,7 @@ extern "C"
     void EMSCRIPTENQT_addRectToCurrentPath(double x, double y, double width, double height);
     void EMSCRIPTENQT_setClipToCurrentPath();
     void EMSCRIPTENQT_strokeCurrentPath();
+    void EMSCRIPTENQT_fillCurrentPath();
     void EMSCRIPTENQT_setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f);
     void EMSCRIPTENQT_setCanvasPixelsRaw(CanvasHandle canvasHandle, uchar* rgbaData, int width, int height);
     void EMSCRIPTENQT_drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int x, int y);
@@ -190,6 +191,11 @@ void Html5CanvasInterface::setClipToCurrentPath()
 void Html5CanvasInterface::strokeCurrentPath()
 {
     EMSCRIPTENQT_strokeCurrentPath();
+}
+
+void Html5CanvasInterface::fillCurrentPath()
+{
+    EMSCRIPTENQT_fillCurrentPath();
 }
 
 void Html5CanvasInterface::setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f)

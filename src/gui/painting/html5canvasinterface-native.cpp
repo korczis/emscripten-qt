@@ -256,6 +256,12 @@ void Html5CanvasInterface::strokeCurrentPath()
     commandSender()->sendCommand(strokeToCurrentPathCommand);
 }
 
+void Html5CanvasInterface::fillCurrentPath()
+{
+    Command fillToCurrentPathCommand(Command::FillCurrentPath);
+    commandSender()->sendCommand(fillToCurrentPathCommand);
+}
+
 void Html5CanvasInterface::setTransform(CanvasHandle canvasHandle, double a, double b, double c, double d, double e, double f)
 {
     Command setTransformCommand(Command::SetTransform);

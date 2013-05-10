@@ -600,6 +600,26 @@ void Html5GraphicsSystemTests::testDrawLineTo()
     painter()->drawPath(path);
 }
 
+void Html5GraphicsSystemTests::testFillPathsWithLinesAndBeziers()
+{
+    QPainterPath path;
+    const QPoint rectBottomLeft = QPoint(widgetWidth() / 4, 3 * widgetHeight() / 4);
+    const QPoint rectBottomRight = QPoint(3 * widgetWidth() / 4, 3 * widgetHeight() / 4);
+    const QPoint rectTopLeft = QPoint(widgetWidth() / 4, widgetHeight() / 2);
+    const QPoint rectTopRight = QPoint(3 * widgetWidth() / 4, widgetHeight() / 2);
+    const QPoint domeControlPointLeft = QPoint(3 * widgetWidth() / 8, widgetHeight() / 8);
+    const QPoint domeControlPointRight = QPoint(5 * widgetWidth() / 8, widgetHeight() / 8);
+
+    QPainterPath rectWithDome;
+    rectWithDome.moveTo(rectBottomLeft);
+    rectWithDome.lineTo(rectTopLeft);
+    rectWithDome.cubicTo(domeControlPointLeft, domeControlPointRight, rectTopRight);
+    rectWithDome.lineTo(rectBottomRight);
+    rectWithDome.lineTo(rectBottomLeft);
+
+    painter()->fillPath(rectWithDome, Qt::green);
+}
+
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {
     m_expectedImage = expectedImage;

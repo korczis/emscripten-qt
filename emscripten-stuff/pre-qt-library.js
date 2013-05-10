@@ -196,6 +196,12 @@ mergeInto(LibraryManager.library, {
       }
     });
 
+mergeInto(LibraryManager.library, {
+     EMSCRIPTENQT_fillCurrentPath: function() {
+         return _EMSCRIPTENQT_fillCurrentPath_internal();
+      }
+    });
+
 
 mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_setTransform: function(canvasHandle, a, b, c, d, e, f) {

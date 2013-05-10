@@ -976,6 +976,13 @@ function _EMSCRIPTENQT_strokeCurrentPath_internal()
     ctx.stroke();
 }
 
+function _EMSCRIPTENQT_fillCurrentPath_internal()
+{
+    var canvas = emscriptenqt_handle_to_canvas[_EMSCRIPTENQT_currentPathCanvasHandle];
+    var ctx = canvas.getContext("2d");
+    ctx.fill();
+}
+
 function _EMSCRIPTENQT_setTransform_internal(canvasHandle, a, b, c, d, e, f)
 {
     try

@@ -85,6 +85,7 @@ public:
     static void addRectToCurrentPath(double x, double y, double width, double height);
     static void setClipToCurrentPath();
     static void strokeCurrentPath();
+    static void fillCurrentPath();
     /**
      * Effectively calls the HTML5 Canvas method setTransform(a, b, c, d, e, f) method on \a canvasHandle 's context.
      * See http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#dom-context-2d-transform

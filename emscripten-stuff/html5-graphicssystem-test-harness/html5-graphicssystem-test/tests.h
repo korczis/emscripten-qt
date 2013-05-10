@@ -47,6 +47,7 @@ public slots:
     void testDoNotTryToRestoreClipFromEndedPainter();
     void testMoveToPointAndDrawBezier();
     void testDrawLineTo();
+    void testFillPathsWithLinesAndBeziers();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

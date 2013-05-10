@@ -343,6 +343,11 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_strokeCurrentPath_internal(); "));
                     break;
             }
+            case Command::FillCurrentPath:
+            {
+                    evaluateJsStatements(QString("return _EMSCRIPTENQT_fillCurrentPath_internal(); "));
+                    break;
+            }
             case Command::SetTransform:
                 {
                     CanvasHandle canvasHandle;

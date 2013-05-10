@@ -48,6 +48,7 @@ public slots:
     void testMoveToPointAndDrawBezier();
     void testDrawLineTo();
     void testFillPathsWithLinesAndBeziers();
+    void testFillTextPath();
 public:
     void setExpectedImage(const QImage& expectedImage);
     QImage expectedImage();

@@ -2,6 +2,7 @@
 
 #include <QtCore/QDebug>
 #include <QtGui/QPainter>
+#include <QtGui/QFontDatabase>
 #include <cmath>
 
 #ifdef EMSCRIPTEN_NATIVE
@@ -619,6 +620,19 @@ void Html5GraphicsSystemTests::testFillPathsWithLinesAndBeziers()
 
     painter()->fillPath(rectWithDome, Qt::green);
 }
+
+
+void Html5GraphicsSystemTests::testFillTextPath()
+{
+    QFontDatabase::addApplicationFont(testDataPath + "/vshexagothica.ttf"); // Weird font that hopefully won't be in anyone's standard install!
+    QPainterPath path;
+    path.moveTo(widgetWidth() / 2, widgetHeight() / 2);
+    path.addText(QPointF(widgetWidth() / 2, 7 * widgetHeight() / 8), QFont("vSHexagothica", 40), "S");
+    
+    painter()->fillPath(path, Qt::gray);
+}
+
+
 
 void Html5GraphicsSystemTests::setExpectedImage(const QImage& expectedImage)
 {

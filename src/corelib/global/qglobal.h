@@ -221,7 +221,7 @@ namespace QT_NAMESPACE {}
 #  define Q_OS_RELIANT
 #elif defined(__native_client__)
 #  define Q_OS_NACL
-#elif defined(__linux__) || defined(__linux)
+#elif defined(__linux__) || defined(__linux) || (defined(EMSCRIPTEN)) // Emscripten doesn't have its own Q_OS*, so piggybacks on Q_OS_LINUX
 #  define Q_OS_LINUX
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
 #  define Q_OS_FREEBSD

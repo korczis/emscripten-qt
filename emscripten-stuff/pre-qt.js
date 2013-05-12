@@ -534,9 +534,6 @@ Module['preRun'].push(function() {
 
 
 		canvas.tabIndex = 1;
-		// Data cache dir for QWS
-		Module['FS_createFolder']("/", 'tmp', true, true);
-		Module['FS_createFolder']("/tmp/", 'qtembedded-0', true, true);
 
         // Decode the arguments provided by any "?args='blah blah'" in the URL.
 
@@ -579,7 +576,7 @@ Module['preRun'].push(function() {
         }
 	} catch (e)
 	{
-		window.alert("Exception while setting up qws filesystem: " + e);
+		window.alert("Exception in emscripten-qt preRun:" + e);
 	}
 });
 

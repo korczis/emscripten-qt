@@ -624,10 +624,15 @@ void Html5GraphicsSystemTests::testFillPathsWithLinesAndBeziers()
 
 void Html5GraphicsSystemTests::testFillTextPath()
 {
-    QFontDatabase::addApplicationFont(testDataPath + "/vshexagothica.ttf"); // Weird font that hopefully won't be in anyone's standard install!
+    const int fontId = QFontDatabase::addApplicationFont(testDataPath + "vshexagothica.ttf"); // Weird font that hopefully won't be in anyone's standard install!
+    if (fontId == -1)
+    {
+        qDebug() << "Warning: could not find vshexagothica font! - this test will fail!";
+        return;
+    }
     QPainterPath path;
     path.moveTo(widgetWidth() / 2, widgetHeight() / 2);
-    path.addText(QPointF(widgetWidth() / 2, 7 * widgetHeight() / 8), QFont("vSHexagothica", 40), "S");
+    path.addText(QPointF(widgetWidth() / 5, 7 * widgetHeight() / 8), QFont("vSHexagothica", 40), "Sausage");
     
     painter()->fillPath(path, Qt::gray);
 }

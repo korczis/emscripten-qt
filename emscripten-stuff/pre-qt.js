@@ -521,7 +521,6 @@ Module.noExitRuntime = true;
             }
         };
         var argsRaw = parseUri(decodeURI(window.location.href)).queryKey.args;
-        window.alert("argsRaw: " + argsRaw);
         if (argsRaw)
         {
             Module['arguments'] = argsRaw.split(" ");

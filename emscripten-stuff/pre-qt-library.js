@@ -253,3 +253,10 @@ mergeInto(LibraryManager.library, {
           return _EMSCRIPTENQT_notify_frame_rendered_internal();
       }
     });
+
+mergeInto(LibraryManager.library, {
+     EMSCRIPTENQT_mainCanvasContentsRaw: function(destPointer, heapArray8) {
+         return _EMSCRIPTENQT_mainCanvasContentsRaw_internal(destPointer, heapArray8);
+      }
+    });
+

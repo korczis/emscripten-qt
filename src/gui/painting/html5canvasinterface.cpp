@@ -43,7 +43,7 @@ extern "C"
     void EMSCRIPTENQT_drawCanvasOnCanvas(CanvasHandle canvasHandleToDraw,CanvasHandle canvasHandleToDrawOn, double x, double y);
     void EMSCRIPTENQT_drawStretchedCanvasPortionOnCanvas(CanvasHandle canvasHandleToDraw, CanvasHandle canvasHandleToDrawOn, double targetX, double targetY, double targetWidth, double targetHeight, double sourceX, double sourceY, double sourceWidth, double sourceHeight);
     void EMSCRIPTENQT_clearMainCanvas(Rgba rgba);
-    void EMSCRIPTENQT_mainCanvasContentsRaw_internal(void* destPtr);
+    void EMSCRIPTENQT_mainCanvasContentsRaw(void* destPtr);
     int EMSCRIPTENQT_canvas_width_pixels();
     int EMSCRIPTENQT_canvas_height_pixels();
 }
@@ -233,7 +233,7 @@ Rgba* Html5CanvasInterface::mainCanvasContentsRaw()
 {
     const int numPixels = mainCanvasWidth() * mainCanvasHeight();
     void *destPointer = malloc(numPixels * sizeof(Rgba));
-    EMSCRIPTENQT_mainCanvasContentsRaw_internal(destPointer);
+    EMSCRIPTENQT_mainCanvasContentsRaw(destPointer);
     return static_cast<Rgba*>(destPointer);
 }
 

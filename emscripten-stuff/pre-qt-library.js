@@ -225,7 +225,7 @@ mergeInto(LibraryManager.library, {
 
 mergeInto(LibraryManager.library, {
       EMSCRIPTENQT_drawStretchedCanvasPortionOnCanvas: function(canvasHandleToDraw, canvasHandleToDrawOn, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight) {
-          return _EMSCRIPTENQT_drawCanvasOnCanvas_internal(canvasHandleToDraw, canvasHandleToDrawOn, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight);
+          return _EMSCRIPTENQT_drawStretchedCanvasPortionOnCanvas_internal(canvasHandleToDraw, canvasHandleToDrawOn, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight);
       }
     });
 

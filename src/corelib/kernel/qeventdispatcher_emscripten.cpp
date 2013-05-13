@@ -500,15 +500,17 @@ void QEventDispatcherEmscripten::batchProcessEvents()
 {
     const QDateTime processingBeginTime = QDateTime::currentDateTime();
     m_batchProcessingEvents = true;
+    bool timedOut = false;
     do
     {
-        while (hasPendingEvents())
+        while (hasPendingEvents() && !timedOut)
         {
             processEvents(QEventLoop::AllEvents);
+            timedOut = (processingBeginTime.msecsTo(QDateTime::currentDateTime()) > 50);
         }
         // Activating timers might trigger yet more events to deal with.
         timerList.activateTimers();
-        if (hasPendingEvents() && processingBeginTime.msecsTo(QDateTime::currentDateTime()) > 50)
+        if (hasPendingEvents() && timedOut)
         {
             // If processing events a) takes a long time, and b) repeatedly sets timers, then
             // we could potentially end up in an infinite loop - add this safety valve.

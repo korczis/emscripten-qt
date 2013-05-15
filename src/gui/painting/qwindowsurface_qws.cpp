@@ -1578,7 +1578,7 @@ QPaintDevice *QWSHtml5CanvasSurface::paintDevice() {
 bool QWSHtml5CanvasSurface::scroll(const QRegion &area, int dx, int dy)
 {
 #ifdef QT_DEBUG_SURFACE
-    qDebug() << "QWSHtml5CanvasSurface::scroll()";
+    qDebug() << "QWSHtml5CanvasSurface::scroll(): " << area << "," << "(" << dx << "," << dy << ")";
 #endif
     return true;
 }

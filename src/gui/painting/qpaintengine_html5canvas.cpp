@@ -279,7 +279,7 @@ void QHtml5CanvasPaintEngine::updatePen(const QPen &pen)
 void QHtml5CanvasPaintEngine::brushOriginChanged()
 {
 #ifdef QT_DEBUG_DRAW
-    qDebug() << "QHtml5CanvasPaintEngine::brushOriginChanged()";
+    qDebug() << "QHtml5CanvasPaintEngine::brushOriginChanged()" << state()->brushOrigin;
 #endif
 }
 

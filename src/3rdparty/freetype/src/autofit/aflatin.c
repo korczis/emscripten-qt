@@ -2047,10 +2047,11 @@
   static FT_Error
   af_latin_hints_apply( AF_GlyphHints    hints,
                         FT_Outline*      outline,
-                        AF_LatinMetrics  metrics )
+                        AF_ScriptMetrics  scriptMetrics )
   {
     FT_Error  error;
     int       dim;
+    AF_LatinMetrics metrics = (AF_LatinMetrics)scriptMetrics;
 
 
     error = af_glyph_hints_reload( hints, outline, 1 );

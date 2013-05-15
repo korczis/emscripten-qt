@@ -78,3 +78,82 @@ function EMSCRIPTENNATIVEHELPER_setCanvasPixelsRaw(canvasHandle, rgbaHexString, 
     _EMSCRIPTENQT_setCanvasPixelsRaw_internal(canvasHandle, 0, fakeHeap8);
     
 }
+
+function EMSCRIPTENNATIVEHELPER_loadFont(fontDataHexString, fontFamilyHexString)
+{
+    try
+    {
+    var fontDataSize = fontDataHexString.length / 2;
+    var fontFamilyStringLength = fontFamilyHexString.length / 2; // Includes null terminator.
+    var totalBytes = fontDataSize + fontFamilyStringLength;
+    var fakeHeap = new ArrayBuffer(totalBytes);
+    var fakeHeap8 = new Uint8Array(fakeHeap);
+    
+    var posInFakeHeap = 0;
+    var fontDataBeginInFakeHeap = 0;
+
+    var posInFontDataHexString = 0;
+    for (var i = 0; i < fontDataSize; i++)
+    {
+        fakeHeap8[posInFakeHeap] = parseInt(fontDataHexString.substring(posInFontDataHexString, posInFontDataHexString + 2), 16) & 0xFF;
+
+        posInFontDataHexString += 2;
+        posInFakeHeap++;
+    }
+    var fontFamilyStringBeginInFakeHeap = posInFakeHeap;
+    
+
+    var posInFontFamilyHexString = 0;
+    for (var i = 0; i < fontFamilyStringLength; i++)
+    {
+        fakeHeap8[posInFakeHeap] = parseInt(fontFamilyHexString.substring(posInFontFamilyHexString, posInFontFamilyHexString + 2), 16) & 0xFF;
+
+        posInFontFamilyHexString += 2;
+        posInFakeHeap++;
+    }
+
+    _EMSCRIPTENQT_loadFont_internal(fontDataBeginInFakeHeap, fontDataSize, fontFamilyStringBeginInFakeHeap, fakeHeap8);
+    }
+    catch (e)
+    {
+        window.alert("Exception in EMSCRIPTENNATIVEHELPER_loadFont: " + e);
+    }
+}
+function Pointer_stringify_nativehelper(ptr, HEAPU8) {
+  // Find the length, and check for UTF while doing so
+  var hasUtf = false;
+  var t;
+  var i = 0;
+  var length = 0;
+  while (1) {
+    t = HEAPU8[(((ptr)+(i))|0)];
+    if (t >= 128) hasUtf = true;
+    else if (t == 0 && !length) break;
+    i++;
+    if (length && i == length) break;
+  }
+  if (!length) length = i;
+  var ret = '';
+  if (!hasUtf) {
+    var MAX_CHUNK = 1024; // split up into chunks, because .apply on a huge string can overflow the stack
+    var curr;
+    while (length > 0) {
+      var dataArray = [];
+      for (var j = 0, jj = length; j < jj; ++j) {
+          dataArray.push(HEAPU8[ptr + j]);
+      }
+      curr = String.fromCharCode.apply(null, dataArray);
+      //curr = String.fromCharCode.apply(String, HEAPU8.subarray(ptr, ptr + Math.min(length, MAX_CHUNK))); See https://github.com/mozilla/pdf.js/issues/1820
+      ret = ret ? ret + curr : curr;
+      ptr += MAX_CHUNK;
+      length -= MAX_CHUNK;
+    }
+    return ret;
+  }
+  var utf8 = new Runtime.UTF8Processor();
+  for (i = 0; i < length; i++) {
+    t = HEAPU8[(((ptr)+(i))|0)];
+    ret += utf8.processCChar(t);
+  }
+  return ret;
+}

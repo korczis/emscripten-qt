@@ -42,6 +42,16 @@
 
 #ifndef QT_NO_GRAPHICSSYSTEM_HTML5CANVAS
 
+void registerTTFile(const QByteArray &fontData, const QList<QString> families)
+{
+#ifdef QT_DEBUG_DRAW
+    Q_ASSERT(families.size() == 1); // Don't know how to deal with fonts that define more than one family.
+    Q_ASSERT(!fontData.isEmpty());
+#endif
+    qDebug() << "TTF font registered; size: " + fontData.size() << " families: " << families;
+    Html5CanvasInterface::loadFont(fontData.data(), fontData.size(), families.first().toAscii());
+}
+
 QT_BEGIN_NAMESPACE
 
 Q_GUI_EXPORT extern QImage qt_imageForBrush(int brushStyle, bool invert);

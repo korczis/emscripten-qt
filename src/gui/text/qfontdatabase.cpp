@@ -831,6 +831,10 @@ void QFontDatabasePrivate::addFont(const QString &familyname, const char *foundr
 }
 #endif
 
+#if (defined (EMSCRIPTEN)) && !(defined(QT_NO_GRAPHICSSYSTEM_HTML5CANVAS))
+extern void registerTTFile(const QByteArray &fontData, const QList<QString> families);
+#endif
+
 #if (defined(Q_WS_QWS) || defined(Q_OS_SYMBIAN)) && !defined(QT_NO_FREETYPE)
 QStringList QFontDatabasePrivate::addTTFile(const QByteArray &file, const QByteArray &fontData)
 {
@@ -894,6 +898,19 @@ QStringList QFontDatabasePrivate::addTTFile(const QByteArray &file, const QByteA
         FT_Done_Face(face);
         ++index;
     } while (index < numFaces);
+#if (defined (EMSCRIPTEN)) && !(defined(QT_NO_GRAPHICSSYSTEM_HTML5CANVAS))
+    if (!families.isEmpty())
+    {
+        QByteArray actualFontData = fontData;
+        if (actualFontData.isEmpty())
+        {
+            QFile fontDataFile(file);
+            fontDataFile.open(QIODevice::ReadOnly);
+            actualFontData = fontDataFile.readAll();
+        }
+        registerTTFile(actualFontData, families);
+    }
+#endif
     return families;
 }
 #endif

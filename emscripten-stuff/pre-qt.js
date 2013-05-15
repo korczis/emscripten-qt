@@ -1084,6 +1084,67 @@ function _EMSCRIPTENQT_mainCanvasContentsRaw_internal(destPointer, heapArray8)
     }
 }
 
+function _EMSCRIPTENQT_loadFont_internal(fontDataPointer, fontDataSize, fontFamilyPointer, heapArray8)
+{
+    try
+    {
+        var useNativeHelperPointerStringify = true;
+        if (heapArray8 == undefined)
+        {
+            heapArray8 = HEAP8;
+            useNativeHelperPointerStringify = false;
+        }
+        function encode64(data) {
+            var BASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+            var PAD = '=';
+            var ret = '';
+            var leftchar = 0;
+            var leftbits = 0;
+            for (var i = 0; i < data.length; i++) {
+                leftchar = (leftchar << 8) | data[i];
+                leftbits += 8;
+                while (leftbits >= 6) {
+                    var curr = (leftchar >> (leftbits-6)) & 0x3f;
+                    leftbits -= 6;
+                    ret += BASE[curr];
+                }
+            }
+            if (leftbits == 2) {
+                ret += BASE[(leftchar&3) << 4];
+                ret += PAD + PAD;
+            } else if (leftbits == 4) {
+                ret += BASE[(leftchar&0xf) << 2];
+                ret += PAD;
+            }
+                return ret;
+        };
+        var fontData = [];
+        for (var i = 0; i < fontDataSize; i++)
+        {
+            fontData[i] = heapArray8[fontDataPointer + i] & 0xFF;
+        }
+        var fontDataUrl = "data:application/x-font-ttf;base64," + encode64(fontData);
+        var fontFamily = null;
+        if (useNativeHelperPointerStringify)
+        {
+            fontFamily = Pointer_stringify_nativehelper(fontFamilyPointer, heapArray8);
+        }
+        else
+        {
+            fontFamily = Pointer_stringify(fontFamilyPointer);
+        }
+       var newStyle = document.createElement('style');
+       newStyle.appendChild(document.createTextNode(" @font-face { font-family:" + fontFamily + "; src: url('" + fontDataUrl + "') ; format('truetype');} "));
+       document.head.appendChild(newStyle);
+ 
+       return true;
+    }
+    catch (e)
+    {
+        window.alert("Exception (_EMSCRIPTENQT_loadFont): " + e);
+    }
+}
+
 function _EMSCRIPTENQT_clearMainCanvas_internal(rgba)
 {
     try 

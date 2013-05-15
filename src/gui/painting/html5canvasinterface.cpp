@@ -46,7 +46,9 @@ extern "C"
     void EMSCRIPTENQT_mainCanvasContentsRaw(void* destPtr);
     int EMSCRIPTENQT_canvas_width_pixels();
     int EMSCRIPTENQT_canvas_height_pixels();
+    void EMSCRIPTENQT_loadFont(const char* fontData, int fontDataSize, char* familyName);
 }
+
 
 CanvasHandle Html5CanvasInterface::handleForMainCanvas()
 {
@@ -235,6 +237,11 @@ Rgba* Html5CanvasInterface::mainCanvasContentsRaw()
     void *destPointer = malloc(numPixels * sizeof(Rgba));
     EMSCRIPTENQT_mainCanvasContentsRaw(destPointer);
     return static_cast<Rgba*>(destPointer);
+}
+
+void Html5CanvasInterface::loadFont(const char* fontData, int fontDataSize, const char* familyName)
+{
+    EMSCRIPTENQT_loadFont(fontData, fontDataSize, familyName);
 }
 
 #endif

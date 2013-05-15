@@ -255,6 +255,12 @@ mergeInto(LibraryManager.library, {
     });
 
 mergeInto(LibraryManager.library, {
+     EMSCRIPTENQT_loadFont: function(fontDataPointer, fontDataSize, fontFamilyPointer, heapArray8) {
+         return _EMSCRIPTENQT_loadFont_internal(fontDataPointer, fontDataSize, fontFamilyPointer, heapArray8);
+      }
+    });
+
+mergeInto(LibraryManager.library, {
      EMSCRIPTENQT_mainCanvasContentsRaw: function(destPointer, heapArray8) {
          return _EMSCRIPTENQT_mainCanvasContentsRaw_internal(destPointer, heapArray8);
       }

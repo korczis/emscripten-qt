@@ -307,6 +307,34 @@ void Html5CanvasInterface::drawCanvasOnMainCanvas(CanvasHandle canvasHandle, int
     commandSender()->sendCommand(drawCanvasOnMainCanvasCommand);
 }
 
+void Html5CanvasInterface::loadFont(const char* fontData, int fontDataSize, const char* familyName)
+{
+    Command loadFontCommand(Command::LoadFont);
+    QString fontDataAsHexString;
+    for (int i = 0; i < fontDataSize; i++)
+    {
+        QString hex = QString::number((unsigned char)(fontData[i]), 16);
+        if (hex.length() == 1)
+        {
+            hex = "0" + hex;
+        }
+        fontDataAsHexString += hex;
+    }
+    loadFontCommand.commandData() << fontDataAsHexString;
+    QString fontFamilyNameAsHexString;
+    for (int i = 0; i < qstrlen(familyName) + 1 /* include null terminator */; i++)
+    {
+        QString hex = QString::number((unsigned char)(familyName[i]), 16);
+        if (hex.length() == 1)
+        {
+            hex = "0" + hex;
+        }
+        fontFamilyNameAsHexString += hex;
+    }
+    loadFontCommand.commandData() << fontFamilyNameAsHexString;
+    commandSender()->sendCommand(loadFontCommand);
+}
+
 void Html5CanvasInterface::processEvents()
 {
     Command processEventsCommand(Command::ProcessEvents);

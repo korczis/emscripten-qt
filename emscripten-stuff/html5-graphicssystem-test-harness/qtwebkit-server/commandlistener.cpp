@@ -396,6 +396,12 @@ void CommandListener::newCommandIncoming()
                     evaluateJsStatements(QString("return _EMSCRIPTENQT_drawCanvasOnMainCanvas_internal(%1, %2, %3); ").arg(canvasHandle).arg(x).arg(y));
                     break;
                 }
+            case Command::LoadFont:
+            {
+                QString fontDataHexString, fontFamilyNameHexString;
+                command.commandData() >> fontDataHexString >> fontFamilyNameHexString;
+                evaluateJsStatements(QString("return EMSCRIPTENNATIVEHELPER_loadFont(\"%1\", \"%2\"); ").arg(fontDataHexString).arg(fontFamilyNameHexString));
+            }
             case Command::ProcessEvents:
             {
                 while(QApplication::hasPendingEvents())

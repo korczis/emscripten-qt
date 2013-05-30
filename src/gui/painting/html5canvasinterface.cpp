@@ -46,7 +46,7 @@ extern "C"
     void EMSCRIPTENQT_mainCanvasContentsRaw(void* destPtr);
     int EMSCRIPTENQT_canvas_width_pixels();
     int EMSCRIPTENQT_canvas_height_pixels();
-    void EMSCRIPTENQT_loadFont(const char* fontData, int fontDataSize, char* familyName);
+    void EMSCRIPTENQT_loadFont(const char* fontData, int fontDataSize, const char* familyName);
 }
 
 

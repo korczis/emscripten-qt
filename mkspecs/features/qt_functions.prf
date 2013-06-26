@@ -75,7 +75,8 @@ defineTest(qtAddLibrary) {
            win32:LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}d
            mac:LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}_debug
        }
-       isEmpty(LINKAGE):LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}
+       # Don't add any "-l" stuff for emscripten, as llvm-link can't deal with it.
+       !emscripten:isEmpty(LINKAGE):LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}
     }
     !isEmpty(QMAKE_LSB) {
         QMAKE_LFLAGS *= --lsb-libpath=$$$$QMAKE_LIBDIR_QT

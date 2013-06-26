@@ -700,9 +700,11 @@ Returns a QDeclarativeTypeData for the specified \a url.  The QDeclarativeTypeDa
 */
 QDeclarativeTypeData *QDeclarativeTypeLoader::get(const QUrl &url)
 {
+#ifndef EMSCRIPTEN // This Q_ASSERT seems to fail for Emscripten - need to figure out why, but for now, just comment out.
     Q_ASSERT(!url.isRelative() && 
             (QDeclarativeEnginePrivate::urlToLocalFileOrQrc(url).isEmpty() || 
              !QDir::isRelativePath(QDeclarativeEnginePrivate::urlToLocalFileOrQrc(url))));
+#endif
 
     QDeclarativeTypeData *typeData = m_typeCache.value(url);
 

@@ -43,12 +43,12 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QApplication *app = new QApplication(argc, argv);
 
-    QmlApplicationViewer viewer;
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationLockLandscape);
-    viewer.setMainQmlFile(QLatin1String("qml/tvtennis/tvtennis.qml"));
-    viewer.showExpanded();
+    QmlApplicationViewer *viewer = new QmlApplicationViewer;
+    viewer->setOrientation(QmlApplicationViewer::ScreenOrientationLockLandscape);
+    viewer->setMainQmlFile(QLatin1String("qml/tvtennis/tvtennis.qml"));
+    viewer->showExpanded();
 
-    return app.exec();
+    return app->exec();
 }

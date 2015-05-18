@@ -1,0 +1,23 @@
+50,51c50,51
+<     QApplication app(argc, argv);
+<     app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+---
+>     QApplication *app = new QApplication(argc, argv);
+>     app->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+53,54c53,54
+<     MainWindow window;
+<     window.show();   
+---
+>     MainWindow *window = new MainWindow;
+>     window->show();   
+56c56,63
+<     return app.exec();
+---
+>     app->exec();
+> 
+> #ifdef EMSCRIPTEN_NATIVE
+>     while (true)
+>     {
+>         app->processEvents();
+>     }
+> #endif

@@ -66,6 +66,15 @@ QT_USE_NAMESPACE
 static const int TextClipboard=424242;
 static bool init = false;
 
+#ifdef Q_OS_EMSCRIPTEN
+extern "C"
+{
+    int EMSCRIPTENQT_clipboardTextChanged(const char *pText);
+    int EMSCRIPTENQT_setClipboardText(const char *pText);
+}
+#endif
+
+
 static inline void qwsInitClipboard()
 {
     //### this should go into QWSServer; it only needs to happen once.
@@ -82,25 +91,46 @@ static QString qwsClipboardText()
     qwsInitClipboard();
     if( !QPaintDevice::qwsDisplay()->getProperty(0, TextClipboard, data, len) ) {
 //        qDebug("Property received: %d bytes", len);
+        return QString();
     }
 
     QString s((const QChar*)data, len/sizeof(QChar));
- //       qDebug("Property received: '%s'", s.toAscii().constData());
+ //       qDebug("Property received: '%s'", s.toLatin1().constData());
     delete[] data;
     return s;
 }
 
-
 static void qwsSetClipboardText(const QString& s)
 {
     qwsInitClipboard();
-  //  qDebug("qwsSetClipboardText( %s )", s.toAscii().data());
+//    qDebug("qwsSetClipboardText( %s )", s.toLatin1().constData());
     int len =  s.length()*sizeof(QChar);
     QByteArray ba((const char*)s.unicode(), len);
     QPaintDevice::qwsDisplay()->
         setProperty(0, TextClipboard, QWSPropertyManager::PropReplace, ba);
 
+#ifdef Q_OS_EMSCRIPTEN
+    EMSCRIPTENQT_clipboardTextChanged(s.toUtf8().data());
+#endif
 }
+
+#ifdef Q_OS_EMSCRIPTEN
+extern "C"
+{
+
+int EMSCRIPTENQT_setClipboardText(const char *pText)
+{
+    // Set via setMimeData rather then qwsSetClipboardText so that
+    //	the clipboard properly emits the changed() signal:
+    QMimeData *pMime = new QMimeData();
+    pMime->setText(QString::fromUtf8(pText));
+    QApplication::clipboard()->setMimeData(pMime);
+
+    return 0;
+}
+
+}
+#endif
 
 class QClipboardData
 {

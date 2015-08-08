@@ -47,7 +47,7 @@ namespace
 extern "C"
 {
 	void EMSCRIPTENQT_mouseCanvasPosChanged(int x, int y);
-	void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state);
+	void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state, int wheel);
 	void EMSCRIPTENQT_canvasKeyChanged(int unicode, int keycode, int modifiers, int isPress, int autoRepeat);
 
 
@@ -393,11 +393,11 @@ int EmscriptenQtSDL::exec()
 		}
 		else if (event.type == SDL_MOUSEBUTTONUP)
 		{
-			EMSCRIPTENQT_mouseCanvasButtonChanged(sdlButtonToQtButton(event.button.button), 0);
+			EMSCRIPTENQT_mouseCanvasButtonChanged(sdlButtonToQtButton(event.button.button), 0, 0);
 		}
 		else if (event.type == SDL_MOUSEBUTTONDOWN)
 		{
-            EMSCRIPTENQT_mouseCanvasButtonChanged(sdlButtonToQtButton(event.button.button), 1);
+            EMSCRIPTENQT_mouseCanvasButtonChanged(sdlButtonToQtButton(event.button.button), 1, 0);
 		}
 		else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
 		{

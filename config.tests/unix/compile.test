@@ -66,7 +66,7 @@ cd "$OUTDIR/$TEST"
 
 test -r Makefile && $MAKE distclean >/dev/null 2>&1
 # Make sure output from possible previous tests is gone
-rm -f "$EXE" "${EXE}.exe"
+rm -f "$EXE" "${EXE}.exe" "${EXE}.bc"
 
 echo "QT_BUILD_TREE = $OUTDIR" > "$OUTDIR/$TEST/.qmake.cache"
 "$OUTDIR/bin/qmake" -spec "$QMKSPEC" "CONFIG+=$QMAKE_CONFIG" "CONFIG-=debug_and_release" "LIBS*=$LFLAGS" "LIBS+=$MAC_ARCH_LFLAGS" "INCLUDEPATH*=$INCLUDEPATH" "QMAKE_CXXFLAGS*=$CXXFLAGS" "QMAKE_CXXFLAGS+=$MAC_ARCH_CXXFLAGS" "$SRCDIR/$TEST/$EXE.pro" -o "$OUTDIR/$TEST/Makefile"
@@ -77,7 +77,7 @@ else
     $MAKE >/dev/null 2>&1
 fi
 
-( [ -x "$EXE" ] || [ -x "${EXE}.exe" ] ) && SUCCESS=yes
+( [ -x "$EXE" ] || [ -x "${EXE}.exe" ] || [ -e "${EXE}.bc" ] ) && SUCCESS=yes
 
 # done
 if [ "$SUCCESS" != "yes" ]; then

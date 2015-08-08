@@ -13,24 +13,27 @@ namespace
 extern "C"
 {
     void EMSCRIPTENQT_mouseCanvasPosChanged(int x, int y) __attribute__((used))  ;
-    void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state) __attribute__((used))  ;
+    void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state, int wheel) __attribute__((used))  ;
     void EMSCRIPTENQT_mouseCanvasPosChanged(int x, int y)
     {
         currentMouseX = x;
         currentMouseY = y;
-        QEmscriptenCanvasMouseHandler::canvasMouseChanged(x, y, mouseButtonsDown);
+        QEmscriptenCanvasMouseHandler::canvasMouseChanged(x, y, mouseButtonsDown, 0);
     }
-    void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state)
+    void EMSCRIPTENQT_mouseCanvasButtonChanged(int button, int state, int wheel)
     {
-        if (state)
+        if (button)
         {
-           mouseButtonsDown |= button;
-        }
-        else
-        {
-            mouseButtonsDown = mouseButtonsDown & (7 - button);
-        }
-        QEmscriptenCanvasMouseHandler::canvasMouseChanged(currentMouseX, currentMouseY, mouseButtonsDown);
+            if (state)
+            {
+                mouseButtonsDown |= button;
+            }
+            else
+            {
+                mouseButtonsDown = mouseButtonsDown & (7 - button);
+            }
+            }
+        QEmscriptenCanvasMouseHandler::canvasMouseChanged(currentMouseX, currentMouseY, mouseButtonsDown, wheel/3);
     }
 }
 
@@ -57,9 +60,9 @@ void QEmscriptenCanvasMouseHandler::suspend()
     qDebug() << "QEmscriptenCanvasMouseHandler::suspend";
 }
 
-void QEmscriptenCanvasMouseHandler::canvasMouseChanged(int x, int y, int buttons)
+void QEmscriptenCanvasMouseHandler::canvasMouseChanged(int x, int y, int buttons, int wheel)
 {
     QEventDispatcherEmscripten::setBatchProcessingEvents();
-    m_instance->mouseChanged(QPoint(x, y), buttons, 0);
+    m_instance->mouseChanged(QPoint(x, y), buttons, wheel);
     QEventDispatcherEmscripten::batchProcessEventsAndScheduleNextCallback();
 }

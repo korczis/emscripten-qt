@@ -54,6 +54,10 @@ function _EMSCRIPTENQT_canvas_height_pixels_internal()
 var lastRenderedData = null;
 function _EMSCRIPTENQT_flush_pixels_typed_array(data, regionX, regionY, regionW, regionH)
 {
+        if ((regionW <= 0) || (regionH <= 0))
+        {
+            return;
+        }
 	// Experimental canvas rendered that makes use of typed arrays.
         var canvasWidth = _EMSCRIPTENQT_canvas_width_pixels();
         var canvasHeight = _EMSCRIPTENQT_canvas_height_pixels();
@@ -105,6 +109,10 @@ function _EMSCRIPTENQT_flush_pixels_typed_array(data, regionX, regionY, regionW,
 }
 function _EMSCRIPTENQT_flush_pixels_normal(data, regionX, regionY, regionW, regionH)
 {
+        if ((regionW <= 0) || (regionH <= 0))
+        {
+            return;
+        }
         var canvasWidth = _EMSCRIPTENQT_canvas_width_pixels();
         var canvasHeight = _EMSCRIPTENQT_canvas_height_pixels();
         var canvas = document.getElementById('canvas');
@@ -143,7 +151,7 @@ function _EMSCRIPTENQT_flush_pixels_internal(data, regionX, regionY, regionW, re
                 _EMSCRIPTENQT_flush_pixels_normal(data, regionX, regionY, regionW, regionH);
         }
 }
-function _EMSCRIPTENQT_attemptedLocalEventLoop()
+function _EMSCRIPTENQT_attemptedLocalEventLoop_internal()
 {
 }
 function _EMSCRIPTENQT_launchWebBrowser_internal(urlCString)
@@ -182,21 +190,21 @@ function EMSCRIPTENQT_mouseButtonEvent(e, isButtonDown)
         return;
     }
         var canvas = document.getElementById('canvas');
-        var qtMouseButton = -1; // See  Qt::MouseButton
+        var qtMouseButton = -1; // See  Qt::MouseButton (and EMSCRIPTENQT_mouseCanvasButtonChanged)
         switch (e.which) {
                 case 1:
-                        qtMouseButton = 1;
+                        qtMouseButton = 1;    // Left
                         break;
                 case 2:
-                        qtMouseButton = 4;
+                        qtMouseButton = 4;    // Middle
                         break;
                 case 3:
-                        qtMouseButton = 2;
+                        qtMouseButton = 2;    // Right
                         break;
         }
         try
         {
-                cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number'])(qtMouseButton, (isButtonDown ? 1 : 0));
+                cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number', 'number'])(qtMouseButton, (isButtonDown ? 1 : 0), 0);
         }
         catch (e)
         {
@@ -210,6 +218,35 @@ function EMSCRIPTENQT_mouseDown(e)
 function EMSCRIPTENQT_mouseUp(e)
 {
         EMSCRIPTENQT_mouseButtonEvent(e, false);
+}
+function EMSCRIPTENQT_mouseWheel(e)
+{
+    if (!EMSCRIPTENQT_mainLoopHasBeenInitialised)
+    {
+        return;
+    }
+        // Note: Browsers, events, and data will be as follows:
+        //  IE9, Chrome, Safari, Opera : mousewheel     : 120, 240, -120, -240
+        //  Firefox and Opera (some)   : DOMMouseScroll : -1,  -2,  1,    2
+        //
+        // We will normalize them and convert them to the consistent 120/240/-120/-240 values:
+        var evt=window.event || e;      //equalize event object
+        var delta=(evt.detail ? evt.detail*(-120) : evt.wheelDelta);    //check for detail first so Opera uses that instead of wheelDelta
+        if (document.getElementById("invert-mousewheel-checkbox").checked)
+        {
+            delta = delta * (-1);
+        }
+
+        e.preventDefault();
+
+        try
+        {
+                cwrap('EMSCRIPTENQT_mouseCanvasButtonChanged', 'number', ['number', 'number', 'number'])(0, 0, delta);
+        }
+        catch (e)
+        {
+                Module.print("Exception during mouseWheel event: " + e);
+        }
 }
 var lastKeyPressCharCode = null;
 var lastKeyDownCharCode = null;
@@ -226,6 +263,10 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
     {
         e.preventDefault();
     }
+    if (e.altKey )
+    {
+        e.preventDefault();
+    }
 	var jsKeyCode = e.keyCode;
 	var qtKeyCode = 0;
 	var qtModifiers = 0;
@@ -239,6 +280,22 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
         // does not change when coupled with a shift.
         switch(jsKeyCode)
         {
+            case 33: // PgUp
+                qtKeyCode = 0x01000016;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 34: // PgDn
+                qtKeyCode = 0x01000017;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 35: // End
+                qtKeyCode = 0x01000011;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 36: // Home
+                qtKeyCode = 0x01000010;
+                jsKeyCodeIsValidUnicode = false;
+                break;
             case 37: // Left
                 qtKeyCode = 0x01000012;
                 jsKeyCodeIsValidUnicode = false;
@@ -255,8 +312,59 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
                 qtKeyCode = 0x01000015;
                 jsKeyCodeIsValidUnicode = false;
                 break;
+            case 112: // F1
+                qtKeyCode = 0x01000030;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 113: // F2
+                qtKeyCode = 0x01000031;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 114: // F3
+                qtKeyCode = 0x01000032;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 115: // F4
+                qtKeyCode = 0x01000033;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 116: // F5
+                qtKeyCode = 0x01000034;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 117: // F6
+                qtKeyCode = 0x01000035;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 118: // F7
+                qtKeyCode = 0x01000036;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 119: // F8
+                qtKeyCode = 0x01000037;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 120: // F9
+                qtKeyCode = 0x01000038;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 121: // F10
+                qtKeyCode = 0x01000039;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 122: // F11
+                qtKeyCode = 0x0100003a;
+                jsKeyCodeIsValidUnicode = false;
+                break;
+            case 123: // F12
+                qtKeyCode = 0x0100003b;
+                jsKeyCodeIsValidUnicode = false;
+                break;
             case 8: // Backspace
                 qtKeyCode = 0x01000003;
+                break;
+            case 9: // Tab
+                qtKeyCode = 0x01000001;
                 break;
             case 13: // Enter
                 qtKeyCode = 0x01000004;
@@ -272,6 +380,9 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
                 break;
             case 17: // Ctrl
                 qtKeyCode = 0x01000021;
+                break;
+            case 18: // Alt
+                qtKeyCode = 0x01000023;
                 break;
             default:
                 recognised = false;
@@ -335,7 +446,16 @@ function EMSCRIPTENQT_keyEvent(e, isKeyDown, isKeyPress)
 	{
 		qtModifiers += 0x04000000;
 	}
+	// The same as shift, but for alt:
+	if (e.altKey && !(qtKeyCode == 0x01000023 && !isKeyDown))
+	{
+                qtModifiers += 0x08000000;
+	}
     if (e.ctrlKey && (jsKeyCode >= "A".charCodeAt(0) && jsKeyCode <= "Z".charCodeAt(0)))
+    {
+        jsKeyCode = "a".charCodeAt(0) + (jsKeyCode - "A".charCodeAt(0));
+    }
+    if (e.altKey && (jsKeyCode >= "A".charCodeAt(0) && jsKeyCode <= "Z".charCodeAt(0)))
     {
         jsKeyCode = "a".charCodeAt(0) + (jsKeyCode - "A".charCodeAt(0));
     }
@@ -540,6 +660,10 @@ Module['preRun'].push(function() {
                     document.addEventListener("keydown", EMSCRIPTENQT_keyDown, true);
                     document.addEventListener("keyup", EMSCRIPTENQT_keyUp, true);
                     document.addEventListener("keypress", EMSCRIPTENQT_keyPress, true);
+                    // IE9, Chrome, Safari, Opera:
+                    document.addEventListener("mousewheel", EMSCRIPTENQT_mouseWheel, false);
+                    // Firefox:
+                    document.addEventListener("DOMMouseScroll", EMSCRIPTENQT_mouseWheel, false);
                 }
                 canvas.onblur = function()
                 {
@@ -551,6 +675,10 @@ Module['preRun'].push(function() {
                     document.removeEventListener("keydown", EMSCRIPTENQT_keyDown, true);
                     document.removeEventListener("keyup", EMSCRIPTENQT_keyUp, true);
                     document.removeEventListener("keypress", EMSCRIPTENQT_keyPress, true);
+                    // IE9, Chrome, Safari, Opera
+                    document.removeEventListener("mousewheel", EMSCRIPTENQT_mouseWheel, false);
+                    // Firefox
+                    document.removeEventListener("DOMMouseScroll", EMSCRIPTENQT_mouseWheel, false);
                 }
 		// Add the 'use experimental renderer' checkbox beneath the canvas.
                 var experimentalRendererCheckbox = document.createElement("input");
@@ -566,6 +694,19 @@ Module['preRun'].push(function() {
                 var experimentalRendererLabel = document.createElement('label');
                 experimentalRendererLabel.innerHTML = "Use experimental renderer";
                 paragraphForExperimentalCheckboxRenderer.appendChild(experimentalRendererLabel);
+
+                // Add 'invert mousewheel' checkbox beneath the canvas
+                var invertMousewheelCheckbox = document.createElement("input");
+                invertMousewheelCheckbox.id = "invert-mousewheel-checkbox";
+                invertMousewheelCheckbox.type = "checkbox";
+                invertMousewheelCheckbox.checked = (/Macintosh/i.test(navigator.userAgent)) ? true : false;
+                var paragraphForInvertMousewheelCheckbox = document.createElement("p");
+                paragraphForInvertMousewheelCheckbox.appendChild(invertMousewheelCheckbox);
+                paragraphForInvertMousewheelCheckbox.style.textAlign = "center";
+                canvas.parentNode.insertBefore(paragraphForInvertMousewheelCheckbox, canvas.nextSibling);
+                var invertMousewheelLabel = document.createElement("label");
+                invertMousewheelLabel.innerHTML = "Invert Mouse Scroll Wheel (Mac \"Natural\" Format)";
+                paragraphForInvertMousewheelCheckbox.appendChild(invertMousewheelLabel);
 
 
 		canvas.tabIndex = 1;
@@ -1196,3 +1337,10 @@ function _EMSCRIPTENQT_notify_frame_rendered_internal()
         fpsCounter.innerHTML = "FPS: " + framesPerSecond;
     }
 }
+
+function _EMSCRIPTENQT_clipboardTextChanged_internal(pcstrText)
+{
+    // TODO: Handle clipboard change notifications here, such as setting the
+    //  system's clipboard to match the Emscripten-Qt clipboard
+}
+

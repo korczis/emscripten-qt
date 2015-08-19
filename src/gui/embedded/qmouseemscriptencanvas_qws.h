@@ -21,7 +21,7 @@ public:
     void resume();
     void suspend();
 
-    static void canvasMouseChanged(int x, int y, int buttons);
+    static void canvasMouseChanged(int x, int y, int buttons, int wheel = 0);
 private:
     static QEmscriptenCanvasMouseHandler *m_instance;
 };
